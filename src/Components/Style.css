@@ -1,0 +1,1998 @@
+/* Option 2: Import via CSS */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+@import url('https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=Roboto+Slab:wght@100..900&family=Slabo+27px&display=swap');
+a:hover {
+    color: #0000ff; /* #0ab4ff */
+    font-size: 1.1rem;
+  }
+  .menu-anchor:hover {
+
+    font-weight: bolder;
+  }
+  
+  .menu-label {
+    font-size: 13px;
+  }
+
+  .newButton {
+    font-weight: bold !important;
+    font-size: 13px !important;
+  }
+
+  .tab-border { 
+    border: 1px solid black !important;
+}
+  .nav-tabs .nav-link.active
+  {
+    background-color: hsla(177, 59%, 86%, 0.894) !important;
+   
+  }
+
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .main-content {
+    display: flex;
+    width: 100%;
+  }
+  
+
+  .inputwidthTukaMin{
+    width: 4rem !important;
+  }
+
+  
+  .content-area {
+    width: 82%;
+    transition: width 0.4s;
+  }
+  
+  .content-area.expanded {
+    width: 100%;
+  }
+  
+  /* .sidebar {
+    width: 18%;
+    
+    transition: width 0.4s;
+  } */
+  /* In your CSS file */
+
+  
+  .sidebar.toggled {
+    width: 5%;
+  }
+  
+  .header {
+    transition: top 0.4s;
+  }
+  
+  .header.collapsed {
+    top: -60px; /* Change the value as needed */
+  }
+  
+  /* Icon styles */
+  .icon-style {
+    fill:black !important; /* Color for icons */
+    font-weight: bold !important;
+    font-size: x-large;
+  }
+  
+  .icon-style-child {
+    fill: black !important; /* Color for icons */
+    font-weight: bold !important;
+    font-size: large;
+  }
+
+
+  .link-style {
+    color: black !important; /* Dark text color */
+    text-decoration: none;
+    /* font-size: xx-large; */
+  }
+  
+  .icon-style-child {
+    fill: black !important; /* Color for icons */
+    text-decoration: none;
+  } 
+  
+  .link-style.active {
+    background-color:gold !important; /* Darker shade for active item */
+    color: #ef2b2b !important; /* White text color for active item */
+  }
+
+  /* .menu-anchor:hover {
+    background-color: #ee5d35 !important;
+    font-weight: bolder;
+  } */
+  
+
+  .css-dip3t8 {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 3;
+    width: 100% !important;
+
+    background: linear-gradient(to bottom, #30D2BE 0%, #e6ffe6 50%, #473B7B 100%) !important;
+
+    /* background: linear-gradient(to bottom, #30D2BE 0%, #3584A7 50%, #473B7B 100%) !important; */
+
+    /* background: linear-gradient(to bottom, #FF9933 0%, #FFFFFF 50%, #138808 100%) !important; */
+    
+    /* background-image: 'linear-gradient(-225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%)'; */
+
+
+    /* background: linear-gradient(to bottom, #FF6A00 0%, #EE0979 50%, #9C27B0 100%) !important;  */
+
+    /* background: linear-gradient(to bottom, #3a1c71 0%, #d76d77 50%, #ffaf7b 100%) !important; */
+
+    /* background: linear-gradient(to bottom, #2c3e50 0%, #d2ccc4 50%, #e6c200 100%) !important; */
+
+    color: #151616 !important;
+  }
+  
+  .cfs-sidebar {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 3;
+    width: 100% !important;
+    background: linear-gradient(to bottom, #FF9933 0%, #FFFFFF 50%, #138808 100%) !important;
+    color: #151616 !important;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* Optional: Adding a shadow effect for better visibility */
+.cfs-sidebar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* height: 100%; */
+    background: rgba(255, 255, 255, 0.05); /* Light overlay */
+}
+
+/* Style for sidebar items */
+.cfs-sidebar .menu-item {
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+/* Hover effect */
+.cfs-sidebar .menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Icons */
+.cfs-sidebar .menu-item svg {
+    color: #151616;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+/* Style for the toggle button */
+.cfs-sidebar .menu-toggle {
+    background: #ffffff;
+    color: #151616;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cfs-sidebar .menu-toggle:hover {
+    background: #ddd;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  button {
+    right: 40px;
+  }
+  hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    opacity: 0.15;
+  }
+  
+
+
+.bb{
+  border-bottom: 0.1px solid black;
+}
+
+.bt{
+  border-top: 0.1px solid black;
+}
+
+.vheight{
+  height: 60px;
+  background-color: skyblue;
+}
+
+.fr{
+  float: right;
+}
+
+body {
+  font-family: 'Your-Heading-Font', sans-serif;
+}
+/* Option 2: Import via CSS */
+.removestyle{
+  text-decoration: none;
+  color: rgb(63, 31, 180) !important;
+  font-size: 16px !important;
+}
+
+.removestyle:hover{
+  text-decoration: none;
+  color: black;
+  background-color: white;
+}
+
+.imagesize{
+  height: 20px;
+  width: 20px;
+}
+
+.alertwidth{
+  width: 460px !important;
+}
+
+.mt{
+  margin-top: 120px;
+}
+
+.is{
+  width: 650px;
+  height:720px;
+}
+
+.fs{
+  font-weight: bold;
+  color: brown;
+  font-size: 15px;
+}
+
+.buttonwidth{
+  width: 460px;
+}
+
+.buttonwidth1{
+  width: 200px;
+}
+
+.fs1{
+  font-weight: bold;
+  
+  font-size: 10px;
+}
+
+.inputwidth{
+  width: 460px !important;
+}
+
+
+.mardown{
+  margin-bottom: 40px;
+}
+
+
+
+.padright{
+  padding-right: 0 !important;
+}
+
+
+
+.col{
+  float: 0 1 !important;
+}
+
+.dw{
+  width: 100%;
+  border-radius: 5px;
+  height: 100;
+}
+
+.bodybackground{
+  background-color: burlywood;
+}
+
+body
+  {
+    background-color: #e6ffff;
+  }
+
+
+/* for dash */
+
+.profilewidth{
+  font-size: 20px;
+
+}
+
+
+.ml{
+  margin-left: 20px;
+}
+
+#fs{
+  font-size: 23px;
+  font-style: normal;
+ 
+}
+
+.dropdown-menu-left {
+  right: auto;
+  left: 0;
+}
+
+
+
+.fontwt{
+  font-weight: bold;
+}
+
+
+
+/*  For Userrights  */
+
+.padleft{
+  padding-left: 300px;
+  padding-top: 20px;
+}
+
+
+
+.colsize{
+  width: 20px;
+}
+.colsize1{
+  width: 40px;
+}
+
+
+.readonly{
+  color: gray;
+}
+
+
+
+/*  For userrights */
+.dw2{
+  width: 260px;
+  border-radius: 5px;
+}
+
+
+.marfordrop{
+    margin-right: 500px;
+}
+
+.searchCard{
+  padding: 30px 40px 30px 40px;
+}
+
+.tablehead{
+  background-color: skyblue;
+}
+
+.LabelHeader{
+  font-weight: bold;
+}
+
+
+/* for airline*/
+.custom-modal-size {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.custom-modal-size .modal-content {
+  max-height: 500px;
+}
+
+
+
+
+/* Service Master */
+.pad{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+  .label
+  {
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: large;
+  }
+  .radios[type="radio"]
+  {
+    border-color: #333;
+  
+  }
+  .radios[type="checkbox"]
+  {
+    border-color: #333;
+  width:100%;
+  height: 2vw;
+  }
+  
+  .width
+  {
+    width: 110px;
+  }
+  .paddingleft
+  {
+    padding-left:20px;
+  }
+  .btnwidth
+  {
+    width: 6vw;
+  }
+  .btnwidth2
+  {
+    width: 7vw;
+  }
+  .fullScreenCard {
+   
+    height: 80vh;
+    background-color: white; /* Replace with the desired background color */
+  }
+  .error
+  {
+    color: red;
+  }
+  .read-only
+  {
+    background-color: red; /* Grey background color */
+    /* You can also add additional styling properties like padding, border, etc. */
+    color: grey;
+  }
+  #service
+  {
+    background-color: #f2f2f2;
+
+  }
+
+
+  /*Import tp*/
+  #dw{
+    /* margin-top: 8px; */
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+  
+  }
+
+
+  .inputhead{
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+
+
+  
+  /*Export PCTM*/
+  #dw1{
+    margin-top: 8px;
+    width: 250px;
+    height: 35px;
+    border-radius: 5px;
+  
+  }
+
+
+
+  /* Paymeny & bills  */
+
+  .tabspace{
+    margin-right: 20px;
+    border: 0.1px  solid  gray;
+    border-bottom: none;
+  }
+
+
+  .backGround{
+      background-color: rgb(181, 166, 166);
+  }
+
+
+
+  #dw2{
+    margin-top: 8px;
+    width: 500px;
+    height: 35px;
+    border-radius: 5px;
+  
+  }
+
+
+
+  .inputSize{
+    width: 200px !important;
+  }
+
+
+  /* Import PCTM*/
+    #dw3{
+    margin-top: 8px;
+    width: 300px;
+    height: 35px;
+    border-radius: 5px;
+  
+  }
+
+  .dw3{
+
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    appearance: none;
+    width: 200px;
+    height: 35px;
+   border:1px solid #dee2e6;
+   border-radius: 0.375rem;
+  
+  }
+
+
+
+  .marginfordrop{
+    margin-right: 10px;
+  }
+  
+
+
+  #dw4{
+    margin-top: 8px;
+    width: 160px;
+    height: 35px;
+    border-radius: 5px;
+  
+  }
+
+
+
+  /*  Export Register */
+#dw5{
+  margin-top: 8px;
+  width: 350px;
+  height: 35px;
+  border-radius: 5px;
+}
+
+
+/* GST Reports */
+#dw6{
+  margin-top: 8px;
+  width: 280px;
+  height: 35px;
+  border-radius: 5px;
+}
+
+
+
+
+
+
+/* Service Master */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+/* a:hover {
+    color: #0000ff; 
+    font-size: 1.1rem;
+  }
+  .menu-anchor:hover {
+
+    font-weight: bolder;
+  }
+  
+  .menu-label {
+    font-size: 13px;
+  } */
+  
+  button {
+    right: 40px;
+  }
+  hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    opacity: 0.15;
+  }
+  
+
+
+.bb{
+  border-bottom: 0.1px solid black;
+}
+
+.bt{
+  border-top: 0.1px solid black;
+}
+
+.vheight{
+  height: 60px;
+  background-color: skyblue;
+}
+
+.fr{
+  float: right;
+}
+
+
+/* Option 2: Import via CSS */
+.removestyle{
+  text-decoration: none;
+  color: black;
+  font-size: 14px;
+}
+
+.removestyle:hover{
+  text-decoration: none;
+  color: black;
+  background-color: white;
+}
+
+.imagesize{
+  height: 20px;
+  width: 20px;
+}
+
+.alertwidth{
+  width: 460px !important;
+}
+
+.mt{
+  margin-top: 120px;
+}
+
+.is{
+  width: 650px;
+  height:720px;
+}
+
+.fs{
+  font-weight: bold;
+  color: brown;
+  font-size: 15px;
+}
+
+.buttonwidth{
+  width: 460px;
+}
+
+.fs1{
+  font-weight: bold;
+  
+  font-size: 10px;
+}
+
+.inputwidth{
+  width: 460px !important;
+}
+
+.inputwidth1{
+  width: 200px !important;
+}
+
+
+.mardown{
+  margin-bottom: 40px;
+}
+
+
+
+.padright{
+  padding-right: 0 !important;
+}
+
+
+
+.col{
+  float: 0 1 !important;
+}
+
+
+
+.bodybackground{
+  background-color: burlywood;
+}
+
+
+
+
+/* for dash */
+
+.profilewidth{
+  font-size: 20px;
+
+}
+
+
+.ml{
+  margin-left: 20px;
+}
+
+#fs{
+  font-size: 23px;
+  font-style: normal;
+ 
+}
+
+.dropdown-menu-left {
+  right: auto;
+  left: 0;
+}
+
+
+
+.fontwt{
+  font-weight: bold;
+}
+
+
+
+/*  For Userrights  */
+
+.padleft{
+  padding-left: 300px;
+  padding-top: 20px;
+}
+
+
+
+.colsize{
+  width: 20px;
+}
+.colsize1{
+  width: 40px;
+}
+
+
+.readonly{
+  color: gray;
+}
+
+
+
+/*  For userrights */
+.dw2{
+  width: 260px;
+  border-radius: 5px;
+}
+
+
+.marfordrop{
+    margin-right: 500px;
+}
+
+.searchCard{
+  padding: 30px 40px 30px 40px;
+}
+
+.tablehead{
+  background-color: skyblue;
+}
+
+.LabelHeader{
+  font-weight: bold;
+}
+
+
+/* for airline*/
+.custom-modal-size {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.custom-modal-size .modal-content {
+  max-height: 500px;
+}
+
+
+
+
+/* Service Master */
+.pad{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.label
+{
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: large;
+}
+.radios[type="radio"]
+{
+  border-color: #333;
+  
+}
+.custom-label.form-check-label
+{
+  color: black; /* Use the default color */
+}
+.custom-radio.form-check-input[disabled] {
+  opacity: 1; /* This maintains the normal color even when disabled */
+  cursor: not-allowed; /* Optional: Change cursor to indicate unclickable */
+}
+.radios[type="checkbox"]
+{
+  border-color: #333;
+width:100%;
+height: 2vw;
+}
+
+.width
+{
+  width: 110px;
+}
+.paddingleft
+{
+  padding-left:20px;
+}
+.btnwidth
+{
+  width: 6vw;
+  transition: none;
+}
+
+.fullScreenCard {
+ 
+  height: 80vh;
+  background-color: white; /* Replace with the desired background color */
+}
+.error
+{
+  color: red;
+}
+.read-only
+{
+  background-color: red; /* Grey background color */
+  /* You can also add additional styling properties like padding, border, etc. */
+  color: grey;
+}
+#service
+{
+  background-color: #f2f2f2;
+
+}
+input[type="checkbox"]:disabled {
+  /* Add your desired styles here to match the original color */
+  opacity: 1; /* Adjust the opacity if needed */
+  /* Add more styles to maintain the original color */
+}
+.table-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.table-column {
+  flex: 1;
+  padding: 8px;
+}
+.custom-table thead {
+ 
+  height: 60px; /* Adjust the height as needed */
+ 
+  
+}
+
+.custom-table thead th
+{
+  /* Define your custom styles for table header here */
+  background-color: #87CEEB;
+}
+
+.bold label
+{
+  font-weight: 400;
+}
+.font
+{
+  font-size: 20px;
+  font-weight: 400;
+}
+.containerservices label
+{
+  font-size: 15px;
+  font-weight: 600;
+}
+.cardback
+{
+  background-color:rgb(226 232 240)
+}
+.labeldown label
+{
+  margin-top: 10px;
+}
+.singlebtn
+{
+  height: 3vw;
+  width: 9vw;
+  transition: none;
+}
+.matched-row {
+  background-color: #f52b2b !important; /* Replace with your desired background color */
+}
+.error-input {
+  border-color: #f52b2b;
+}
+.custom-datepicker {
+  height: 45px;
+  width: 100%;
+  /* Add other styles as needed */
+}
+.form-input {
+  height: 45px;
+  width: 100%; /* Use full width */
+}
+.btn-disabled {
+  /* Define styles to make the link look disabled */
+  opacity: 0.5; /* You can adjust this value for desired visual effect */
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.label-like-input {
+  appearance: none;         /* Remove browser's default appearance */
+}
+.enhanceinput
+{
+  width: 10vw;
+  height: 40px;
+  border: 2px solid #ccc; 
+  border-radius: 5px;       
+  padding: 8px;            
+  font-size: 16px;          
+  color: #333;             
+  outline: none;           
+  transition: border-color 0.3s, box-shadow 0.3s; 
+}
+
+
+/* In your CSS file */
+
+/* .sidebar-container {
+  height: 72%;
+  width: 100%;
+  overflow-y: auto; 
+  position: absolute;
+
+  left: 0;
+} */
+
+
+
+.css-1097eso{
+  background-color: orange !important;
+}
+
+
+
+
+
+
+
+
+
+/*   Party Entry  */
+
+.pageHead{
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.forlabel{
+  font-weight: 540;
+  font-size: medium;
+}
+
+
+.inputField{
+  font-size: 15px;
+  background-color: gray;
+  padding: 5px;
+}
+
+
+.allbutton{
+  width: 105px;
+}
+
+
+
+/*  pdf */
+/* Style.css */
+.custom-header {
+  background-color: white !important;  
+  color: black !important;
+}
+
+
+.buttton:hover{
+  color: white !important;
+}
+
+
+
+/* .css-1wvake5 */
+
+
+.bgcolo {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 3;
+  background-color: rgb(0 0 0 / 70%) !important;
+}
+
+
+.font1
+{
+  font-family: 'Your-Data-Font'!important;
+}
+
+
+.dropstart .dropdown-toggle::before
+{
+  color: #fff !important;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000; /* Adjust the color as needed */
+}
+
+.close-button:hover {
+  color: red; /* Change the color on hover if desired */
+}
+.error-message
+{
+ color: red;
+}
+.redText {
+  color: red;
+  font-weight: bolder;
+  cursor:default;
+}
+.orangeText
+  {
+    color: orange;
+    font-weight: bolder;
+    cursor:default;
+  }
+
+  /* Tab Styles */
+  .tableHeader
+  {
+    border: 2px solid rgba(7, 7, 7, 0.447) !important;
+  }
+
+/* .nav-tabs .nav-link.active
+{
+  background-color: hsla(177, 51%, 93%, 0.894) !important;
+ 
+}
+.nav-tabs .nav-link.active h6 {
+  font-weight: bold;
+  color: black;
+} */
+
+.total-row td {
+  font-weight: bold !important;
+  background-color: #fff !important;
+  border: 1px solid #9e9d9d !important;
+  height: 50px;
+}
+
+.refresh-button {
+  position: absolute;
+  top: 10px;
+  right: 100px;
+  background: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+.rounded-image {
+  border-radius: 50%;
+  width: 200px; /* Example width */
+  height: 200px; /* Example height */
+  object-fit: cover; /* Ensures the image covers the entire container */
+}
+
+.form-background {
+  background-color: rgba(235, 245, 246, 0.589) !important;
+  border-radius: 18px !important;
+}
+
+.form-label {
+  margin-bottom: 0.3rem !important;
+}
+
+.inputHeader {
+  font-weight: 495 !important;
+  font-size: medium !important;
+}
+
+
+.buttonDown {
+  margin-top: 36px;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  border: 4px solid #0000;
+  border-radius: 50%;
+  border-right-color: #004dff;
+  animation: spinner-a4dj62 1s infinite linear;
+ }
+ 
+ .spinner::before,
+ .spinner::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 2px;
+  border: inherit;
+  border-radius: 50%;
+  animation: spinner-a4dj62 2s infinite;
+ }
+ 
+ .spinner::after {
+  margin: 8px;
+  animation-duration: 3s;
+ }
+ 
+ @keyframes spinner-a4dj62 {
+  100% {
+   transform: rotate(1turn);
+  }
+ }
+
+
+ .loader {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.truckWrapper {
+  width: 200px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  justify-content: flex-end;
+  overflow-x: hidden;
+}
+/* truck upper body */
+.truckBody {
+  width: 130px;
+  height: fit-content;
+  margin-bottom: 6px;
+  animation: motion 1s linear infinite;
+}
+/* truck suspension animation*/
+@keyframes motion {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+/* truck's tires */
+.truckTires {
+  width: 130px;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px 0px 15px;
+  position: absolute;
+  bottom: 0;
+}
+.truckTires svg {
+  width: 24px;
+}
+
+.road {
+  width: 100%;
+  height: 1.5px;
+  background-color: #282828;
+  position: relative;
+  bottom: 0;
+  align-self: flex-end;
+  border-radius: 3px;
+}
+.road::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 100%;
+  background-color: #282828;
+  right: -50%;
+  border-radius: 3px;
+  animation: roadAnimation 1.4s linear infinite;
+  border-left: 10px solid white;
+}
+.road::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  background-color: #282828;
+  right: -65%;
+  border-radius: 3px;
+  animation: roadAnimation 1.4s linear infinite;
+  border-left: 4px solid white;
+}
+
+.lampPost {
+  position: absolute;
+  bottom: 0;
+  right: -90%;
+  height: 90px;
+  animation: roadAnimation 1.4s linear infinite;
+}
+
+@keyframes roadAnimation {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-350px);
+  }
+}
+
+
+.error-messageNew {
+  position: absolute;
+  bottom: -20px;  
+  left: 0;
+  color: #f52b2b;
+  font-size: 12px;  
+}
+
+.dynamic-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Allows columns to adjust their widths based on content */
+}
+
+.dynamic-table th,
+.dynamic-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  /* Other styling properties */
+}
+.tooltip {
+  background-color: #333;
+  color: #7c1717;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  z-index: 1000;
+  position: absolute;
+}
+
+.error-messageNew {
+  position: absolute;
+  bottom: -20px;  
+  left: 0;
+  color: #f52b2b;
+  font-size: 12px;  
+}
+
+.inputwidthTuka{
+  width: 7rem !important;
+}
+
+.inputwidthTukaMax{
+  width: 10rem !important;
+}
+
+.pl1{
+  padding-left: 10px !important;
+}
+
+.pl2{
+  padding-left: 0px !important;
+}
+
+
+
+
+
+
+/* Tariff Styles */
+
+/* Tarrif */
+/* Main container with a horizontal line at the top */
+.revenueAndService {
+  display: flex;
+  height: 400px;
+  /* Set the main container's height */
+  max-height: 400px;
+  width: 100%;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* Add horizontal rule at the top */
+.revenueAndService hr {
+  margin: 0;
+  height: 2px;
+  background-color: #333;
+  border: none;
+}
+
+
+
+.serviceItem:hover {
+  background-color: #f0f0f0;
+  /* Light grey background on hover */
+}
+
+/* Remove top border for the first item to avoid double border */
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+td .form-control {
+  margin: auto;
+}
+
+td .form-control[type="checkbox"] {
+  display: inline-block;
+  /* Keeps the checkbox in the middle */
+  margin: 0 auto;
+  /* Centers horizontally */
+  cursor: pointer;
+  /* Ensures a pointer cursor */
+  width: 20px;
+  height: 24px;
+}
+
+.tableheadNew {
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  height: 42px;
+}
+
+.tariffTable td {
+  height: 46px;
+  padding: 0 !important;
+  margin: 0  !important;
+ 
+}
+
+
+
+
+.mainHeader {
+  display: flex;
+}
+
+.searchtariff {
+  flex: 0 0 20%;
+  position: relative;
+}
+
+.searchtariff::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 2px;
+  /* Border thickness */
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+}
+
+
+.search-tariff-header h6 {
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  padding: 10px;
+  color: black;
+  border-radius: 1px;
+  display: inline-block;
+  width: 100%;
+}
+
+
+.validaity {
+  flex: 0 0 80%;
+}
+
+.containerBody {
+  display: flex;
+  height: 100%;
+}
+
+/* Outer container for services */
+.serviceGroup {
+  flex: 0 0 20%;
+  max-height: 400px;
+  border-right: 1px solid #ccc;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header and input box are not scrollable */
+.search-tariff-headerService,
+.form-control {
+  flex-shrink: 0; /* Prevent shrinking when scrolling */
+}
+
+/* Scrollable area for services */
+.serviceList {
+  flex-grow: 1; /* Allows the list to take up remaining space */
+  overflow-y: auto;
+}
+
+/* Scrollbar Styling */
+.serviceList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.serviceList::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.serviceList::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  border-radius: 10px;
+}
+
+.serviceList::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5ca8f2 0%, #bfc2c5 100%);
+}
+
+
+
+
+
+
+/* Sticky Header */
+.search-tariff-headerService {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  /* padding: 4px 9px; */
+  border-radius: 0.5px;
+  /* z-index: 10; */
+  padding-top: 2px;
+  padding-right: 9px;
+  padding-bottom: 3px;
+  padding-left: 9px;
+
+}
+
+/* Service Items */
+.serviceItem {
+  /* border-top: 1px solid #ccc; */
+  padding: 3px 10px;
+  word-wrap: break-word;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.serviceItem:hover {
+  background: linear-gradient(135deg, #97fbea 0%, #dadde0 100%);
+  transition: background 0.3s ease;
+}
+
+.selectedService {
+  background: linear-gradient(135deg, #97fbea 0%, #dadde0 100%);
+}
+
+
+.revenue {
+  flex: 0 0 80%;
+  max-height: 400px;
+  /* Ensures container respects max height */
+  overflow: hidden;
+  /* Disable scrolling for the entire revenue container */
+}
+
+.tableWrapper {
+  max-height: 350px;
+  /* Set a max height for the table area */
+  overflow-y: auto;
+  /* Enable vertical scroll */
+  overflow-x: auto;
+  /* Enable horizontal scroll */
+}
+
+/* Scrollbar Styling for the tableWrapper */
+.tableWrapper::-webkit-scrollbar {
+  width: 8px;
+  /* Scrollbar width (vertical) */
+  height: 8px;
+  /* Scrollbar height (horizontal) */
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  /* Track color */
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  border-radius: 10px;
+  /* Rounded scrollbar edges */
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5ca8f2 0%, #bfc2c5 100%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.custom-hr {
+  height: 2px;
+  /* Height of the line */
+  margin: 0;
+  /* Removes any margin */
+  padding: 0;
+  /* Ensures no padding */
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  border: none;
+  /* Removes any default borders */
+}
+
+.serviceText {
+  color: #007bff;
+  font-weight: 550;  
+  font-style: italic;
+}
+.inputwidthTukaTariff {
+  width: 6rem !important;
+}
+
+
+.container1 {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.radio-tile-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.radio-tile-group .input-container {
+  position: relative;
+  height: 50px;
+  width: 125px;
+  margin: 0.5rem;
+}
+
+.radio-tile-group .input-container .radio-button {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio-tile-group .input-container .radio-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #079ad9;
+  border-radius: 5px;
+  padding: 1rem;
+  transition: transform 300ms ease;
+}
+
+.radio-tile-group .input-container .icon svg {
+  fill: #079ad9;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.radio-tile-group .input-container .radio-tile-label {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #079ad9;
+  margin-left: 5px;
+}
+
+.radio-tile-group .input-container .radio-button:checked + .radio-tile {
+  background-color: #079ad9;
+  border: 2px solid #079ad9;
+  transform: scale(1.1, 1.1);
+}
+
+.radio-tile-group .input-container .radio-button:checked + .radio-tile .icon svg {
+  fill: white;
+  background-color: #079ad9;
+}
+
+.radio-tile-group .input-container .radio-button:checked + .radio-tile .radio-tile-label {
+  color: white;
+  background-color: #079ad9;
+}
+
+
+
+
+
+
+
+
+
+ .container2 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.radio-tile-group2 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.radio-tile-group2 .input-container {
+  position: relative;
+  height: 45px;
+  width: 170px;
+  margin: 0.2rem;
+}
+
+.radio-tile-group2 .input-container .radio-button {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.radio-tile-group2 .input-container .radio-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #079ad9;
+  border-radius: 5px;
+  /* padding: 1rem; */
+  transition: transform 0.3s ease, background-color 0.3s ease, border 0.3s ease;
+}
+
+.radio-tile-group2 .input-container .radio-button:checked + .radio-tile {
+  background-color: #079ad9;
+  border-color: #079ad9;
+  transform: scale(1.1);
+}
+
+.radio-tile-group2 .input-container .radio-button:checked + .radio-tile .icon svg {
+  fill: white;
+}
+
+.radio-tile-group2 .input-container .radio-button:checked + .radio-tile .radio-tile-label {
+  color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .radio-tile-group2 .input-container {
+    width: 100px;
+    height: 45px;
+  }
+  
+  .radio-tile-group2 .input-container .radio-tile-label {
+    font-size: 0.65rem;
+  }
+}
+
+.radio-tile-group2 .input-container .icon svg {
+  fill: #079ad9;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: fill 0.3s ease;
+}
+
+.radio-tile-group2 .input-container .radio-tile-label {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #079ad9;
+  margin-left: 0;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  margin-left: 5px !important;
+}
+
+/* General Menu Styles */
+.menu-item {
+  color: black;
+
+  /* padding: 10px; */
+  font-size: 16px;
+  font-weight: 500;
+  /* transition: color 0.3s ease-in-out, background 0.3s ease-in-out; */
+}
+
+/* Parent Menu */
+.menu-item > a {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  /* padding: 10px; */
+  border-radius: 5px;
+}
+
+/* On Hover (Parent Menu) */
+.menu-item:hover > a {
+  color: gold !important;
+  background: rgba(255, 255, 255, 0.2); /* Light overlay effect */
+}
+
+/* Submenu Items */
+.submenu-item {
+  /* padding: 8px 15px; */
+  font-size: 12px;
+  color: rgba(11, 10, 10, 0.85);
+  border-left: 3px solid transparent;
+  /* transition: all 0.3s ease-in-out; */
+}
+
+/* On Hover (Submenu) */
+.submenu-item:hover {
+  background: red;
+}
+
+.menu-item {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Default Parent Menu Link Style */
+.menu-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  /* transition: all 0.3s ease-in-out; */
+}
+
+.menu-link:hover {
+  color: rgba(255, 215, 0, 0.8); /* Gold Background */
+}
+
+.submenu-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  /* padding: 8px 15px; */
+  background: #e6ffe6; 
+  /* background: white;  */
+  border-radius: 5px;
+  /* transition: all 0.3s ease-in-out; */
+}
+
+ /* .submenu-link:hover {
+  color: 'red';
+} */
+
+/*
+.menu-icon {
+  color: gold;
+  margin-right: 8px;
+  font-size: 18px;
+  transition: color 0.3s ease-in-out;
+}
+
+.menu-link:hover .menu-icon,
+.submenu-link:hover .menu-icon {
+  color: rgba(255, 215, 0, 0.8);
+} */
+
+
+.sidebar-container {
+  transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none; /* Hide sidebar in mobile view when collapsed */
+    width: 0px !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Sb Documen Upload */
+.file-scroll-container {
+  max-width: 100%;
+  overflow-x: auto;
+  /* border: 1px solid #ccc; */
+  padding: 10px;
+  /* background: #f9f9f9; */
+  display: flex;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #7dbefb #dadde0;
+}
+
+.file-scroll-container::-webkit-scrollbar {
+  height: 8px; /* Adjust height for horizontal scrollbars */
+}
+
+.file-scroll-container::-webkit-scrollbar-track {
+  background: #dadde0; /* Track color */
+  border-radius: 4px;
+}
+
+.file-scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7dbefb 0%, #dadde0 100%);
+  border-radius: 4px;
+}
+
+.file-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5fa8f2 0%, #c2c7ca 100%);
+}
+
+
+
+
+
+
+.file-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px; /* Set fixed width */
+  margin-right: 10px; /* Space between previews */
+}
+
+.remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  background: red;
+}
+
+.file-preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: #f8f8f8;
+  border-radius: 5px;
+}
+
+
+.file-thumbnail {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.file-name {
+  font-size: 10px;
+  text-align: center;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  margin-top: 5px;
+  padding: 2px;
+}

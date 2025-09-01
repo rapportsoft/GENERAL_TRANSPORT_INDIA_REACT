@@ -1,0 +1,24 @@
+/* RowAnimation.css */
+.row-animation-enter {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 100ms ease-in, opacity 100ms ease-in;
+}
+
+.row-animation-enter-active {
+    max-height: 1000px; /* Adjust to fit your content */
+    opacity: 1;
+}
+
+.row-animation-exit {
+    max-height: 1000px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 100ms ease-out, opacity 100ms ease-out;
+}
+
+.row-animation-exit-active {
+    max-height: 0;
+    opacity: 0;
+}

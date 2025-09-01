@@ -1,0 +1,440 @@
+.content-wrapper {
+  height: calc(100vh - 60px); /* Adjust the height based on your layout */
+  /* overflow-y: auto; */
+  padding: 10px; /* Add padding for a better visual */
+}
+
+.dropdown-menu {
+  max-height: 300px; /* Adjust the max height as needed */
+  overflow-y: auto;
+}
+body {
+  font-family: 'Your-Heading-Font', sans-serif;
+}
+.error-border {
+  border: 1px solid #f52b2b !important;
+}
+/* Define custom styles for the title */
+.your-custom-title-class {
+  font-size: 20px; 
+  font-family: 'Times New Roman', Times, serif;/* Adjust the font size as needed */
+  /* font-weight: bold;  */
+  /* Add other styles as needed */
+}
+
+/* Define custom styles for the cancel button */
+.your-custom-cancel-button-class {
+  background-color: transparent; /* Remove the background color */
+  border: 2px solid #dc3545; /* Set the border color for danger */
+  color: #dc3545; /* Text color for danger */
+  transition: background-color 0.3s, color 0.3s;
+  width: 6vw;
+  height: 2.1vw;
+ border-radius: 5px;
+}
+
+/* Define custom styles for the confirm button */
+.your-custom-confirm-button-class {
+  background-color: transparent; /* Remove the background color */
+  border: 2px solid #28a745; /* Set the border color for success */
+  color: #28a745; /* Text color for success */
+  transition: background-color 0.3s, color 0.3s;
+  width: 6vw;
+  height: 2.1vw;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+/* Define custom styles for the content */
+.your-custom-content-class {
+  font-size: 16px; /* Adjust the font size as needed */
+  /* Add other styles as needed */
+}
+
+.your-custom-confirm-button-class:hover {
+  background-color: #28a745; /* Background color on hover */
+  color: #fff; /* Text color on hover */; /* Change text color on hover */
+}
+
+.your-custom-cancel-button-class:hover {
+  background-color: #dc3545; /* Background color on hover */
+  color: #fff; /* Text color on hover */
+}
+
+
+/* Manage External user */
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn4 {
+  vertical-align: middle;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.widthbtn
+{
+  width: 7vw;
+}
+.link {
+  transition: none !important; /* Disable transitions */
+  animation: none !important; /* Disable animations */
+  /* Add any other necessary styling here */
+  font-size: 16px;
+}
+.link:hover {
+  font-size: 16px !important; /* Prevent font size change on hover */
+  /* Any other hover styles you want */
+}
+.table-responsive .table-bordered.custom-table tbody .highlighted-row {
+  background-color: skyblue;
+  color: blue;
+}
+
+.table {
+  table-layout: auto;
+  width: auto;
+}
+
+th {
+  white-space: nowrap;
+}
+
+
+/* Cartting Agent */
+.custom-table-container {
+  max-height: 40vh; 
+  overflow-y: auto; 
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+  border:1px dotted gray; 
+}
+.image-column {
+  width: auto;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+.rounded-image {
+  border-radius: 50%;
+  width: 200px; /* Example width */
+  height: 200px; /* Example height */
+  object-fit: cover; /* Ensures the image covers the entire container */
+}
+
+.image-column1 {
+  width: auto;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.rounded-image1 {
+  border-radius: 50%;
+  width: 100%;
+  height: 170px; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensures the image covers the entire container */
+}
+.rounded-image2 {
+  border-radius: 50%;
+  width: 100%;
+  height: 240px; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensures the image covers the entire container */
+}
+.modal-content {
+  display: flex;
+  height: 100%; /* Ensure the modal content takes full height */
+}
+
+.table-section {
+  flex: 20; /* Takes up 20% of the modal's height */
+  overflow-y: auto; /* Add scroll if content overflows */
+  padding: 10px; /* Add padding as needed */
+}
+
+.other-content-section {
+  flex: 80; /* Takes up 80% of the modal's height */
+  overflow-y: auto; /* Add scroll if content overflows */
+  padding: 20px; /* Add padding as needed */
+  background-color: #eaf4f5; /* Example background color */
+}
+
+
+
+
+
+
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pad{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.body{
+  background-color: cornsilk;
+    font-family: inherit;
+    margin: 3px -28px 0 0px;
+  }
+  .y{
+    width: 50%;
+    margin-top: 27px;
+  }
+  .c{
+    margin-top: 36px;
+  }
+  .bt
+  {
+    margin-bottom: 18px;
+  }
+  .body
+  {
+    background-color: darksalmon;
+  }
+  .b1{
+    margin-top: 18px;
+    margin-left: 18px;
+  }
+  .add-new-btn
+  {
+  float: right;
+  }
+  .MyCard{
+    padding-left: 9px;
+    padding-right: 9px;
+    padding-bottom: 9px;
+    padding-top: 9px;
+    margin-top: 18PX;
+    width: 100%;
+  }
+  label{
+    font-size: small;
+  }
+
+/* .backgroundforpages{
+  background-color: #B4F5FF;
+} */
+
+
+.content-collapsed {
+  padding-left: 60px; /* Adjust this value based on your sidebar width */
+  transition: padding-left 0.3s ease-in-out;
+}
+
+/* .content-collapsed .sidebar-collapsed {
+  width: 60px; 
+}
+
+.content-collapsed .sidebar-expanded {
+  width: 250px; 
+} */
+
+.content-wrapper {
+  height: calc(100vh - 20px); /* Adjust the height based on your layout */
+   overflow-y: auto; 
+  padding: 10px; /* Add padding for a better visual */
+}
+.dropdown-menu {
+  max-height: 300px; /* Adjust the max height as needed */
+  overflow-y: auto;
+}
+
+.error-border {
+  border: 1px solid #f52b2b !important;
+}
+/* Define custom styles for the title */
+.your-custom-title-class {
+  font-size: 20px; 
+  font-family: 'Times New Roman', Times, serif;/* Adjust the font size as needed */
+  /* font-weight: bold;  */
+  /* Add other styles as needed */
+}
+
+/* Define custom styles for the cancel button */
+.your-custom-cancel-button-class {
+  background-color: transparent; /* Remove the background color */
+  border: 2px solid #dc3545; /* Set the border color for danger */
+  color: #dc3545; /* Text color for danger */
+  transition: background-color 0.3s, color 0.3s;
+  width: 6vw;
+  height: 2.1vw;
+ border-radius: 5px;
+}
+
+/* Define custom styles for the confirm button */
+.your-custom-confirm-button-class {
+  background-color: transparent; /* Remove the background color */
+  border: 2px solid #28a745; /* Set the border color for success */
+  color: #28a745; /* Text color for success */
+  transition: background-color 0.3s, color 0.3s;
+  width: 6vw;
+  height: 2.1vw;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+/* Define custom styles for the content */
+.your-custom-content-class {
+  font-size: 16px; /* Adjust the font size as needed */
+  /* Add other styles as needed */
+}
+
+.your-custom-confirm-button-class:hover {
+  background-color: #28a745; /* Background color on hover */
+  color: #fff; /* Text color on hover /; / Change text color on hover */
+}
+
+.your-custom-cancel-button-class:hover {
+  background-color: #dc3545; /* Background color on hover */
+  color: #fff; /* Text color on hover */
+}
+
+
+
+
+
+.widthbtn
+{
+  width: 7vw;
+}
+.link {
+  transition: none !important; /* Disable transitions */
+  animation: none !important; /* Disable animations */
+  /* Add any other necessary styling here */
+  font-size: 16px;
+}
+.link:hover {
+  font-size: 16px !important; /* Prevent font size change on hover */
+  /* Any other hover styles you want */
+}
+.table-responsive .table-bordered.custom-table tbody .highlighted-row {
+  background-color: skyblue;
+  color: blue;
+}
+
+.table {
+  table-layout: auto;
+  width: auto;
+}
+
+th {
+  white-space: nowrap;
+}
+
+
+/* Cartting Agent */
+.custom-table-container {
+  max-height: 40vh; 
+  overflow-y: auto; 
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+  border:1px dotted gray; 
+}
+.image-column {
+  height: 100%; /* Match the height of the other columns */
+  width: auto; /* Maintain the image's aspect ratio */
+  max-width: 100%; /* Make sure the image doesn't exceed its container */
+  display: block; /* Ensure the image behaves as a block element */
+  margin: 0 auto; /* Center the image horizontally */
+}
+.modal-content {
+  display: flex;
+  height: 100%; /* Ensure the modal content takes full height */
+}
+
+.table-section {
+  flex: 20; /* Takes up 20% of the modal's height */
+  overflow-y: auto; /* Add scroll if content overflows */
+  padding: 10px; /* Add padding as needed */
+}
+
+.other-content-section {
+  flex: 80; /* Takes up 80% of the modal's height */
+  overflow-y: auto; /* Add scroll if content overflows */
+  padding: 20px; /* Add padding as needed */
+  background-color: #eaf4f5; /* Example background color */
+}
+
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 400;
+  line-height: 1.2 !important;
+  color: var(--bs-body-color);
+  appearance: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.forlabel {
+  font-weight: 540;
+  font-size: 14px !important;
+}
+
+.datepicker{
+   height:  30px !important;
+}
+
+
