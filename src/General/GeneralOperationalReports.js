@@ -14,493 +14,501 @@ import { format } from 'date-fns';
 import Select from "react-select";
 export default function GeneralOperationalReports() {
 
-    const axios = useAxios();
-    const { isAuthenticated } = useContext(AuthContext);
-  
-    const navigate = useNavigate();
-    // If the user is not authenticated, redirect to the login page
-    useEffect(() => {
-      if (!isAuthenticated) {
-        navigate(
-          "/login?message=You need to be authenticated to access this page."
-        );
-      }
-    }, [isAuthenticated, navigate]);
-  
-    const {
-      jwtToken,
-      userId,
-      username,
-      branchId,
-      companyid,
-      role,
-      companyname,
-      branchname,
-      login,
-      logout,
-      userType,
-      userRights,
-    } = useContext(AuthContext);
-  
-    const styles = {
-      overlay: {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9999,
-      },
-    };
-  
-    const location = useLocation();
-    const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
-  
-    const queryParams = new URLSearchParams(location.search);
-    const processId = queryParams.get("process_id");
-  
-    const foundRights =
-      role !== "ROLE_ADMIN"
-        ? userRights.find((item) => item.process_Id === processId)
-        : null;
-    const allowCreate = foundRights?.allow_Create === "Y";
-    const allowRead = foundRights?.allow_Read === "Y";
-    const allowEdit = foundRights?.allow_Update === "Y";
-    const allowDelete = foundRights?.allow_Delete === "Y";
-  
-    const [startDate ,setStartDate] =useState('');
-    const [endDate ,setEndDate] =useState(new Date());
-    const [igmNo ,setIgmNo] =useState('');
-    const [itemNo ,setItemNo] =useState('');
-    const [cha,setCha]=useState('');
-    const [accountHolder ,setAccountHolder]=useState('');
-    const [shippingLine,setShippingLine] = useState('');
-    const [selectedReport, setSelectedReport] = useState(""); // Track selected radio button
-    const [chaName, setChaName] = useState('');
-    const [isoData, setISOData] = useState([]);
-    const [shippingLineName, setShippingLineName] = useState("");
-    const [accountHolderName, setAccountHolderName] = useState("");
-const [impData, setImpData] = useState([]);
-const [accountHolderData, setAccountHolderData] = useState([]);
-    const handlePortChange = async (selectedOption, { action }) => {
+  const axios = useAxios();
+  const { isAuthenticated } = useContext(AuthContext);
 
-        if (action === 'clear') {
-      
-            console.log("respone datacagahgdhsagdhs",selectedOption);
-            setCha('');
-            setChaName(''); 
-        }
-        else {
-            console.log("respone datacagahgdhsagdhs",selectedOption);
-      
-            setCha(selectedOption ? selectedOption.value : '')
-            setChaName(selectedOption ? selectedOption.drop : '');
-        }
-      };
-      
-      const getIsoData = (val) => {
-        if (val === '') {
-            setISOData([]);
-            return;
-        }
-      
-        axios.get(`${ipaddress}api/cfbondnoc/search?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`
-            }
-        })
-            .then((response) => {
-                const data = response.data;
-      
-                console.log("response.data",data);
-                const portOptions = data.map(port => ({
-                    value: port.partyId,
-                    label: `${ port.partyName}-${port.address1},${port.address1},${port.address3}`,
-                    drop: port.partyName,
-                    ccode:port.customerCode,
-                    bWeek:port.bondnocWeek,
-                    cName:port.partyName,
-                }))
-                setISOData(portOptions);
-            })
-            .catch((error) => {
-      
-            })
-      }
-
-      const handleShippingLineChange = async (selectedOption, { action }) => {
-        if (action === 'clear') {
-            setShippingLineName('');
-          setShippingLine(''); 
-          console.log("respone datacagahgdhsagdhs",selectedOption);
-        }
-        else {
-            console.log("respone datacagahgdhsagdhs",selectedOption);
-      
-            setShippingLine(selectedOption ? selectedOption.value : '');
-            setShippingLineName(selectedOption ? selectedOption.impN : '');
-        }
-      };
-      
-      const getShippingLineData = (val) => {
-        if (val === '') {
-          setImpData([]);
-            return;
-        }
-      
-        axios.get(`${ipaddress}api/cfbondnoc/searchShippingLine?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`
-            }
-        })
-            .then((response) => {
-                const data = response.data;
-      
-                console.log("response.data",data);
-                const portOptions = data.map(port => ({ 
-                    value: port.partyId,
-                    label: `${port.partyName}-${port.address1}-${port.address2}-${port.address3}`,
-                    //label: port.partyName,
-                    impN:port.partyName,
-                    ad1:port.address1,
-                    ad2:port.address2,
-                    ad3:port.address3,
-                }))
-                setImpData(portOptions);
-            })
-            .catch((error) => {
-      
-            })
-      }
-      const handleAccountHolderChange = async (selectedOption, { action }) => {
-        if (action === 'clear') {
-            setAccountHolderName('');
-          setAccountHolder(''); 
-          console.log("respone datacagahgdhsagdhs",selectedOption);
-        }
-        else {
-            console.log("respone datacagahgdhsagdhs",selectedOption);
-      
-            setAccountHolder(selectedOption ? selectedOption.value : '');
-            setAccountHolderName(selectedOption ? selectedOption.impN : '');
-        }
-      };
-      
-      const getAccountHolderData = (val) => {
-        if (val === '') {
-            setAccountHolderData([]);
-            return;
-        }
-      
-        axios.get(`${ipaddress}api/cfbondnoc/searchImporters?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`
-            }
-        })
-            .then((response) => {
-                const data = response.data;
-      
-                console.log("response.data",data);
-                const portOptions = data.map(port => ({ 
-                    value: port.partyId,
-                    label: `${port.partyName}-${port.address1}-${port.address2}-${port.address3}`,
-                    //label: port.partyName,
-                    impN:port.partyName,
-                    ad1:port.address1,
-                    ad2:port.address2,
-                    ad3:port.address3,
-                }))
-                setAccountHolderData(portOptions);
-            })
-            .catch((error) => {
-      
-            })
-      }
-      
-      const reports = [
-        "General Receiving Register",
-        "General Delivery Register",
-        "General Stock Report",
-      ];
-    
-
-
-      const handleRadioChange = (report) => {
-        setSelectedReport(report);   // Update the selected report
-        setInventoryList([]); 
-        handlePageChange(1);       // Empty the inventoryList
-      };
-      
-
-      const [inventoryList ,setInventoryList]=useState([]);
-      const [currentPage, setCurrentPage] = useState(1);
-      const [itemsPerPage] = useState(10);
-    
-      const indexOfLastItem = currentPage * itemsPerPage;
-      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-      const currentItems = inventoryList.slice(indexOfFirstItem, indexOfLastItem);
-      const totalPages = Math.ceil(inventoryList.length / itemsPerPage);
-    
-      // Function to handle page change
-      const handlePageChange = (page) => {
-        if (page >= 1 && page <= totalPages) {
-          setCurrentPage(page);
-        }
-      };
-      const displayPages = () => {
-        const centerPageCount = 5;
-        const middlePage = Math.floor(centerPageCount / 2);
-        let startPage = currentPage - middlePage;
-        let endPage = currentPage + middlePage;
-    
-        if (startPage < 1) {
-          startPage = 1;
-          endPage = Math.min(totalPages, centerPageCount);
-        }
-    
-        if (endPage > totalPages) {
-          endPage = totalPages;
-          startPage = Math.max(1, totalPages - centerPageCount + 1);
-        }
-    
-        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-      };
-
-
-    const handleStartDateChange = (date) => {
-        setStartDate(date);
-      };
-    
-      // Handler for end date change
-      const handleEndDateChange = (date) => {
-        setEndDate(date);
-      };
-
-
-
-      const handleExleDownload = async (type) => {
-        try {
-          setLoading(true);
-  
-        const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD HH:mm') : '';
-        const formattedEndDate= endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
-        if (!selectedReport) {
-          toast.error('Please select a report.');
-          setLoading(false); // Ensure the loading state is reset
-          return;
-        }
-if (
-  (!formattedStartDate || !formattedEndDate)
-) {
-  toast.error('Please enter both start date and end date.');
-  setLoading(false); // Ensure the loading state is reset
-  return;
-}
-        console.log(selectedReport);
-        console.log(formattedStartDate);
-        console.log(formattedEndDate);
-       
-          const response = await axios.get(
-            `${ipaddress}api/generalReports/getImportGateInContainerDetailedReport?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&accountHolder=${accountHolder}&cha=${cha}&selectedReport=${selectedReport}`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`
-              },
-              responseType: 'blob' // Make sure the response type is set to blob
-            }
-          );
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${selectedReport}.xlsx`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-      
-          // Optionally, revoke the Object URL to free up resources
-          window.URL.revokeObjectURL(url);
-      
-          // Success toast notification
-          toast.success('Excel file downloaded successfully!', { autoClose: 900 });
-          setInventoryList([]);
-          setSelectedReport('');
-        } catch (error) {
-          console.error('Error downloading Excel file:', error);
-      
-          // Error toast notification
-          toast.error('Failed to download Excel file. Please try again.', { autoClose: 900 });
-        }finally{
-          setLoading(false);
-        }
-      };
-
-
-
-      const handleShow = async (type) => {
-        try {
-          setLoading(true);
-            console.log("In show data");
-
-            const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD HH:mm') : '';
-            const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
-            
-            if (!selectedReport) {
-              toast.error('Please select a report.');
-              setLoading(false); // Ensure the loading state is reset
-              return;
-            }
-        // Check startDate and endDate only if the selectedReport is neither "Import Long Standing Report" nor "LCL Cargo Balance Inventory Report"
-        if (
-          (!formattedStartDate || !formattedEndDate)
-        ) {
-          toast.error('Please enter both start date and end date.');
-          setLoading(false); // Ensure the loading state is reset
-          return;
-        }
-
-            const response = await axios.get(
-                `${ipaddress}api/generalReports/show?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&accountHolder=${accountHolder}&cha=${cha}&selectedReport=${selectedReport}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${jwtToken}`
-                    }
-                }
-            );
-    
-            const data = response.data;
-            if (data.length === 0) {
-              toast.info(`No records found for dates: ${formattedStartDate} to ${formattedEndDate}`);
-          }
-    setInventoryList(data);
-            console.log(data);
-            
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            // You may want to show a toast notification or alert the user
-        }finally{
-          setLoading(false);
-        }
-    };
-    
-
-      const handleClear =()=>{
-        setIgmNo('');
-        setItemNo('');
-        setStartDate('');
-        setEndDate(new Date());
-        setInventoryList([]);
-        setSelectedReport("");
-        setCha('');
-        setChaName('');
-        setAccountHolder('');
-        setAccountHolderName('');
-        setShippingLine('');
-        setShippingLineName('');
-      }
-
-      const GeneralReceivingRegister = ({ currentItems}) => (
-        <table className="table table-bordered table-hover tableHeader">
-          <thead className="text-center">
-            <tr>
-              <th scope="col">Sr No</th>
-              <th scope="col">Receiving Date</th>
-              <th scope="col" style={{minWidth:270}}>Importer Name</th>
-              <th scope="col" style={{minWidth:270}}>CHA Name</th>
-              <th scope="col" style={{minWidth:126}}>BE NO</th>
-              <th scope="col"  style={{minWidth:180}}>BE Date</th>
-              <th scope="col"  style={{minWidth:180}}>Commodity</th>
-              <th scope="col">Container</th>
-              <th scope="col">No Of 20</th>
-              <th scope="col">No Of 40</th>
-              <th scope="col">Gate In Packages</th>
-              <th scope="col">Gate In Weight</th>
-              <th scope="col">Received Quantity</th>
-              <th scope="col">Receiving Weight</th>
-              <th scope="col">Package Type</th>
-              <th scope="col">Vehicle No</th>
-              <th scope="col" style={{minWidth:270}}>Transporter</th>
-              <th scope="col">Handling</th>
-              <th scope="col">Handling1</th>
-              <th scope="col">Handling2</th>
-              <th scope="col">Owner1</th>
-              <th scope="col">Owner2</th>
-              <th scope="col">Owner3</th>
-              <th scope="col" style={{minWidth:126}}>Job No</th>
-              <th scope="col">Remarks</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {currentItems.map((item, index) => (
-              <tr key={index}>
-                <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td> {/* Sr No */}
-                <td>{item[0] || ""}</td> {/* Receiving Date */}
-                <td>{item[1] || ""}</td> {/* Importer Name */}
-                <td>{item[2] || ""}</td> {/* CHA Name */}
-                <td>{item[3] || ""}</td> {/* BE NO */}
-                <td>{item[4] || ""}</td> {/* BE Date */}
-                <td>{item[5] || ""}</td> {/* Commodity */}
-                <td>{item[6] || ""}</td> {/* Container */}
-                <td>{item[7] || ""}</td> {/* No Of 20 */}
-                <td>{item[8] || ""}</td> {/* No Of 40 */}
-                <td>{item[9] || ""}</td> {/* Gate In Packages */}
-                <td>{item[10] || ""}</td> {/* Gate In Weight */}
-                <td>{item[11] || ""}</td> {/* Received Quantity */}
-                <td>{item[12] || ""}</td> {/* Receiving Weight */}
-                <td>{item[13] || ""}</td> {/* Package Type */}
-                <td>{item[14] || ""}</td> {/* Vehicle No */}
-                <td>{item[15] || ""}</td> {/* Transporter */}
-                <td>{item[16] || ""}</td> {/* Handling */}
-                <td>{item[17] || ""}</td> {/* Handling1 */}
-                <td>{item[18] || ""}</td> {/* Handling2 */}
-                <td>{item[19] || ""}</td> {/* Owner1 */}
-                <td>{item[20] || ""}</td> {/* Owner2 */}
-                <td>{item[21] || ""}</td> {/* Owner3 */}
-                <td>{item[22] || ""}</td> {/* Job No */}
-                <td>{item[23] || ""}</td> {/* Remarks */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  const navigate = useNavigate();
+  // If the user is not authenticated, redirect to the login page
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(
+        "/login?message=You need to be authenticated to access this page."
       );
-      
-    
-    const GeneralDeliveryRegister = ({ currentItems }) => (
-      <table className="table table-bordered table-hover tableHeader">
+    }
+  }, [isAuthenticated, navigate]);
+
+  const {
+    jwtToken,
+    userId,
+    username,
+    branchId,
+    companyid,
+    role,
+    companyname,
+    branchname,
+    login,
+    logout,
+    userType,
+    userRights,
+  } = useContext(AuthContext);
+
+  const styles = {
+    overlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    },
+  };
+
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const queryParams = new URLSearchParams(location.search);
+  const processId = queryParams.get("process_id");
+
+  const foundRights =
+    role !== "ROLE_ADMIN"
+      ? userRights.find((item) => item.process_Id === processId)
+      : null;
+  const allowCreate = foundRights?.allow_Create === "Y";
+  const allowRead = foundRights?.allow_Read === "Y";
+  const allowEdit = foundRights?.allow_Update === "Y";
+  const allowDelete = foundRights?.allow_Delete === "Y";
+
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState(new Date());
+  const [igmNo, setIgmNo] = useState('');
+  const [itemNo, setItemNo] = useState('');
+  const [cha, setCha] = useState('');
+  const [accountHolder, setAccountHolder] = useState('');
+  const [shippingLine, setShippingLine] = useState('');
+  const [selectedReport, setSelectedReport] = useState(""); // Track selected radio button
+  const [chaName, setChaName] = useState('');
+  const [isoData, setISOData] = useState([]);
+  const [shippingLineName, setShippingLineName] = useState("");
+  const [accountHolderName, setAccountHolderName] = useState("");
+  const [impData, setImpData] = useState([]);
+  const [accountHolderData, setAccountHolderData] = useState([]);
+  const handlePortChange = async (selectedOption, { action }) => {
+
+    if (action === 'clear') {
+
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+      setCha('');
+      setChaName('');
+    }
+    else {
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+
+      setCha(selectedOption ? selectedOption.value : '')
+      setChaName(selectedOption ? selectedOption.drop : '');
+    }
+  };
+
+  const getIsoData = (val) => {
+    if (val === '') {
+      setISOData([]);
+      return;
+    }
+
+    axios.get(`${ipaddress}api/cfbondnoc/search?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+
+        console.log("response.data", data);
+        const portOptions = data.map(port => ({
+          value: port.partyId,
+          label: `${port.partyName}-${port.address1},${port.address1},${port.address3}`,
+          drop: port.partyName,
+          ccode: port.customerCode,
+          bWeek: port.bondnocWeek,
+          cName: port.partyName,
+        }))
+        setISOData(portOptions);
+      })
+      .catch((error) => {
+
+      })
+  }
+
+  const handleShippingLineChange = async (selectedOption, { action }) => {
+    if (action === 'clear') {
+      setShippingLineName('');
+      setShippingLine('');
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+    }
+    else {
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+
+      setShippingLine(selectedOption ? selectedOption.value : '');
+      setShippingLineName(selectedOption ? selectedOption.impN : '');
+    }
+  };
+
+  const getShippingLineData = (val) => {
+    if (val === '') {
+      setImpData([]);
+      return;
+    }
+
+    axios.get(`${ipaddress}api/cfbondnoc/searchShippingLine?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+
+        console.log("response.data", data);
+        const portOptions = data.map(port => ({
+          value: port.partyId,
+          label: `${port.partyName}-${port.address1}-${port.address2}-${port.address3}`,
+          //label: port.partyName,
+          impN: port.partyName,
+          ad1: port.address1,
+          ad2: port.address2,
+          ad3: port.address3,
+        }))
+        setImpData(portOptions);
+      })
+      .catch((error) => {
+
+      })
+  }
+  const handleAccountHolderChange = async (selectedOption, { action }) => {
+    if (action === 'clear') {
+      setAccountHolderName('');
+      setAccountHolder('');
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+    }
+    else {
+      console.log("respone datacagahgdhsagdhs", selectedOption);
+
+      setAccountHolder(selectedOption ? selectedOption.value : '');
+      setAccountHolderName(selectedOption ? selectedOption.impN : '');
+    }
+  };
+
+  const getAccountHolderData = (val) => {
+    if (val === '') {
+      setAccountHolderData([]);
+      return;
+    }
+
+    axios.get(`${ipaddress}api/cfbondnoc/searchImporters?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+
+        console.log("response.data", data);
+        const portOptions = data.map(port => ({
+          value: port.partyId,
+          label: `${port.partyName}-${port.address1}-${port.address2}-${port.address3}`,
+          //label: port.partyName,
+          impN: port.partyName,
+          ad1: port.address1,
+          ad2: port.address2,
+          ad3: port.address3,
+        }))
+        setAccountHolderData(portOptions);
+      })
+      .catch((error) => {
+
+      })
+  }
+
+  const reports = [
+    "General Receiving Register",
+    "General Delivery Register",
+    "General Stock Report",
+  ];
+
+
+
+  const handleRadioChange = (report) => {
+    setSelectedReport(report);   // Update the selected report
+    setInventoryList([]);
+    handlePageChange(1);       // Empty the inventoryList
+  };
+
+
+  const [inventoryList, setInventoryList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = inventoryList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(inventoryList.length / itemsPerPage);
+
+  // Function to handle page change
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+  const displayPages = () => {
+    const centerPageCount = 5;
+    const middlePage = Math.floor(centerPageCount / 2);
+    let startPage = currentPage - middlePage;
+    let endPage = currentPage + middlePage;
+
+    if (startPage < 1) {
+      startPage = 1;
+      endPage = Math.min(totalPages, centerPageCount);
+    }
+
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, totalPages - centerPageCount + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
+
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  // Handler for end date change
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+
+
+  const handleExleDownload = async (type) => {
+    try {
+      setLoading(true);
+
+      const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD HH:mm') : '';
+      const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
+      if (!selectedReport) {
+        toast.error('Please select a report.');
+        setLoading(false); // Ensure the loading state is reset
+        return;
+      }
+      if (
+        (!formattedStartDate || !formattedEndDate)
+      ) {
+        toast.error('Please enter both start date and end date.');
+        setLoading(false); // Ensure the loading state is reset
+        return;
+      }
+      console.log(selectedReport);
+      console.log(formattedStartDate);
+      console.log(formattedEndDate);
+
+      const response = await axios.get(
+        `${ipaddress}api/generalReports/getImportGateInContainerDetailedReport?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&accountHolder=${accountHolder}&cha=${cha}&selectedReport=${selectedReport}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          },
+          responseType: 'blob' // Make sure the response type is set to blob
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedReport}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Optionally, revoke the Object URL to free up resources
+      window.URL.revokeObjectURL(url);
+
+      // Success toast notification
+      toast.success('Excel file downloaded successfully!', { autoClose: 900 });
+      setInventoryList([]);
+      setSelectedReport('');
+    } catch (error) {
+      console.error('Error downloading Excel file:', error);
+
+      // Error toast notification
+      toast.error('Failed to download Excel file. Please try again.', { autoClose: 900 });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  const handleShow = async (type) => {
+    try {
+      setLoading(true);
+      console.log("In show data");
+
+      const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD HH:mm') : '';
+      const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
+
+      if (!selectedReport) {
+        toast.error('Please select a report.');
+        setLoading(false); // Ensure the loading state is reset
+        return;
+      }
+      // Check startDate and endDate only if the selectedReport is neither "Import Long Standing Report" nor "LCL Cargo Balance Inventory Report"
+      if (
+        (!formattedStartDate || !formattedEndDate)
+      ) {
+        toast.error('Please enter both start date and end date.');
+        setLoading(false); // Ensure the loading state is reset
+        return;
+      }
+
+      const response = await axios.get(
+        `${ipaddress}api/generalReports/show?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&accountHolder=${accountHolder}&cha=${cha}&selectedReport=${selectedReport}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      );
+
+      const data = response.data;
+      if (data.length === 0) {
+        toast.info(`No records found for dates: ${formattedStartDate} to ${formattedEndDate}`);
+      }
+      setInventoryList(data);
+      console.log(data);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // You may want to show a toast notification or alert the user
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleClear = () => {
+    setIgmNo('');
+    setItemNo('');
+    setStartDate('');
+    setEndDate(new Date());
+    setInventoryList([]);
+    setSelectedReport("");
+    setCha('');
+    setChaName('');
+    setAccountHolder('');
+    setAccountHolderName('');
+    setShippingLine('');
+    setShippingLineName('');
+  }
+
+  const GeneralReceivingRegister = ({ currentItems }) => (
+    <table className="table table-bordered table-hover tableHeader">
       <thead className="text-center">
         <tr>
           <th scope="col">Sr No</th>
-          <th scope="col">Delivery Date</th>
-          <th scope="col" style={{minWidth:270}}>Importer Name</th>
-          <th scope="col" style={{minWidth:270}}>CHA Name</th>
-          <th scope="col" style={{minWidth:126}}>BE NO</th>
-          <th scope="col"  style={{minWidth:180}}>BE Date</th>
-          <th scope="col"  style={{minWidth:180}}>Commodity</th>
+          <th scope="col">Receiving Date</th>
+          <th scope="col" style={{ minWidth: 270 }}>Importer Name</th>
+          <th scope="col" style={{ minWidth: 270 }}>CHA Name</th>
+          <th scope="col" style={{ minWidth: 126 }}>BE NO</th>
+          <th scope="col" style={{ minWidth: 180 }}>BE Date</th>
+          <th scope="col" style={{ minWidth: 180 }}>Commodity</th>
           <th scope="col">Container</th>
-          <th scope="col">No Of 20</th>
-          <th scope="col">No Of 40</th>
-          <th scope="col">Delivery Packages</th>
-          <th scope="col">Delivery Weight</th>
-          <th scope="col">Out Quantity</th>
-          <th scope="col">Out Weight</th>
-   
+          <th scope="col">Size</th>
+          <th scope="col">Type</th>
+          <th scope="col">Gate In Packages</th>
+          <th scope="col">Gate In Weight</th>
+          <th scope="col">Received Quantity</th>
+          <th scope="col">Receiving Weight</th>
           <th scope="col">Package Type</th>
-          <th scope="col">Yard Location</th>
-          <th scope="col">Yard Block</th>
-          <th scope="col">Block Cell No</th>
           <th scope="col">Vehicle No</th>
-          <th scope="col" style={{minWidth:270}}>Transporter</th>
+          <th scope="col" style={{ minWidth: 270 }}>Transporter</th>
           <th scope="col">Handling</th>
           <th scope="col">Handling1</th>
           <th scope="col">Handling2</th>
           <th scope="col">Owner1</th>
           <th scope="col">Owner2</th>
           <th scope="col">Owner3</th>
-          <th scope="col" style={{minWidth:126}}>Job No</th>
+          <th scope="col" style={{ minWidth: 126 }}>Job No</th>
+          <th scope="col" style={{ minWidth: 126 }}>Job Date</th>
+          <th scope="col" style={{ minWidth: 126 }}>Intra Sez Req Id</th>
+          <th scope="col" style={{ minWidth: 126 }}>Invoice No</th>
+          <th scope="col" style={{ minWidth: 126 }}>Marks & Nos</th>
+          <th scope="col">Remarks</th>
+        </tr>
+      </thead>
+      <tbody className="text-center">
+        {currentItems.map((item, index) => (
+          <tr key={index}>
+            <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td> {/* Sr No */}
+            <td>{item[0] || ""}</td> {/* Receiving Date */}
+            <td>{item[1] || ""}</td> {/* Importer Name */}
+            <td>{item[2] || ""}</td> {/* CHA Name */}
+            <td>{item[3] || ""}</td> {/* BE NO */}
+            <td>{item[4] || ""}</td> {/* BE Date */}
+            <td>{item[5] || ""}</td> {/* Commodity */}
+            <td>{item[6] || ""}</td> {/* Container */}
+            <td>{item[7] || ""}</td> {/* No Of 20 */}
+            <td>{item[8] || ""}</td> {/* No Of 40 */}
+            <td>{item[9] || ""}</td> {/* Gate In Packages */}
+            <td>{item[10] || ""}</td> {/* Gate In Weight */}
+            <td>{item[11] || ""}</td> {/* Received Quantity */}
+            <td>{item[12] || ""}</td> {/* Receiving Weight */}
+            <td>{item[13] || ""}</td> {/* Package Type */}
+            <td>{item[14] || ""}</td> {/* Vehicle No */}
+            <td>{item[15] || ""}</td> {/* Transporter */}
+            <td>{item[16] || ""}</td> {/* Handling */}
+            <td>{item[17] || ""}</td> {/* Handling1 */}
+            <td>{item[18] || ""}</td> {/* Handling2 */}
+            <td>{item[19] || ""}</td> {/* Owner1 */}
+            <td>{item[20] || ""}</td> {/* Owner2 */}
+            <td>{item[21] || ""}</td> {/* Owner3 */}
+            <td>{item[22] || ""}</td> {/* Job No */}
+            <td>{item[25] || ""}</td> {/* Job Date */}
+            <td>{item[26] || ""}</td> {/* Job No */}
+            <td>{item[27] || ""}</td> {/* Job Date */}
+            <td>{item[28] || ""}</td> {/* Job Date */}
+            <td>{item[23] || ""}</td> {/* Remarks */}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
+
+  const GeneralDeliveryRegister = ({ currentItems }) => (
+    <table className="table table-bordered table-hover tableHeader">
+      <thead className="text-center">
+        <tr>
+          <th scope="col">Sr No</th>
+          <th scope="col">Delivery Date</th>
+          <th scope="col" style={{ minWidth: 270 }}>Importer Name</th>
+          <th scope="col" style={{ minWidth: 270 }}>CHA Name</th>
+          <th scope="col" style={{ minWidth: 126 }}>BE NO</th>
+          <th scope="col" style={{ minWidth: 180 }}>BE Date</th>
+          <th scope="col" style={{ minWidth: 180 }}>Commodity</th>
+          <th scope="col">Container</th>
+          <th scope="col">Size</th>
+          <th scope="col">Type</th>
+          <th scope="col">Delivery Packages</th>
+          <th scope="col">Delivery Weight</th>
+          <th scope="col">Out Quantity</th>
+          <th scope="col">Out Weight</th>
+
+          <th scope="col">Package Type</th>
+          <th scope="col">Yard Location</th>
+          <th scope="col">Yard Block</th>
+          <th scope="col">Block Cell No</th>
+          <th scope="col">Vehicle No</th>
+          <th scope="col" style={{ minWidth: 270 }}>Transporter</th>
+          <th scope="col">Handling</th>
+          <th scope="col">Handling1</th>
+          <th scope="col">Handling2</th>
+          <th scope="col">Owner1</th>
+          <th scope="col">Owner2</th>
+          <th scope="col">Owner3</th>
+          <th scope="col" style={{ minWidth: 126 }}>Job No</th>
           <th scope="col">Remarks</th>
         </tr>
       </thead>
@@ -540,21 +548,21 @@ if (
       </tbody>
     </table>
 
-    
-    
-    );
-    const GeneralStockReport = ({ currentItems }) => (
-      <table className="table table-bordered table-hover tableHeader">
+
+
+  );
+  const GeneralStockReport = ({ currentItems }) => (
+    <table className="table table-bordered table-hover tableHeader">
       <thead className="text-center">
         <tr>
           <th scope="col">Sr No</th>
           <th scope="col">Deposit No</th>
           <th scope="col">Boe No</th>
-          <th scope="col" style={{minWidth:144}}>Boe Date</th>
-          <th scope="col" style={{minWidth:270}}>Importer Name</th>
-          <th scope="col" style={{minWidth:270}}>CHA</th>
+          <th scope="col" style={{ minWidth: 144 }}>Boe Date</th>
+          <th scope="col" style={{ minWidth: 270 }}>Importer Name</th>
+          <th scope="col" style={{ minWidth: 270 }}>CHA</th>
           <th scope="col" >Commodity</th>
-          <th scope="col" style={{minWidth:270}}>Commodity Desc</th>
+          <th scope="col" style={{ minWidth: 270 }}>Commodity Desc</th>
           <th scope="col">Gate In Packages</th>
           <th scope="col">Gross Weight</th>
           <th scope="col">Receiving Pkg</th>
@@ -568,7 +576,7 @@ if (
           <th scope="col">Warehouse</th>
           <th scope="col">Warehouse Block</th>
           <th scope="col">Warehouse Cell No</th>
-          <th scope="col" style={{minWidth:126}}>Job No</th>
+          <th scope="col" style={{ minWidth: 126 }}>Job No</th>
           <th scope="col">Job Trans Id</th>
         </tr>
       </thead>
@@ -602,12 +610,12 @@ if (
         ))}
       </tbody>
     </table>
-    
-    );
-    
+
+  );
+
   return (
-  <>
-     {loading && (
+    <>
+      {loading && (
         <div className="loader" style={styles.overlay}>
           <div className="truckWrapper">
             <div className="truckBody">
@@ -738,256 +746,256 @@ if (
         </div>
       )}
       <div>
-      <Row>
-      <Col md={2}>
-        
-        <FormGroup>
-          <label className="forlabel bold-label" htmlFor="inGateInDate">
-            Start Date <span className="error-message">*</span>
-          </label>
-          <div style={{ position: "relative" }}>
-
-             <div>
-                      <DatePicker
-                       
-                        wrapperClassName="custom-react-datepicker-wrapper"
-                        className="form-control"
-                        selected={startDate}
-                        id="startDate"
-                        name='startDate'
-                        onChange={handleStartDateChange}
-                        timeInputLabel="Time:"
-                        dateFormat="dd/MM/yyyy HH:mm"
-                        showTimeInput
-                        timeFormat="HH:mm"
-                        popperPlacement="bottom-start"
-                      />
-                    </div>
-            <FontAwesomeIcon
-              icon={faCalendarAlt}
-              style={{
-                position: "absolute",
-                right: "10px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                pointerEvents: "none",
-                color: "#6c757d",
-              }}
-            />
-          </div>
-        </FormGroup>
-      </Col>
-
-      <Col md={2}>
-        <FormGroup>
-          <label className="forlabel bold-label" htmlFor="outGateInDate">
-            End Date <span className="error-message">*</span>
-          </label>
-          <div style={{ position: "relative" }}>
-<div>
-                      <DatePicker
-                        id="endDate"
-                        name='endDate'
-                        wrapperClassName="custom-react-datepicker-wrapper"
-                        className="form-control"
-                        selected={endDate}
-                        onChange={handleEndDateChange}
-                        // dateFormat="dd/MM/yyyy"
-                        timeInputLabel="Time:"
-                        dateFormat="dd/MM/yyyy HH:mm"
-                        showTimeInput
-                      />
-                    </div>
-            <FontAwesomeIcon
-              icon={faCalendarAlt}
-              style={{
-                position: "absolute",
-                right: "10px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                pointerEvents: "none",
-                color: "#6c757d",
-              }}
-            />
-          </div>
-        </FormGroup>
-      </Col>
-
-      <Col md={4}>
-<FormGroup>
-                                <label className="forlabel bold-label" htmlFor="accountHolder">
-                              Importer Name
-                                </label>
-                                <Select
-                                    value={{ value: accountHolder, label: accountHolderName }}
-                                    onChange={handleAccountHolderChange}
-                                    onInputChange={getAccountHolderData}
-                                    options={accountHolderData}
-                                    placeholder="Select accountHolder"
-                                    isClearable
-                                    id="accountHolder"
-                                    vesselName="accountHolder"
-
-                                    styles={{
-                                      control: (provided, state) => ({
-                                        ...provided,
-                                        height: 32, // Set height
-                                        minHeight: 32, // Set minimum height
-                                        border: state.isFocused ? "1px solid #ccc" : "1px solid #ccc",
-                                        boxShadow: "none",
-                                        display: 'flex',
-                                        alignItems: 'center', // Align items vertically
-                                        padding: 0, // Remove padding to control height
-                                        "&:hover": {
-                                          border: "1px solid #ccc",
-                                        },
-                                        borderRadius: '6px', // Add border radius
-                                        "&:hover": {
-                                          border: "1px solid #ccc",
-                                        },
-                                      }),
-                                      valueContainer: (provided) => ({
-                                        ...provided,
-                                        height: '100%', // Full height of the control
-                                        display: 'flex',
-                                        alignItems: 'center', // Align items vertically
-                                        padding: '0 0.75rem', // Match padding
-                                      }),
-                                      singleValue: (provided) => ({
-                                        ...provided,
-                                        lineHeight: '32px', // Center text vertically
-                                      }),
-                                      indicatorSeparator: () => ({
-                                        display: "none",
-                                      }),
-                                      dropdownIndicator: () => ({
-                                        display: "none",
-                                      }),
-                                      placeholder: (provided) => ({
-                                        ...provided,
-                                        lineHeight: '32px', // Center placeholder text vertically
-                                        color: "gray",
-                                      }),
-                                      clearIndicator: (provided) => ({
-                                        ...provided,
-                                        padding: 2, // Remove padding
-                                        display: 'flex',
-                                        alignItems: 'center', // Align clear indicator vertically
-                                      }),
-                                    }}
-                                />
-                            </FormGroup>
-    </Col>
-
-    <Col md={4}>
-                            <FormGroup>
-                                <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    CHA
-                                </label>
-                                <Select
-                                    value={{ value:cha, label:chaName }}
-                                    onChange={handlePortChange}
-                                    onInputChange={getIsoData}
-                                    options={isoData}
-                                    placeholder="Select CHA"
-                                    isClearable
-                                    id="cha"
-                                    vesselName="cha"
-                                    styles={{
-                                      control: (provided, state) => ({
-                                        ...provided,
-                                        height: 32, // Set height
-                                        minHeight: 32, // Set minimum height
-                                        border: state.isFocused ? "1px solid #ccc" : "1px solid #ccc",
-                                        boxShadow: "none",
-                                        display: 'flex',
-                                        alignItems: 'center', // Align items vertically
-                                        padding: 0, // Remove padding to control height
-                                        "&:hover": {
-                                          border: "1px solid #ccc",
-                                        },
-                                        borderRadius: '6px', // Add border radius
-                                        "&:hover": {
-                                          border: "1px solid #ccc",
-                                        },
-                                      }),
-                                      valueContainer: (provided) => ({
-                                        ...provided,
-                                        height: '100%', // Full height of the control
-                                        display: 'flex',
-                                        alignItems: 'center', // Align items vertically
-                                        padding: '0 0.75rem', // Match padding
-                                      }),
-                                      singleValue: (provided) => ({
-                                        ...provided,
-                                        lineHeight: '32px', // Center text vertically
-                                      }),
-                                      indicatorSeparator: () => ({
-                                        display: "none",
-                                      }),
-                                      dropdownIndicator: () => ({
-                                        display: "none",
-                                      }),
-                                      placeholder: (provided) => ({
-                                        ...provided,
-                                        lineHeight: '32px', // Center placeholder text vertically
-                                        color: "gray",
-                                      }),
-                                      clearIndicator: (provided) => ({
-                                        ...provided,
-                                        padding: 2, // Remove padding
-                                        display: 'flex',
-                                        alignItems: 'center', // Align clear indicator vertically
-                                      }),
-                                    }}
-                                />
-                            </FormGroup>
-                        </Col>
-    </Row>
-
-<Row>
-
-</Row>
-<div className="report-list mt-4">
         <Row>
-          {reports.map((report, index) => (
-            <Col md={4} key={index} className="mb-2">
-              <div className="d-flex align-items-center">
-                <input
-                  type="radio"
-                  id={`radio-${index}`}
-                  name="reportGroup"
-                  checked={selectedReport === report}
-                  onChange={() => handleRadioChange(report)}
+          <Col md={2}>
+
+            <FormGroup>
+              <label className="forlabel bold-label" htmlFor="inGateInDate">
+                Start Date <span className="error-message">*</span>
+              </label>
+              <div style={{ position: "relative" }}>
+
+                <div>
+                  <DatePicker
+
+                    wrapperClassName="custom-react-datepicker-wrapper"
+                    className="form-control"
+                    selected={startDate}
+                    id="startDate"
+                    name='startDate'
+                    onChange={handleStartDateChange}
+                    timeInputLabel="Time:"
+                    dateFormat="dd/MM/yyyy HH:mm"
+                    showTimeInput
+                    timeFormat="HH:mm"
+                    popperPlacement="bottom-start"
+                  />
+                </div>
+                <FontAwesomeIcon
+                  icon={faCalendarAlt}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    color: "#6c757d",
+                  }}
                 />
-                 <label className="ms-2 bold-report" htmlFor={`radio-${index}`}>
-            {report}
-          </label>
               </div>
-            </Col>
-          ))}
+            </FormGroup>
+          </Col>
+
+          <Col md={2}>
+            <FormGroup>
+              <label className="forlabel bold-label" htmlFor="outGateInDate">
+                End Date <span className="error-message">*</span>
+              </label>
+              <div style={{ position: "relative" }}>
+                <div>
+                  <DatePicker
+                    id="endDate"
+                    name='endDate'
+                    wrapperClassName="custom-react-datepicker-wrapper"
+                    className="form-control"
+                    selected={endDate}
+                    onChange={handleEndDateChange}
+                    // dateFormat="dd/MM/yyyy"
+                    timeInputLabel="Time:"
+                    dateFormat="dd/MM/yyyy HH:mm"
+                    showTimeInput
+                  />
+                </div>
+                <FontAwesomeIcon
+                  icon={faCalendarAlt}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    color: "#6c757d",
+                  }}
+                />
+              </div>
+            </FormGroup>
+          </Col>
+
+          <Col md={4}>
+            <FormGroup>
+              <label className="forlabel bold-label" htmlFor="accountHolder">
+                Importer Name
+              </label>
+              <Select
+                value={{ value: accountHolder, label: accountHolderName }}
+                onChange={handleAccountHolderChange}
+                onInputChange={getAccountHolderData}
+                options={accountHolderData}
+                placeholder="Select accountHolder"
+                isClearable
+                id="accountHolder"
+                vesselName="accountHolder"
+
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    height: 32, // Set height
+                    minHeight: 32, // Set minimum height
+                    border: state.isFocused ? "1px solid #ccc" : "1px solid #ccc",
+                    boxShadow: "none",
+                    display: 'flex',
+                    alignItems: 'center', // Align items vertically
+                    padding: 0, // Remove padding to control height
+                    "&:hover": {
+                      border: "1px solid #ccc",
+                    },
+                    borderRadius: '6px', // Add border radius
+                    "&:hover": {
+                      border: "1px solid #ccc",
+                    },
+                  }),
+                  valueContainer: (provided) => ({
+                    ...provided,
+                    height: '100%', // Full height of the control
+                    display: 'flex',
+                    alignItems: 'center', // Align items vertically
+                    padding: '0 0.75rem', // Match padding
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px', // Center text vertically
+                  }),
+                  indicatorSeparator: () => ({
+                    display: "none",
+                  }),
+                  dropdownIndicator: () => ({
+                    display: "none",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px', // Center placeholder text vertically
+                    color: "gray",
+                  }),
+                  clearIndicator: (provided) => ({
+                    ...provided,
+                    padding: 2, // Remove padding
+                    display: 'flex',
+                    alignItems: 'center', // Align clear indicator vertically
+                  }),
+                }}
+              />
+            </FormGroup>
+          </Col>
+
+          <Col md={4}>
+            <FormGroup>
+              <label className="forlabel bold-label" htmlFor="sbRequestId">
+                CHA
+              </label>
+              <Select
+                value={{ value: cha, label: chaName }}
+                onChange={handlePortChange}
+                onInputChange={getIsoData}
+                options={isoData}
+                placeholder="Select CHA"
+                isClearable
+                id="cha"
+                vesselName="cha"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    height: 32, // Set height
+                    minHeight: 32, // Set minimum height
+                    border: state.isFocused ? "1px solid #ccc" : "1px solid #ccc",
+                    boxShadow: "none",
+                    display: 'flex',
+                    alignItems: 'center', // Align items vertically
+                    padding: 0, // Remove padding to control height
+                    "&:hover": {
+                      border: "1px solid #ccc",
+                    },
+                    borderRadius: '6px', // Add border radius
+                    "&:hover": {
+                      border: "1px solid #ccc",
+                    },
+                  }),
+                  valueContainer: (provided) => ({
+                    ...provided,
+                    height: '100%', // Full height of the control
+                    display: 'flex',
+                    alignItems: 'center', // Align items vertically
+                    padding: '0 0.75rem', // Match padding
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px', // Center text vertically
+                  }),
+                  indicatorSeparator: () => ({
+                    display: "none",
+                  }),
+                  dropdownIndicator: () => ({
+                    display: "none",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px', // Center placeholder text vertically
+                    color: "gray",
+                  }),
+                  clearIndicator: (provided) => ({
+                    ...provided,
+                    padding: 2, // Remove padding
+                    display: 'flex',
+                    alignItems: 'center', // Align clear indicator vertically
+                  }),
+                }}
+              />
+            </FormGroup>
+          </Col>
         </Row>
-      </div>
 
-<hr/>
-    <Row style={{justifyContent:'center',display:'flex'}}>
+        <Row>
 
-      <Col md={7} style={{justifyContent:'center',display:'flex'}} >
-      <button
-                className="btn btn-outline-success btn-margin newButton"
-                id="submitbtn2"
-                style={{ fontSize: 11, marginRight: 5 }}
-               onClick={()=> handleShow('Excel') }
+        </Row>
+        <div className="report-list mt-4">
+          <Row>
+            {reports.map((report, index) => (
+              <Col md={4} key={index} className="mb-2">
+                <div className="d-flex align-items-center">
+                  <input
+                    type="radio"
+                    id={`radio-${index}`}
+                    name="reportGroup"
+                    checked={selectedReport === report}
+                    onChange={() => handleRadioChange(report)}
+                  />
+                  <label className="ms-2 bold-report" htmlFor={`radio-${index}`}>
+                    {report}
+                  </label>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </div>
+
+        <hr />
+        <Row style={{ justifyContent: 'center', display: 'flex' }}>
+
+          <Col md={7} style={{ justifyContent: 'center', display: 'flex' }} >
+            <button
+              className="btn btn-outline-success btn-margin newButton"
+              id="submitbtn2"
+              style={{ fontSize: 11, marginRight: 5 }}
+              onClick={() => handleShow('Excel')}
             >
               <FontAwesomeIcon icon={faEye} style={{ marginRight: "4px" }} />
               Show
             </button>
 
             <button
-                className="btn btn-outline-success btn-margin newButton"
-                id="submitbtn2"
-                style={{ fontSize: 11, marginRight: 5 }}
-                onClick={()=> handleExleDownload('Excel')}
+              className="btn btn-outline-success btn-margin newButton"
+              id="submitbtn2"
+              style={{ fontSize: 11, marginRight: 5 }}
+              onClick={() => handleExleDownload('Excel')}
 
             >
               <FontAwesomeIcon icon={faDownload} style={{ marginRight: "4px" }} />
@@ -996,54 +1004,54 @@ if (
 
 
             <button
-                className="btn btn-outline-danger btn-margin newButton"
-                id="submitbtn2"
-                style={{ fontSize: 11, marginRight: 5 }}
-                onClick={handleClear }
+              className="btn btn-outline-danger btn-margin newButton"
+              id="submitbtn2"
+              style={{ fontSize: 11, marginRight: 5 }}
+              onClick={handleClear}
 
             >
               <FontAwesomeIcon icon={faRefresh} style={{ marginRight: "4px" }} />
               Clear
             </button>
-        </Col>
-    </Row>
+          </Col>
+        </Row>
       </div>
-{inventoryList.length > 0 ? (
-  <>
-    <div className="table-responsive" style={{ paddingTop: 9 }}>
-    {selectedReport === "General Receiving Register" && <GeneralReceivingRegister currentItems={currentItems} />}
-    {selectedReport === "General Delivery Register" && <GeneralDeliveryRegister currentItems={currentItems} />}
-    {selectedReport === "General Stock Report" && <GeneralStockReport currentItems={currentItems} />}
-    
-    </div>
-    <Pagination style={{ display: "flex", justifyContent: "center", color: "gray" }}>
-      <Pagination.First onClick={() => handlePageChange(1)} />
-      <Pagination.Prev
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-      />
-      <Pagination.Ellipsis />
-      {displayPages().map((pageNumber) => (
-        <Pagination.Item
-          key={pageNumber}
-          active={pageNumber === currentPage}
-          onClick={() => handlePageChange(pageNumber)}
-        >
-          {pageNumber}
-        </Pagination.Item>
-      ))}
-      <Pagination.Ellipsis />
-      <Pagination.Next
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      />
-      <Pagination.Last onClick={() => handlePageChange(totalPages)} />
-    </Pagination>
-  </>
-) : (
-  <></>
-)}
+      {inventoryList.length > 0 ? (
+        <>
+          <div className="table-responsive" style={{ paddingTop: 9 }}>
+            {selectedReport === "General Receiving Register" && <GeneralReceivingRegister currentItems={currentItems} />}
+            {selectedReport === "General Delivery Register" && <GeneralDeliveryRegister currentItems={currentItems} />}
+            {selectedReport === "General Stock Report" && <GeneralStockReport currentItems={currentItems} />}
 
-      </>
+          </div>
+          <Pagination style={{ display: "flex", justifyContent: "center", color: "gray" }}>
+            <Pagination.First onClick={() => handlePageChange(1)} />
+            <Pagination.Prev
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+            <Pagination.Ellipsis />
+            {displayPages().map((pageNumber) => (
+              <Pagination.Item
+                key={pageNumber}
+                active={pageNumber === currentPage}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </Pagination.Item>
+            ))}
+            <Pagination.Ellipsis />
+            <Pagination.Next
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            />
+            <Pagination.Last onClick={() => handlePageChange(totalPages)} />
+          </Pagination>
+        </>
+      ) : (
+        <></>
+      )}
+
+    </>
   )
 }

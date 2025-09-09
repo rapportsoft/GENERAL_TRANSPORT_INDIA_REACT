@@ -3136,7 +3136,7 @@
 //                       : "0"
 //                   }
 //                   onChange={handleNocChange}
-                 
+
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -3160,7 +3160,7 @@
 //                       : "0"
 //                   }
 //                   onChange={handleNocChange}
-                
+
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -4221,6 +4221,7 @@ import {
   faPlaneArrival,
   faXmark,
   faEye,
+  faAtom,
 } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/style.css";
 import "../Components/Style.css";
@@ -4957,7 +4958,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
 
 
       console.log('data : ', data);
-      
+
 
       // setInputValues(data.map(mnr => ({
       //   ...mnr,
@@ -5011,7 +5012,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
             ).toFixed(3)
           ),
 
-          oldReceivedPackages : (mnr.receivingPackages || 0),
+          oldReceivedPackages: (mnr.receivingPackages || 0),
           oldReceivedWeight: (mnr.receivingWeight || 0),
 
         }))
@@ -5071,10 +5072,10 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         ...mnr,
 
         receivingPackages: mnr.receivingPackages || 0,
-        oldReceivedPackagesThis : mnr.receivingPackages || 0,
+        oldReceivedPackagesThis: mnr.receivingPackages || 0,
         balanceReceivedPackages: (mnr.gateInPackages - (mnr.oldReceivingPackages || 0)),
 
-        balanceReceivedWeight: (mnr.gateInWeight || 0) - ( mnr.oldReceivingPackages || 0),          
+        balanceReceivedWeight: (mnr.gateInWeight || 0) - (mnr.oldReceivingPackages || 0),
 
         receivingWeight: mnr.receivingWeight || 0,
 
@@ -5176,7 +5177,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
       // const dtl = currentItems[index]; 
 
       const dtl = currentItems[index]; // Get the current item details for comparison
-const currentRow = updatedValues[index]; // Use from inputValues directly
+      const currentRow = updatedValues[index]; // Use from inputValues directly
       let errorMessage = "";
 
 
@@ -5200,9 +5201,9 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
       if (inBond.receivingId) {
         // addition = dtl.gateInPackages;
 
-      const oldPkg = parseFloat(currentRow.oldReceivedPackagesThis || 0);
-      const balancePkg = parseFloat(currentRow.balanceReceivedPackages || 0);
-      addition = oldPkg + balancePkg;
+        const oldPkg = parseFloat(currentRow.oldReceivedPackagesThis || 0);
+        const balancePkg = parseFloat(currentRow.balanceReceivedPackages || 0);
+        addition = oldPkg + balancePkg;
 
 
       } else {
@@ -6193,37 +6194,183 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
   };
 
 
+  const [isModalOpenForAddBatch, setIsModalOpenForAddBatch] = useState(false);
+  const [selectedSrNo, setSelectedSrNo] = useState("");
+
+  const [batchData, setBatchData] = useState([{
+    batchNo: "",
+    receivingId: "",
+    receivingSrNo: 0,
+    srNo: 0,
+    startDate: null,
+    endDate: null
+  }])
+
+  const handleBatchChange = (e, index) => {
+    const { name, value } = e.target;
+
+    setBatchData((prevState) => {
+      const updatedRows = [...prevState];
+      updatedRows[index] = {
+        ...updatedRows[index],
+        [name]: value,
+      };
+      return updatedRows;
+    });
+  }
+
+  const openAddBatchModal = (srNo) => {
+
+    setIsModalOpenForAddBatch(true);
+    setSelectedSrNo(srNo);
+    getBatchData(srNo);
+  }
+
+  const closeAddBatchModal = () => {
+    setIsModalOpenForAddBatch(false);
+    setSelectedSrNo("");
+    setBatchData([{
+      batchNo: "",
+      receivingId: "",
+      receivingSrNo: 0,
+      srNo: 0,
+      startDate: null,
+      endDate: null
+    }])
+  }
+
+  const addBatch = () => {
+    const addData = {
+      batchNo: "",
+      receivingId: "",
+      receivingSrNo: 0,
+      srNo: 0,
+      startDate: null,
+      endDate: null
+    }
+
+    setBatchData([...batchData, addData]);
+  }
+
+  const removeBatch = (index) => {
+    const updated = batchData.filter((_, i) => i !== index);
+    setBatchData(updated);
+  };
+
+  const handleSaveBatch = () => {
+
+    if (batchData.length === 0) {
+      toast.error('Please enter batch data', {
+        autoClose: 800
+      })
+      return;
+    }
+
+    for (let i = 0; i < batchData.length; i++) {
+      const { batchNo, startDate, endDate } = batchData[i];
+
+      if (!batchNo) {
+        toast.error(`Error: Batch no are missing for batch entry ${i + 1}.`, {
+          autoClose: 800,
+        });
+        return; // Stop the process if validation fails
+      }
+
+      if (!startDate) {
+        toast.error(`Error: Mfg Date are missing for batch entry ${i + 1}.`, {
+          autoClose: 800,
+        });
+        return; // Stop the process if validation fails
+      }
+
+      if (!endDate) {
+        toast.error(`Error: Exp Date are missing for batch entry ${i + 1}.`, {
+          autoClose: 800,
+        });
+        return; // Stop the process if validation fails
+      }
+    }
+
+    setLoading(true);
+
+    axios.post(`${ipaddress}api/receiving/saveBatchData`, batchData, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      },
+      params: {
+        cid: companyid,
+        bid: branchId,
+        user: userId,
+        receivingId: inBond.receivingId,
+        rSrNo: selectedSrNo
+      }
+    })
+      .then((response) => {
+        setLoading(false);
+
+        toast.success("Batch data save successfully!!", {
+          autoClose: 800
+        })
+
+        setBatchData(response.data.map((item) => ({
+          batchNo: item.batchNo || "",
+          receivingId: item.receivingId || "",
+          receivingSrNo: item.receivingSrNo || 0,
+          srNo: item.srNo || 0,
+          startDate: item.startDate === null ? null : new Date(item.startDate),
+          endDate: item.endDate === null ? null : new Date(item.endDate),
+        })))
+
+      })
+      .catch((error) => {
+        setLoading(false);
+        if (error) {
+          toast.error(error.response.data, {
+            autoClose: 800
+          })
+        }
+      })
+  }
+
+  const getBatchData = (srNo) => {
+    setLoading(true);
+    axios.get(`${ipaddress}api/receiving/getBatchData`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      },
+      params: {
+        cid: companyid,
+        bid: branchId,
+        user: userId,
+        receivingId: inBond.receivingId,
+        rSrNo: srNo
+      }
+    })
+      .then((response) => {
+        setLoading(false);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        setBatchData(response.data.map((item) => ({
+          batchNo: item.batchNo || "",
+          receivingId: item.receivingId || "",
+          receivingSrNo: item.receivingSrNo || 0,
+          srNo: item.srNo || 0,
+          startDate: item.startDate === null ? null : new Date(item.startDate),
+          endDate: item.endDate === null ? null : new Date(item.endDate),
+        })))
+      })
+      .catch((error) => {
+        setLoading(false);
+        setBatchData([{
+          batchNo: "",
+          receivingId: "",
+          receivingSrNo: 0,
+          srNo: 0,
+          startDate: null,
+          endDate: null
+        }])
+      })
+  }
 
   return (
     <>
@@ -7379,6 +7526,7 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>
@@ -7403,6 +7551,7 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>
@@ -7429,6 +7578,7 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>
@@ -7923,14 +8073,14 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
                   className="text-center"
                   style={{ color: "black" }}
                 >
-                  Bal Receiving PKG 
+                  Bal Receiving PKG
                 </th>
                 <th
                   scope="col"
                   className="text-center"
                   style={{ color: "black" }}
                 >
-                  Bal Receiving Weight  
+                  Bal Receiving Weight
                 </th>
                 <th
                   scope="col"
@@ -7947,7 +8097,7 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
                   Receiving Weight <span className="error-message">*</span>
                 </th>
 
-                <th scope="col" className="text-center" style={{ color: 'black' }}>Damage Documents</th>
+                <th scope="col" className="text-center" style={{ color: 'black' }}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -8050,13 +8200,36 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
 
 
                   <td className="text-center">
-                    {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+                    {/* {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
                       <FontAwesomeIcon
                         icon={faUpload}
                         onClick={() => handleOpenDocumentUpload(dtl)}
                         style={{ color: 'green', cursor: 'pointer', fontSize: '24px' }}
                       />
-                    )}
+                    )} */}
+                    <td className="text-center">
+                      <div className="">
+                        <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <FontAwesomeIcon icon={faAtom} style={{ marginRight: '5px' }} />
+                          Action
+                        </button>
+                        <ul className="dropdown-menu">
+                          {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+                            <li>
+                              <button className="dropdown-item" onClick={() => handleOpenDocumentUpload(dtl)}>
+                                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />Upload Damage Doc
+                              </button>
+                            </li>)}
+                          {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+                            <li>
+                              <button className="dropdown-item" onClick={() => openAddBatchModal(dtl.srNo)}>
+                                <FontAwesomeIcon icon={faAdd} style={{ marginRight: "5px" }} />Add Batch
+                              </button>
+                            </li>)}
+
+                        </ul>
+                      </div>
+                    </td>
 
                   </td>
 
@@ -8335,7 +8508,178 @@ const currentRow = updatedValues[index]; // Use from inputValues directly
 
 
 
+      <Modal Modal isOpen={isModalOpenForAddBatch} onClose={closeAddBatchModal} toggle={closeAddBatchModal} style={{ maxWidth: '700px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
 
+        <ModalHeader toggle={closeAddBatchModal} style={{
+          backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+          boxShadow: '0px 5px 10px rgba(0, 77, 64, 0.3)',
+          border: '1px solid rgba(0, 0, 0, 0.3)',
+          borderRadius: '0',
+          backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }} >
+
+          <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+            icon={faAdd}
+            style={{
+              marginRight: '8px',
+              color: 'white',
+            }}
+          />Add Batch</h5>
+
+        </ModalHeader>
+        <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+          <Row>
+            <Col className="text-center">
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                style={{ marginRight: 10 }}
+                id="submitbtn2"
+                onClick={handleSaveBatch}
+              >
+                <FontAwesomeIcon
+                  icon={faSave}
+                  style={{ marginRight: "5px" }}
+                />
+                Save
+              </button>
+              <button
+                className="btn btn-outline-success btn-margin newButton"
+                style={{ marginRight: 10 }}
+                id="submitbtn2"
+                onClick={addBatch}
+              >
+                <FontAwesomeIcon
+                  icon={faAdd}
+                  style={{ marginRight: "5px" }}
+                />
+                Add Batch
+              </button>
+            </Col>
+          </Row>
+          <div id="datepicker-portal10"></div>
+          <div className="mt-3 table-responsive ">
+            <table className="table table-bordered table-hover tableHeader">
+              <thead className='tableHeader'>
+                <tr className='text-center'>
+                  <th scope="col">Sr No</th>
+                  <th scope="col">Batch No <span style={{ color: 'red' }}>*</span> </th>
+                  <th scope="col">Mfg Date <span style={{ color: 'red' }}>*</span></th>
+                  <th scope="col">Exp Date <span style={{ color: 'red' }}>*</span></th>
+                  <th scope="col">Action</th>
+                </tr>
+
+              </thead>
+              <tbody>
+                {batchData.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <Input
+                        type="text"
+                        name="batchNo"
+                        id="batchNo"
+                        value={item.batchNo}
+                        maxLength={30}
+                        onChange={(e) => handleBatchChange(e, index)}
+                      />
+                    </td>
+                    <td>
+                      <div style={{ position: "relative" }}>
+                        <DatePicker
+                          selected={item.startDate}
+                          onChange={(date) => {
+                            setBatchData((prevState) => {
+                              const updatedRows = [...prevState];
+                              updatedRows[index] = {
+                                ...updatedRows[index],
+                                startDate: date,
+                                endDate: date >= prevState.endDate ? null : prevState.endDate,
+                              };
+                              return updatedRows;
+                            });
+                          }}
+                          portalId="datepicker-portal10"
+                          id="startDate"
+                          name="startDate"
+                          dateFormat="dd/MM/yyyy"
+                          className="form-control border-right-0 inputField"
+                          wrapperClassName="custom-react-datepicker-wrapper"
+                        />
+                        <FontAwesomeIcon
+                          icon={faCalendarAlt}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                            color: "#6c757d",
+                          }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ position: "relative" }}>
+                        <DatePicker
+                          selected={item.endDate}
+                          onChange={(date) => {
+                            setBatchData((prevState) => {
+                              const updatedRows = [...prevState];
+                              updatedRows[index] = {
+                                ...updatedRows[index],
+                                endDate: date,
+                              };
+                              return updatedRows;
+                            });
+                          }}
+                          minDate={(() => {
+                            const date = new Date(item.startDate);
+                            date.setDate(date.getDate() + 1);
+                            return date;
+                          })()}
+                          portalId="datepicker-portal10"
+                          id="endDate"
+                          name="endDate"
+                          dateFormat="dd/MM/yyyy"
+                          className="form-control border-right-0 inputField"
+                          wrapperClassName="custom-react-datepicker-wrapper"
+                        />
+                        <FontAwesomeIcon
+                          icon={faCalendarAlt}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                            color: "#6c757d",
+                          }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-outline-danger btn-margin newButton"
+                        id="submitbtn2"
+                        onClick={() => removeBatch(index)}
+                        disabled={item.receivingId}
+                      >
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        </ModalBody>
+      </Modal >
 
 
 

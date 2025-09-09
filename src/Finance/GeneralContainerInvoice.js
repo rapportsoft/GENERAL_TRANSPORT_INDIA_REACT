@@ -1074,7 +1074,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
         const formData = {
             assessmentData: assessmentData,
-            containerData: containerData
+            containerData: data
         }
 
         setLoading(true);
@@ -1380,7 +1380,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
         const formData = {
             assessmentData: assessmentData,
-            containerData: containerData
+            containerData: data
         }
 
 

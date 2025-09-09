@@ -699,10 +699,10 @@ export default function BillingHeads() {
                           {servicemaster.sacCode}
                         </td>
                         <td className="table-column">
-                          {servicemaster.serviceType === "Rec"
+                          {servicemaster.serviceType === "AR"
                             ? "Receivable"
-                            : servicemaster.serviceType === "Imp"
-                              ? "Import"
+                            : servicemaster.serviceType === "AP"
+                              ? "Payables"
                               : servicemaster.serviceType === "Exp"
                                 ? "Export"
                                 : servicemaster.serviceType === "All"

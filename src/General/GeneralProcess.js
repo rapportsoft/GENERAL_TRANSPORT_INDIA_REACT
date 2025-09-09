@@ -133,6 +133,8 @@ export default function CFSBonding() {
 
   const [nocNo, setNocNo] = useState("");
   const [boeNo, setBoeNo] = useState("");
+  const [contNo, setContNo] = useState("");
+  const [invNo, setInvNo] = useState("");
   const [bondingNo, setBondingNo] = useState("");
 
   const [nocData, setNocData] = useState([]);
@@ -268,7 +270,17 @@ export default function CFSBonding() {
     setNocNo("");
     setBondingNo("");
     setBoeNo("");
-    setResetFlag(true);
+    setContNo("");
+    setInvNo("");
+    setListData({});
+    setListOfGatePass({});
+    setListOfExBond({});
+    setSavedNoc("");
+    setSavedNocTrans("");
+    setSavedBoe("");
+    setSavedIB("");
+    setListOfGateIn({});
+    // setResetFlag(true);
   };
   const [pagesList, setPagesList] = useState([]);
   const [listData, setListData] = useState({});
@@ -283,24 +295,24 @@ export default function CFSBonding() {
   const [savedIB, setSavedIB] = useState("");
 
   const handleSearch = () => {
-    search1(nocNo, boeNo);
+    search1(nocNo, boeNo, invNo, contNo);
   };
 
-  const search1 = (nocNo, boeNo) => {
-    if (!nocNo && !boeNo) {
+  const search1 = (nocNo, boeNo, invNo, contNo) => {
+    if (!nocNo && !boeNo && !invNo && !contNo) {
       // setLoading(false);
       return;
     }
-    if (!nocNo && !boeNo) {
-      toast.error("At least one of Noc No, BOE No, or Bonding No is required.", {
-        autoClose: 800,
-      });
-      return;
-    }
+    // if (!nocNo && !boeNo && !invNo && !contNo) {
+    //   toast.error("At least one of Noc No, BOE No, or Bonding No is required.", {
+    //     autoClose: 800,
+    //   });
+    //   return;
+    // }
 
     axios
       .get(
-        `${ipaddress}api/gatepasscontroller/getDataForMainBondingSearch?companyId=${companyid}&branchId=${branchId}&nocNo=${nocNo}&boeNo=${boeNo}`,
+        `${ipaddress}api/gatepasscontroller/getDataForMainBondingSearch?companyId=${companyid}&branchId=${branchId}&nocNo=${nocNo}&boeNo=${boeNo}&invNo=${invNo}&contNo=${contNo}`,
         {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -419,13 +431,43 @@ export default function CFSBonding() {
                     />
                   </FormGroup>
                 </Col>
+                <Col md={2}>
+                  <FormGroup>
+                    <label className="forlabel" htmlFor="boeNo">
+                      Container No
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      id="contNo"
+                      name="contNo"
+                      value={contNo}
+                      onChange={(e) => setContNo(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md={2}>
+                  <FormGroup>
+                    <label className="forlabel" htmlFor="boeNo">
+                      Invoice No
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      id="invNo"
+                      name="invNo"
+                      value={invNo}
+                      onChange={(e) => setInvNo(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
 
 
-                <Col md={2} style={{ marginTop: 24 }}>
+                <Col md={2} style={{ marginTop: 20 }}>
                   <button
                     className="btn btn-outline-success btn-margin newButton"
                     id="submitbtn2"
-                    style={{ fontSize: 13, marginRight: 5 }}
+                    style={{ marginRight: 5 }}
                     onClick={handleSearch}
                   >
                     <FontAwesomeIcon
@@ -436,7 +478,6 @@ export default function CFSBonding() {
                   </button>
                   <button
                     className="btn btn-outline-danger btn-margin newButton"
-                    style={{ fontSize: 13 }}
                     id="submitbtn2"
                     onClick={handleReset}
                   >

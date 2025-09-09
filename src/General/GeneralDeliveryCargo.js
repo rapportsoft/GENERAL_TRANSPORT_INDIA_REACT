@@ -2836,6 +2836,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>
@@ -2860,6 +2861,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>
@@ -2886,6 +2888,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
                   <option value="Fork">Fork</option>
                   <option value="Labour">Labour</option>
                   <option value="Hydra">Hydra</option>
+                  <option value="Kalmar">Kalmar</option>
                 </select>
               </FormGroup>
             </Col>

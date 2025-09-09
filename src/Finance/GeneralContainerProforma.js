@@ -1018,7 +1018,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         const formData = {
             assessmentData: assessmentData,
-            containerData: containerData
+            containerData: data
         }
 
         setLoading(true);
@@ -1247,7 +1247,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         const formData = {
             assessmentData: assessmentData,
-            containerData: containerData
+            containerData: data
         }
 
 
