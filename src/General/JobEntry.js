@@ -125,6 +125,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
     jobTransDate: new Date(),
     jobDate: new Date(),
     gateInId: "",
+    boePrefix: "IS/",
     boeNo: "",
     boeDate: new Date(),
     cha: "",
@@ -290,6 +291,8 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
         //     ...data  // Spreading all API response fields into state
         // }));
 
+        console.log('response.data ',response.data);
+        
         fetchData(companyid, branchId, data.jobTransId, data.jobNo);  // ✅ Corrected call
         setChaName(data.editedBy);
         setForworderName(data.forwarderName);
@@ -2353,26 +2356,50 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
 
             <Col md={2}>
               <FormGroup>
-                <label className="forlabel bold-label" htmlFor="sbRequestId">
+                <label className="forlabel bold-label" htmlFor="boeNo">
                   BE No
-                  {/* <span className="error-message">*</span> */}
                 </label>
-                <input
-                  className={`form-control ${nocErrors.boeNo ? 'error-border' : ''}`}
-                  placeholder="Enter BE No"
-                  type="text"
-                  id="boeNo"
-                  maxLength={15}
-                  name="boeNo"
-                  value={noc.boeNo}
-                  onChange={handleNocChange}
-                />
-                <div className="error-message">
-                  {nocErrors.boeNo}
+                <div className="input-group" size="sm" style={{ height: 30 }}>
+                  <div className="input-group-prepend" style={{ width: 50 }} >
+                    <Input
+                      type="select"
+                      id="boePrefix"
+                      name="boePrefix"
+                      value={noc.boePrefix}
+                      onChange={handleNocChange}
+                      className="form-select no-dropdown-arrow"
+                      style={{
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                        height: 31,
+                        fontSize: 14,
+                        paddingRight: 5,   // shrink padding so no space for arrow
+                        backgroundPosition: "right 0 center" // align content properly
+                      }}                    >
+                      <option value="IS/">IS/</option>
+                      <option value="BE/">BE/</option>
+                    </Input>
+                  </div>
+                  <input
+                    className={`form-control ${nocErrors.boeNo ? 'error-border' : ''}`}
+                    placeholder="Enter BE No"
+                    type="text"
+                    id="boeNo"
+                    maxLength={12}
+                    name="boeNo"
+                    value={
+                      (noc.boeNo?.startsWith("IS/") || noc.boeNo?.startsWith("BE/"))
+                        ? noc.boeNo.substring(3)
+                        : (noc.boeNo || "")
+                    }
+                    onChange={handleNocChange}
+                    style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                  />
                 </div>
-
+                <div className="error-message">{nocErrors.boeNo}</div>
               </FormGroup>
             </Col>
+
             <Col md={2}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="boeDate">
@@ -2877,6 +2904,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
                   type="text"
                   id="noOfPackages32"
                   name="noOfPackages"
+                  value={noc.noOfPackages}
                   disabled
                 />
               </FormGroup>
