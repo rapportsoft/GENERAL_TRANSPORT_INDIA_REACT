@@ -4679,6 +4679,15 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
       return;
     }
 
+    if (!inBond.receivingDate) {
+      errors.receivingDate = "Receiving date is required.";
+      toast.error("Receiving date is required.", {
+        // ... (toast options)
+      });
+      setLoading(false);
+      return;
+    }
+
     if (!inBond.cargoCondition) {
       errors.cargoCondition = "Please specify cargo condition...";
       document.getElementById("cargoCondition").classList.add("error-border");
@@ -5448,6 +5457,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         jobNo: selectedOption?.jobNo,
         jobTransDate: selectedOption?.jobTransDate,
         jobDate: selectedOption?.jobDate,
+        receivingDate: selectedOption?.jobDate == null ? new Date() : new Date(selectedOption?.jobDate),
         boeNo: selectedOption?.value,
         cha: selectedOption?.cha,
         boeDate: selectedOption?.boeDate,
@@ -6760,7 +6770,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                   className="forlabel bold-label"
                   htmlFor="receivingDate"
                 >
-                  Receiving Date
+                  Receiving Date <span style={{ color: 'red' }}>*</span>
                 </label>
                 <div style={{ position: "relative" }}>
                   <DatePicker
@@ -6769,9 +6779,9 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                     id="receivingDate"
                     name="receivingDate"
                     dateFormat="dd/MM/yyyy HH:mm"
-                    showTimeSelect
+                    showTimeInput
                     value={inBond.receivingDate}
-                    disabled
+                    //  disabled
                     timeFormat="HH:mm"
                     className="form-control border-right-0 inputField"
                     wrapperClassName="custom-react-datepicker-wrapper"

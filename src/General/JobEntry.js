@@ -291,8 +291,8 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
         //     ...data  // Spreading all API response fields into state
         // }));
 
-        console.log('response.data ',response.data);
-        
+        console.log('response.data ', response.data);
+
         fetchData(companyid, branchId, data.jobTransId, data.jobNo);  // ✅ Corrected call
         setChaName(data.editedBy);
         setForworderName(data.forwarderName);
@@ -2482,30 +2482,25 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
                   Intra Sez Req Id
                   {/* <span className="error-message">*</span> */}
                 </label>
-                <InputGroup size="sm" style={{ height: 30 }}>
-                  <InputGroupText>IS/</InputGroupText>
-                  <input
-                    className="form-control"
-                    placeholder="Enter Intra Sez Req Id"
-                    type="text"
-                    id="requestId"
-                    maxLength={30}
-                    name="requestId"
-                    // Show value without prefix
-                    value={
-                      noc.requestId?.startsWith("IS/")
-                        ? noc.requestId.substring(3)
-                        : (noc.requestId || "")
-                    }
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setNOC({
-                        ...noc,
-                        requestId: val ? "IS/" + val : ""   // 👈 store empty if user clears field
-                      });
-                    }}
-                  />
-                </InputGroup>
+
+                <input
+                  className="form-control"
+                  placeholder="Enter Intra Sez Req Id"
+                  type="text"
+                  id="requestId"
+                  maxLength={30}
+                  name="requestId"
+                  // Show value without prefix
+                  value={noc.requestId}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setNOC({
+                      ...noc,
+                      requestId: val
+                    });
+                  }}
+                />
+
 
               </FormGroup>
             </Col>
