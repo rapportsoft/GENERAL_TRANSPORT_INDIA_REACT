@@ -935,20 +935,6 @@ export default function GeneralContainerProforma({ activeTab }) {
         }
 
 
-        if (!assessmentData.insuranceValue) {
-            toast.error("Asset Value is required", {
-                autoClose: 800
-            })
-            return;
-        }
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Duty is required", {
-                autoClose: 800
-            })
-            return;
-        }
-
         if (!assessmentData.billingParty) {
             toast.error("Billing Party is required", {
                 autoClose: 800
@@ -1166,20 +1152,6 @@ export default function GeneralContainerProforma({ activeTab }) {
             return;
         }
 
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Asset Value is required", {
-                autoClose: 800
-            })
-            return;
-        }
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Duty is required", {
-                autoClose: 800
-            })
-            return;
-        }
 
         if (!assessmentData.billingParty) {
             toast.error("Billing Party is required", {
@@ -4789,7 +4761,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                         <Col md={2}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Asset Value <span style={{ color: 'red' }}>*</span>
+                                    Asset Value
                                 </label>
                                 <input
                                     className="form-control"
@@ -4806,7 +4778,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                         <Col md={2}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Duty <span style={{ color: 'red' }}>*</span>
+                                    Duty
                                 </label>
                                 <input
                                     className="form-control"

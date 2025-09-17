@@ -409,7 +409,7 @@ import container from "../Images/container.jpeg"
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import "../Components/Style.css";
-import rapport from "../Images/rapportlogo.png";
+import rapport from "../Images/transport_india_logo.png";
 import AuthContext from "./AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
@@ -663,7 +663,7 @@ export default function Login() {
                     <Card.Body className="p-4 p-lg-5 text-black">
                       <Form style={{ maxWidth: '400px', width: '100%' }}>
                         <div className="d-flex align-items-center mb-3 pb-1">
-                          <img src={rapport} style={{ width: '100%' }} alt="" />
+                          <img src={rapport} style={{ width: '100%',height:120 }} alt="" />
                         </div>
                         <Form.Group className="mt-2">
                           <Form.Label className="inputHeader">Company Name</Form.Label>

@@ -936,26 +936,13 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
     const handleSave = () => {
         if (!assessmentData.igmTransId) {
-            toast.error("NOC data not found", {
+            toast.error("Job data not found", {
                 autoClose: 800
             })
             return;
         }
 
 
-        if (!assessmentData.insuranceValue) {
-            toast.error("Asset Value is required", {
-                autoClose: 800
-            })
-            return;
-        }
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Duty is required", {
-                autoClose: 800
-            })
-            return;
-        }
 
 
         console.log('assessmentData : ', assessmentData);
@@ -1250,27 +1237,12 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
     const handleSave1 = () => {
         if (!assessmentData.igmTransId) {
-            toast.error("NOC data not found", {
+            toast.error("Job data not found", {
                 autoClose: 800
             })
             return;
         }
 
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Asset Value is required", {
-                autoClose: 800
-            })
-            return;
-        }
-
-        if (!assessmentData.insuranceValue) {
-            toast.error("Duty is required", {
-                autoClose: 800
-            })
-            return;
-        }
-        console.log('assessmentData : ', assessmentData);
 
 
         if (!assessmentData.billingParty) {
@@ -5224,7 +5196,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
                         <Col md={2}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Asset Value <span style={{ color: 'red' }}>*</span>
+                                    Asset Value
                                 </label>
                                 <input
                                     className="form-control"
@@ -5241,7 +5213,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
                         <Col md={2}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Duty <span style={{ color: 'red' }}>*</span>
+                                    Duty
                                 </label>
                                 <input
                                     className="form-control"

@@ -11,7 +11,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import SplitButton from 'react-bootstrap/SplitButton';
-import rapport from "../Images/rapportlogo.png";
+import rapport from "../Images/transport_india_logo.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBuilding, faUser, faSignOutAlt, faUserCheck, faUserCircle, faUserGear, faUserPlus, faUserShield, faUsersRays, faRefresh, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
@@ -103,8 +103,8 @@ export default function Head({ toggleSidebar }) {
     <div>
       <header style={navbarStyle} id="header" className="header fixed-top d-flex align-items-center">
         <div className="align-items-center justify-content-between">
-          <a href="index.html" className="logo align-items-center">
-            <img src={rapport} alt="Logo" />
+          <a href="index.html" className="align-items-center">
+            <img src={rapport} alt="Logo" style={{ width: 140, height: 45 }} />
 
           </a>
           {isMobile && (
