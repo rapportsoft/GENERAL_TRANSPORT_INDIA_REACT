@@ -4535,11 +4535,11 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(10);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = chaSearchedData;
+  const currentItems = chaSearchedData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(chaSearchedData.length / itemsPerPage);
 
   // Function to handle page change
