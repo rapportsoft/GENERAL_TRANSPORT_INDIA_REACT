@@ -926,7 +926,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
                     gateoutDate: null,
                     examPercentage: item[21] || '0',
                     typeOfContainer: '',
-                    scannerType: '',
+                    scannerType: item[29] || '',
                     gateOutType: '',
                     checkDate: 'N',
                     invoiceDate: null,

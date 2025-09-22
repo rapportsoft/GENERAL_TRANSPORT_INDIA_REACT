@@ -650,7 +650,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
                     gateoutDate: null,
                     examPercentage: item[21] || '0',
                     typeOfContainer: '',
-                    scannerType: '',
+                    scannerType: item[28] || '',
                     gateOutType: '',
                     checkDate: 'N',
                     invoiceDate: null,
