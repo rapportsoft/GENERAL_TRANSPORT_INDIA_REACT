@@ -174,7 +174,7 @@ const stylesLoader = {
 //   .map((item) => item[3]);
 
 
-const categories = ['CFS Import', 'CFS Export', 'CFS Bond'];
+const categories = ['General Warehousing'];
 const advanceCategory = ['Advance']; // Separate category for Advance
 // Extract Invoice Amounts (Index 3) and Align with Categories
 const invoiceDetails = categories.map(category => {
