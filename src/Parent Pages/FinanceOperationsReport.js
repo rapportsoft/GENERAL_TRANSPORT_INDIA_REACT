@@ -136,8 +136,8 @@ const [accountHolderData, setAccountHolderData] = useState([]);
         "Invoice Sales Register Report",  
         "Invoice Register Container Wise Report",  
         "Credit Note Report",  
-        "Import Monthly Revenue Report",
-        "Export Monthly Revenue Report",
+        // "Import Monthly Revenue Report",
+        // "Export Monthly Revenue Report",
         "TDS Report",
         "Daily Receipt Report"
 
