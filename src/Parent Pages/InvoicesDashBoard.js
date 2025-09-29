@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PieChart ,pieArcLabelClasses } from '@mui/x-charts/PieChart';
+import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import styles from "../Dashboard.module.css";
-import { faBusinessTime, faFileCirclePlus, faFileInvoice, faIndianRupee, faIndianRupeeSign, faMoneyBill, faSackDollar, faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
-import { CartesianGrid, Line ,LineChart as LC, ResponsiveContainer, Tooltip, YAxis } from "recharts";
+import { faBusinessTime, faDollar, faDollarSign, faEuro, faEuroSign, faFileCirclePlus, faFileInvoice, faIndianRupee, faIndianRupeeSign, faMoneyBill, faSackDollar, faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
+import { CartesianGrid, Line, LineChart as LC, ResponsiveContainer, Tooltip, YAxis } from "recharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Col, Row } from "reactstrap";
 import { BarChart, LineChart } from "@mui/x-charts";
@@ -45,113 +45,119 @@ const InvoicesDashBoard = () => {
   } = useContext(AuthContext);
   // Sample data for cards
 
-  const [importData,setImportData] = useState([]);
+  const [importData, setImportData] = useState([]);
   const [loading, setLoading] = useState(false);
   const currentDate = new Date();
   currentDate.setHours(8, 0, 0, 0);
-  const [startDate ,setStartDate] =useState(
-     currentDate
+  const [startDate, setStartDate] = useState(
+    currentDate
   );
-const [endDate ,setEndDate] =useState(new Date());
-const [invoicesdata,setinvoicesdata]=useState([]);
+  const [endDate, setEndDate] = useState(new Date());
+  const [invoicesdata, setinvoicesdata] = useState([]);
 
-const [invoicesTotal,setInvoicesTotal]=useState([]);
-const [totalCollection,setTotalCollection]=useState([]);
-const [totalOutStanding,setTotalOutStanding]=useState([]);
+  const [invoicesTotal, setInvoicesTotal] = useState([]);
+  const [totalCollection, setTotalCollection] = useState([]);
+  const [totalOutStanding, setTotalOutStanding] = useState([]);
 
-const [invoicesTotalLastWeek,setInvoicesTotalLastWeek]=useState([]);
-const [totalCollectionLastWeek,setTotalCollectionLastWeek]=useState([]);
-const [totalOutStandingLastWeek,setTotalOutStandingLastWeek]=useState([]);
-const [pieChartData,setPieChartData] =useState([]);
-const [topOutStandingBarChart,setTopOutStandingBarChart] =useState([]);
+  const [invoicesTotalLastWeek, setInvoicesTotalLastWeek] = useState([]);
+  const [totalCollectionLastWeek, setTotalCollectionLastWeek] = useState([]);
+  const [totalOutStandingLastWeek, setTotalOutStandingLastWeek] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [topOutStandingBarChart, setTopOutStandingBarChart] = useState([]);
 
 
-const [totalCollectionChart,setTotalCollectionChart]=useState([]);
-const [totalInvoicesChart,setTotalInvoicesChart]=useState([]);
-const [advaceData,setAdvanceData]=useState([]);
-const stylesLoader = {
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9999,
-  },
-};
+  const [totalCollectionChart, setTotalCollectionChart] = useState([]);
+  const [totalInvoicesChart, setTotalInvoicesChart] = useState([]);
+  const [advaceData, setAdvanceData] = useState([]);
+  const stylesLoader = {
+    overlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    },
+  };
 
 
   const handleDashBoardData = async () => {
     setLoading(true);
     try {
-        
+
       const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD HH:mm') : '';
-      const formattedEndDate= endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
+      const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD HH:mm') : '';
 
-        const response = await axios.get(
-            `${ipaddress}api/dashboard/getInvoiceDashBoard?companyId=${companyid}&branchId=${branchId}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${jwtToken}`
-                }
-            }
-        );
-        const data = response.data;
-        const invoiceDetails = response.data.invocesRecord.invoiceDetails;
-        const collectionDetails = response.data.collection.totalCollections;
-        const invTotals = response.data.invocesRecord;
-
-        const collection = response.data.collection;
-        const outStandingMap = response.data.outStandingMap;
-
-
-        const invoicesDayWise = response.data.invoicesDayWise;
-        const invociceCollection = response.data.invociceCollection;
-        const outStandingLastWeekMap = response.data.outStandingLastWeekMap;
-
-        const pieChart = response.data.pieChart;
-        const top10OutStandingChart = response.data.top10OutStandingChart.top10OutStanding;
-        const advanceMap =response.data.advanceMap.advance;
- 
-        // setinvoicesdata(invoiceDetails);
-        setInvoicesTotal(invTotals);
-        setTotalCollection(collection);
-        setTotalOutStanding(outStandingMap);
-     
-        setInvoicesTotalLastWeek(invoicesDayWise)
-        setTotalCollectionLastWeek(invociceCollection);
-        setTotalOutStandingLastWeek(outStandingLastWeekMap);
-        setPieChartData(pieChart);
-        setTopOutStandingBarChart(top10OutStandingChart);
-
-        setTotalInvoicesChart(invoiceDetails);
-        setTotalCollectionChart(collectionDetails);
-        setAdvanceData(advanceMap);
-   
-
-        console.log("pieChart            ",pieChart);
-        console.log("invoicesDayWise            ",invoicesDayWise);
-        // console.log("advanceMap            ",advanceMap);
-
-        if (data && typeof data === 'object' && !Array.isArray(data)) {
-            const inventoryArray = Object.entries(data).map(([key, value]) => ({
-                name: key,
-                ...value  
-            }));
-  
-            setImportData(inventoryArray);
-        } else {
-            // If already an array, directly set it
-            setImportData(data);
+      const response = await axios.get(
+        `${ipaddress}api/dashboard/getInvoiceDashBoard?companyId=${companyid}&branchId=${branchId}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
         }
+      );
+      const data = response.data;
+      const invoiceDetails = response.data.invocesRecord.invoiceDetails;
+      const collectionDetails = response.data.collection.totalCollections;
+      const invTotals = response.data.invocesRecord;
+
+      const collection = response.data.collection;
   
+      
+      const outStandingMap = response.data.outStandingMap;
+
+
+      const invoicesDayWise = response.data.invoicesDayWise;
+      const invociceCollection = response.data.invociceCollection;
+      const outStandingLastWeekMap = response.data.outStandingLastWeekMap;
+
+      const pieChart = response.data.pieChart;
+      const top10OutStandingChart = response.data.top10OutStandingChart.top10OutStanding;
+      const advanceMap = response.data.advanceMap.advance;
+
+
+      console.log('outStandingMap outStandingMap ',outStandingMap);
+      
+
+      // setinvoicesdata(invoiceDetails);
+      setInvoicesTotal(invTotals);
+      setTotalCollection(collection);
+      setTotalOutStanding(outStandingMap);
+
+      setInvoicesTotalLastWeek(invoicesDayWise)
+      setTotalCollectionLastWeek(invociceCollection);
+      setTotalOutStandingLastWeek(outStandingLastWeekMap);
+      setPieChartData(pieChart);
+      setTopOutStandingBarChart(top10OutStandingChart);
+
+      setTotalInvoicesChart(invoiceDetails);
+      setTotalCollectionChart(collectionDetails);
+      setAdvanceData(advanceMap);
+
+
+      console.log("pieChart            ", pieChart);
+      console.log("invoicesDayWise            ", invoicesDayWise);
+      // console.log("advanceMap            ",advanceMap);
+
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        const inventoryArray = Object.entries(data).map(([key, value]) => ({
+          name: key,
+          ...value
+        }));
+
+        setImportData(inventoryArray);
+      } else {
+        // If already an array, directly set it
+        setImportData(data);
+      }
+
     } catch (error) {
-       
-    }finally{
+
+    } finally {
       setLoading(false);
     }
   };
@@ -163,42 +169,42 @@ const stylesLoader = {
 
   // const categories = totalInvoicesChart.map((item) => item[0]); // Extract category names from index 1
   // const categoriesColl = totalCollectionChart.map((item) => item[1]); // Extract category names from index 1
-//   const categories = ['CFS Import', 'CFS Export','CFS Bond']; // X-Axis Labels
-// const invoiceDetails = totalInvoicesChart
-//   .filter((item) => categories.includes(item[0])) // Keep only items matching categories
-//   .map((item) => item[3]);
+  //   const categories = ['CFS Import', 'CFS Export','CFS Bond']; // X-Axis Labels
+  // const invoiceDetails = totalInvoicesChart
+  //   .filter((item) => categories.includes(item[0])) // Keep only items matching categories
+  //   .map((item) => item[3]);
 
-// // Ensure collectionDetails length matches categories
-// const collectionDetails = totalCollectionChart
-//   .filter((item) => categories.includes(item[1])) // Keep only items matching categories
-//   .map((item) => item[3]);
-
-
-const categories = ['General Warehousing'];
-const advanceCategory = ['Advance']; // Separate category for Advance
-// Extract Invoice Amounts (Index 3) and Align with Categories
-const invoiceDetails = categories.map(category => {
-  const item = totalInvoicesChart.find(item => item[0] === category); // Use index 1 for category name
-  return item ? item[3] : 0; // Use Index 3 for Invoice Amount, Default to 0 if missing
-});
-
-// Extract Collection Amounts (Index 3) and Align with Categories
-const collectionDetails = categories.map(category => {
-  const item = totalCollectionChart.find(item => item[1] === category); // Use index 1 for category name
-  return item ? item[3] : 0; // Use Index 3 for Collection Amount, Default to 0 if missing
-});
+  // // Ensure collectionDetails length matches categories
+  // const collectionDetails = totalCollectionChart
+  //   .filter((item) => categories.includes(item[1])) // Keep only items matching categories
+  //   .map((item) => item[3]);
 
 
-const advanceMoney = [advaceData?.[0]?.[3] || 0];
+  const categories = ['General Warehousing'];
+  const advanceCategory = ['Advance']; // Separate category for Advance
+  // Extract Invoice Amounts (Index 3) and Align with Categories
+  const invoiceDetails = categories.map(category => {
+    const item = totalInvoicesChart.find(item => item[0] === category); // Use index 1 for category name
+    return item ? item[3] : 0; // Use Index 3 for Invoice Amount, Default to 0 if missing
+  });
+
+  // Extract Collection Amounts (Index 3) and Align with Categories
+  const collectionDetails = categories.map(category => {
+    const item = totalCollectionChart.find(item => item[1] === category); // Use index 1 for category name
+    return item ? item[3] : 0; // Use Index 3 for Collection Amount, Default to 0 if missing
+  });
+
+
+  const advanceMoney = [advaceData?.[0]?.[3] || 0];
 
 
   // const invoiceDetails = totalInvoicesChart.map((item) => item[3]);
 
-// Extract Collection Amounts (Index 3)
-// const collectionDetails = totalCollectionChart.map((item) => item[3]);
+  // Extract Collection Amounts (Index 3)
+  // const collectionDetails = totalCollectionChart.map((item) => item[3]);
 
   // const categories = ['CFS Import', 'CFS Export','CFS Bond']; // X-Axis Labels
- // const categories = totalInvoicesChart.map((item) => item[0]); // Extract category names from index 1
+  // const categories = totalInvoicesChart.map((item) => item[0]); // Extract category names from index 1
 
   // const lastWeekTotalInvoicesGeneratedLineChart = Object.keys(invoicesTotalLastWeek)
   // .filter((key) => key !== "name") // Remove "name" key
@@ -211,38 +217,38 @@ const advanceMoney = [advaceData?.[0]?.[3] || 0];
 
   const formattedData = (invoicesTotalLastWeek || {}); // Default to an empty object if undefined
 
-const sampleData = Object.keys(formattedData)
-  .filter((key) => key !== "name") // Remove the "name" key if present
-  .map((dateKey) => {
-    const amount = formattedData[dateKey]?.amount || 0;
-    return {
-      date: dateKey, // Date remains as string (YYYY-MM-DD)
-      // Convert amount to a number with 2 decimal places
-      value: parseFloat(Number(amount).toFixed(2))
-    };
-  })
-  .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date in ascending order
+  const sampleData = Object.keys(formattedData)
+    .filter((key) => key !== "name") // Remove the "name" key if present
+    .map((dateKey) => {
+      const amount = formattedData[dateKey]?.amount || 0;
+      return {
+        date: dateKey, // Date remains as string (YYYY-MM-DD)
+        // Convert amount to a number with 2 decimal places
+        value: parseFloat(Number(amount).toFixed(2))
+      };
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date in ascending order
 
 
   const lastWeekTotalCollection = Object.keys(totalCollectionLastWeek)
-  .filter((key) => key !== "name") // Remove "name" key
-  .map((date) => ({
-    date, // Keep date in YYYY-MM-DD format
-    // value: invoicesTotalLastWeek[date] || 0, // Use value, default to 0
-    // value: totalCollectionLastWeek[date]?.amount || 0, // Use 'amount' field instead of count
-    value: (totalCollectionLastWeek[date]?.amount || 0).toFixed(2), // Format amount to 2 decimal places
-  }))
-  .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort in ascending order
+    .filter((key) => key !== "name") // Remove "name" key
+    .map((date) => ({
+      date, // Keep date in YYYY-MM-DD format
+      // value: invoicesTotalLastWeek[date] || 0, // Use value, default to 0
+      // value: totalCollectionLastWeek[date]?.amount || 0, // Use 'amount' field instead of count
+      value: (totalCollectionLastWeek[date]?.amount || 0).toFixed(2), // Format amount to 2 decimal places
+    }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort in ascending order
 
   const lastWeekOutStandingLineChart = Object.keys(totalOutStandingLastWeek)
-  .filter((key) => key !== "name") // Remove "name" key
-  .map((date) => ({
-    date, // Keep date in YYYY-MM-DD format
-    // value: invoicesTotalLastWeek[date] || 0, // Use value, default to 0
-    value: totalOutStandingLastWeek[date]?.amount || 0, // Use 'amount' field instead of count
-    // value: (totalOutStandingLastWeek[date]?.amount).toFixed(2), // Format amount to 2 decimal places
-  }))
-  .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort in ascending order
+    .filter((key) => key !== "name") // Remove "name" key
+    .map((date) => ({
+      date, // Keep date in YYYY-MM-DD format
+      // value: invoicesTotalLastWeek[date] || 0, // Use value, default to 0
+      value: totalOutStandingLastWeek[date]?.amount || 0, // Use 'amount' field instead of count
+      // value: (totalOutStandingLastWeek[date]?.amount).toFixed(2), // Format amount to 2 decimal places
+    }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort in ascending order
 
 
   const formatToK = (num) => {
@@ -260,13 +266,13 @@ const sampleData = Object.keys(formattedData)
 
       return (
         <div className="custom-tooltip">
-          <p  className="label">{`${formattedDate} - ${data.value}`}</p>
+          <p className="label">{`${formattedDate} - ${data.value}`}</p>
         </div>
       );
     }
     return null;
   };
-  
+
   const paymentModeData = pieChartData?.paymentModeData || {};
 
   // Convert payment mode data to an array (defaulting to zero values if empty)
@@ -282,9 +288,9 @@ const sampleData = Object.keys(formattedData)
     partyName: item[1],  // Use index 1 for labels
     totalOutstanding: item[4] // Use index 4 for values
   }));
-  
+
   // Value Formatter (optional)
-  const valueFormatter = (value) => value.toLocaleString(); 
+  const valueFormatter = (value) => value.toLocaleString();
   // const sampleData = [
   //   { name: "Point 1", value: 0 },
   //   { name: "Point 2", value: 431304.98 },
@@ -294,11 +300,11 @@ const sampleData = Object.keys(formattedData)
   //   { name: "Point 6", value: 1203898.90 },
   //   { name: "Point 7", value: 1753557.81 },
   // ];
-  
-  
+
+
   return (
     <>
-       {loading && (
+      {loading && (
         <div className="loader" style={stylesLoader.overlay}>
           <div className="truckWrapper">
             <div className="truckBody">
@@ -428,175 +434,260 @@ const sampleData = Object.keys(formattedData)
           </div>
         </div>
       )}
-    <div style={{ padding: "20px" }}className={styles.dashboardInv}>
-      <section className={styles.widgets}>
-      <div className={`${styles.widget} ${styles.widgetPrimaryInv}`} >
-      <div style={{ display: "flex", gap: "5px",justifyContent:'center'}}>
-    <h4>Invoices Generated <FontAwesomeIcon icon={faFileInvoice} className="gauge-icon" /></h4>
-  </div>
-  <table style={{ marginTop: 0 }} className={styles.table}>
-  <thead>
-    <tr>
-    <th style={{textAlign:'center',color:'#009999'}}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
-      <th style={{textAlign:'center',color:'#009999'}}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td style={{ textAlign: "center" }}>{invoicesTotal["totalInvoiceCount"]}</td>
-      <td style={{ textAlign: "center" }}>{invoicesTotal["totalAmount"]}</td>
-    </tr>
-  </tbody>
-</table>
+      <div style={{ padding: "20px" }} className={styles.dashboardInv}>
+        <section className={styles.widgets}>
+          <div className={`${styles.widget} ${styles.widgetPrimaryInv}`} >
+            <div style={{ display: "flex", gap: "5px", justifyContent: 'center' }}>
+              <h4>Invoices Generated <FontAwesomeIcon icon={faFileInvoice} className="gauge-icon" /></h4>
+            </div>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{invoicesTotal["totalCountForINR"]}</td>
+                  <td style={{ textAlign: "center" }}>{invoicesTotal["totalAmountForINR"]}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Amount <FontAwesomeIcon icon={faDollarSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                   <td style={{ textAlign: "center" }}>{invoicesTotal["totalCountForUSD"]}</td>
+                  <td style={{ textAlign: "center" }}>{invoicesTotal["totalAmountForUSD"]}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#009999' }}>Amount <FontAwesomeIcon icon={faEuroSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{invoicesTotal.totalCountForEUR}</td>
+                  <td style={{ textAlign: "center" }}>{invoicesTotal.totalAmountForEUR}</td>
+                </tr>
+              </tbody>
+            </table>
 
-  {/* <ResponsiveContainer width="100%" height={50}>
+            {/* <ResponsiveContainer width="100%" height={50}>
   <LC data={lastWeekTotalInvoicesGeneratedLineChart}>
             <Tooltip content={<CustomTooltip />} />
             <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
           </LC>
         </ResponsiveContainer> */}
-<div
-  style={{
-    position: "relative",
-    width: "100%",
-    height: "100px", // Adjust height as needed
-    marginTop: "4px",
-    zIndex: 1,
-  }}
->
-  <ResponsiveContainer width="100%" height="100%">
-    <LC data={sampleData}>
-      <Tooltip content={<CustomTooltip />} cursor={false} />
-      <YAxis hide={true} domain={["auto", "auto"]} />
-      <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
-    </LC>
-  </ResponsiveContainer>
-</div>
+            {/* <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100px", // Adjust height as needed
+                marginTop: "4px",
+                zIndex: 1,
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LC data={sampleData}>
+                  <Tooltip content={<CustomTooltip />} cursor={false} />
+                  <YAxis hide={true} domain={["auto", "auto"]} />
+                  <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+                </LC>
+              </ResponsiveContainer>
+            </div> */}
 
 
 
-</div>
-<div className={`${styles.widget} ${styles.widgetSecondaryInv}`} >
-      <div style={{ display: "flex", gap: "5px",justifyContent:'center'}}>
-    <h4 >Total Collection <FontAwesomeIcon icon={faMoneyBill} className="gauge-icon" /></h4>
-    
-  </div>
-  <table style={{ marginTop: 0 }} className={styles.table}>
-  <thead>
-    <tr>
-    <th style={{textAlign:'center',color:'#b36b00'}}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
-      <th style={{textAlign:'center',color:'#b36b00'}}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td style={{ textAlign: "center" }}>{totalCollection["totalCount"]}</td>
-      <td style={{ textAlign: "center" }}>{totalCollection["totalCollection"]}</td>
-    </tr>
-  </tbody>
-</table>
+          </div>
+          <div className={`${styles.widget} ${styles.widgetSecondaryInv}`} >
+            <div style={{ display: "flex", gap: "5px", justifyContent: 'center' }}>
+              <h4 >Total Collection <FontAwesomeIcon icon={faMoneyBill} className="gauge-icon" /></h4>
 
-  {/* <ResponsiveContainer width="100%" height={50}>
+            </div>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalCoOutStandingForINR"]}</td>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalOutStandingAmountForINR"]}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Amount <FontAwesomeIcon icon={faDollarSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalCoOutStandingForUSD"]}</td>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalOutStandingAmountForUSD"]}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#b36b00' }}>Amount <FontAwesomeIcon icon={faEuroSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalCoOutStandingForEUR"]}</td>
+                  <td style={{ textAlign: "center" }}>{totalCollection["totalOutStandingAmountForEUR"]}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* <ResponsiveContainer width="100%" height={50}>
   <LC data={lastWeekTotalCollection}>
             <Tooltip content={<CustomTooltip />} />
             <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
           </LC>
         </ResponsiveContainer> */}
 
-<div
-    style={{
-      position: "relative",
-      width: "100%",
-      height: "100px", // Adjust height as needed
-      marginTop: "5px",
-      zIndex: 1,
-    }}
-  >
-    <ResponsiveContainer width="100%" height="100%">
-      <LC data={lastWeekTotalCollection}>
-        <Tooltip content={<CustomTooltip />} cursor={false} />
-   
-        <YAxis hide={true}  domain={["auto", "auto"]} />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
-      </LC>
-    </ResponsiveContainer>
-  </div>
+            {/* <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100px", // Adjust height as needed
+                marginTop: "5px",
+                zIndex: 1,
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LC data={lastWeekTotalCollection}>
+                  <Tooltip content={<CustomTooltip />} cursor={false} />
 
-</div>
-<div className={`${styles.widget} ${styles.widgetTertiaryInv}`} >
-      <div style={{ display: "flex", gap: "5px",justifyContent:'center'}}>
-    <h4 >Total Outstanding <FontAwesomeIcon icon={faSackDollar} className="gauge-icon" /></h4>
-    
-  </div>
-  <table style={{ marginTop: 0 }} className={styles.table}>
-  <thead>
-    <tr>
-      <th style={{textAlign:'center',color:'#196619'}}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
-      <th style={{textAlign:'center',color:'#196619'}}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td style={{ textAlign: "center" }}>{totalOutStanding["totalCoOutStanding"]}</td>
-      <td style={{ textAlign: "center" }}>{totalOutStanding["totalOutStandingAmount"]}</td>
-    </tr>
-  </tbody>
-</table>
+                  <YAxis hide={true} domain={["auto", "auto"]} />
+                  <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+                </LC>
+              </ResponsiveContainer>
+            </div> */}
 
-  {/* <ResponsiveContainer width="100%" height={50}>
+          </div>
+          <div className={`${styles.widget} ${styles.widgetTertiaryInv}`} >
+            <div style={{ display: "flex", gap: "5px", justifyContent: 'center' }}>
+              <h4 >Total Outstanding <FontAwesomeIcon icon={faSackDollar} className="gauge-icon" /></h4>
+
+            </div>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Amount <FontAwesomeIcon icon={faIndianRupeeSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalCoOutStandingForINR}</td>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalOutStandingAmountForINR}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Amount <FontAwesomeIcon icon={faDollarSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalCoOutStandingForUSD}</td>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalOutStandingAmountForUSD}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table style={{ marginTop: 0 }} className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Count <FontAwesomeIcon icon={faFileCirclePlus} /></th>
+                  <th style={{ textAlign: 'center', color: '#196619' }}>Amount <FontAwesomeIcon icon={faEuroSign} /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalCoOutStandingForEUR}</td>
+                  <td style={{ textAlign: "center" }}>{totalOutStanding.totalOutStandingAmountForEUR}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* <ResponsiveContainer width="100%" height={50}>
   <LC data={lastWeekOutStandingLineChart}>
             <Tooltip content={<CustomTooltip />} />
             <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
           </LC>
         </ResponsiveContainer> */}
 
-<div
-    style={{
-      position: "relative",
-      width: "100%",
-      height: "100px", // Adjust height as needed
-      marginTop: "5px",
-      zIndex: 1,
-    }}
-  >
-    <ResponsiveContainer width="100%" height="100%">
-      <LC data={lastWeekOutStandingLineChart}>
-        <Tooltip content={<CustomTooltip />} cursor={false} />
-   
-        <YAxis hide={true}  domain={["auto", "auto"]} />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
-      </LC>
-    </ResponsiveContainer>
-  </div>
-</div>
-      </section>
+            {/* <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100px", // Adjust height as needed
+                marginTop: "5px",
+                zIndex: 1,
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LC data={lastWeekOutStandingLineChart}>
+                  <Tooltip content={<CustomTooltip />} cursor={false} />
+
+                  <YAxis hide={true} domain={["auto", "auto"]} />
+                  <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+                </LC>
+              </ResponsiveContainer>
+            </div> */}
+          </div>
+        </section>
 
 
 
 
- <section className={styles.widgetschartInv}>
-      <Row>
 
- <Col md={6}>
-  <div className={`${styles.pieChart} ${styles.gradientTwo}`}>
-    <h6 style={{textAlign:'center',color:'#990000'}}>PROCESS WISE INVOICES AND COLLECTIONS</h6>
-    
-    <LineChart
-      xAxis={[{ scaleType: 'band', data: [...categories, ...advanceCategory] }]}
-      yAxis={[{ valueFormatter: formatToK }]} // Format Y-axis labels in K notation
-      series={[
-        { data: [...invoiceDetails, null], label: 'Invoices', color: '#8884d8' }, 
-        { data: [...collectionDetails, null], label: 'Collections', color: '#82ca9d' }, 
-        { data: [...new Array(categories.length).fill(null), advanceMoney[0]], label: 'Advance', color: '#FF5733' }, 
-      ]}
-      width={500}
-      height={300}
-      margin={{ right: 72, left: 72 }} // Adjust margins to prevent label cut-off
-    />
-  </div>
-</Col> 
+        <section className={styles.widgetschartInv}>
+          <Row>
 
-{/* <Col md={6}>
+            <Col md={6}>
+              <div className={`${styles.pieChart} ${styles.gradientTwo}`}>
+                <h6 style={{ textAlign: 'center', color: '#990000' }}>PROCESS WISE INVOICES AND COLLECTIONS</h6>
+
+                <LineChart
+                  xAxis={[{ scaleType: 'band', data: [...categories, ...advanceCategory] }]}
+                  yAxis={[{ valueFormatter: formatToK }]} // Format Y-axis labels in K notation
+                  series={[
+                    { data: [...invoiceDetails, null], label: 'Invoices', color: '#8884d8' },
+                    { data: [...collectionDetails, null], label: 'Collections', color: '#82ca9d' },
+                    { data: [...new Array(categories.length).fill(null), advanceMoney[0]], label: 'Advance', color: '#FF5733' },
+                  ]}
+                  width={500}
+                  height={300}
+                  margin={{ right: 72, left: 72 }} // Adjust margins to prevent label cut-off
+                />
+              </div>
+            </Col>
+
+            {/* <Col md={6}>
   <div className={`${styles.pieChart} ${styles.gradientTwo}`}>
     <h6 style={{ textAlign: 'center', color: '#990000' }}>
       PROCESS WISE INVOICES AND COLLECTIONS
@@ -622,52 +713,52 @@ const sampleData = Object.keys(formattedData)
 </Col> */}
 
 
-<Col md={6}>
-   <div className={`${styles.lineeeeee} ${styles.gradientOnelineeeeee}`}>
-<h6 style={{textAlign:'center',color:'#990000'}}>PAYMNET MODE WISE COLLECTION(REPORT)
-</h6>
+            <Col md={6}>
+              <div className={`${styles.lineeeeee} ${styles.gradientOnelineeeeee}`}>
+                <h6 style={{ textAlign: 'center', color: '#990000' }}>PAYMNET MODE WISE COLLECTION(REPORT)
+                </h6>
 
 
-    <PieChart
-      series={[
-        {
-          data: dataEntries,
-          label: {
-            show: true, // Show labels inside slices
-            color: 'white',
-          },
-          arcLabel: (item) => `${((item.value / totalSum) * 100).toFixed(2)}%`, // Label with name and percentage
-          arcLabelMinAngle: 9, // Ensure that small slices don't get labels
-          arcLabelRadius: '60%', // Adjust radius of the label
-          innerRadius: 36, // Space inside the pie
-          outerRadius: 144, // Full arc width
-          highlightScope: { faded: 'global', highlighted: 'item' },
-          faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-        },
-      ]}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fontWeight: 'bold', // Customize label styling
-          color: 'orange',
-        },
-      }}
-      height={300}
-    />
-  </div>
-</Col>
+                <PieChart
+                  series={[
+                    {
+                      data: dataEntries,
+                      label: {
+                        show: true, // Show labels inside slices
+                        color: 'white',
+                      },
+                      arcLabel: (item) => `${((item.value / totalSum) * 100).toFixed(2)}%`, // Label with name and percentage
+                      arcLabelMinAngle: 9, // Ensure that small slices don't get labels
+                      arcLabelRadius: '60%', // Adjust radius of the label
+                      innerRadius: 36, // Space inside the pie
+                      outerRadius: 144, // Full arc width
+                      highlightScope: { faded: 'global', highlighted: 'item' },
+                      faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                    },
+                  ]}
+                  sx={{
+                    [`& .${pieArcLabelClasses.root}`]: {
+                      fontWeight: 'bold', // Customize label styling
+                      color: 'orange',
+                    },
+                  }}
+                  height={300}
+                />
+              </div>
+            </Col>
 
-      </Row>
-      </section>
-
-
-
+          </Row>
+        </section>
 
 
 
-      <section className={styles.widgetschartTopTen}>
-<Row>
 
-{/* <Col md={12}>
+
+
+        <section className={styles.widgetschartTopTen}>
+          <Row>
+
+            {/* <Col md={12}>
   <div className={`${styles.pieChart} ${styles.gradientTwo}`}>
   <h6 style={{textAlign:'center',color:'#990000'}}>PARTY WISE OUTSTANDING 
 </h6>
@@ -682,37 +773,37 @@ const sampleData = Object.keys(formattedData)
   />
   </div>
 </Col> */}
-<Col md={12}>
-  <div className={`${styles.horTopTen} ${styles.gradientTwo}`}>
-    <h6 style={{ textAlign: 'center', color: '#990000' }}>PARTY WISE OUTSTANDING</h6>
-    <BarChart
-      dataset={dataset}
-      yAxis={[
-        { 
-          scaleType: 'band', 
-          dataKey: 'partyName', 
-          tickLabelProps: () => ({
-            textAnchor: 'end',  // Align text properly
-            angle: -45,         // Rotate labels for longer text
-            fontSize: 12,       // Reduce font size for better fit
-            width: 270,         // Allow text to fit
-            wordWrap: 'break-word' // Wrap long words
-          })
-        }
-      ]}
-      series={[{ dataKey: 'totalOutstanding', label: 'Total Outstanding', valueFormatter }]}
-      layout="horizontal"
-      width={900} // Increased width for more space
-      height={300} // Increased height for better spacing
-      margin={{ left: 360 }} // ✅ Increased left margin to fit labels
-    />
-  </div>
-</Col>
+            <Col md={12}>
+              <div className={`${styles.horTopTen} ${styles.gradientTwo}`}>
+                <h6 style={{ textAlign: 'center', color: '#990000' }}>PARTY WISE OUTSTANDING</h6>
+                <BarChart
+                  dataset={dataset}
+                  yAxis={[
+                    {
+                      scaleType: 'band',
+                      dataKey: 'partyName',
+                      tickLabelProps: () => ({
+                        textAnchor: 'end',  // Align text properly
+                        angle: -45,         // Rotate labels for longer text
+                        fontSize: 12,       // Reduce font size for better fit
+                        width: 270,         // Allow text to fit
+                        wordWrap: 'break-word' // Wrap long words
+                      })
+                    }
+                  ]}
+                  series={[{ dataKey: 'totalOutstanding', label: 'Total Outstanding', valueFormatter }]}
+                  layout="horizontal"
+                  width={900} // Increased width for more space
+                  height={300} // Increased height for better spacing
+                  margin={{ left: 360 }} // ✅ Increased left margin to fit labels
+                />
+              </div>
+            </Col>
 
 
-</Row>
-</section>
-    </div>
+          </Row>
+        </section>
+      </div>
 
     </>
   );
