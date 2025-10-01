@@ -359,20 +359,20 @@ export default function AddParty() {
                 document.getElementById('panNo').classList.add('error-border');
             }
         }
-        if (partyData.operationalMail) {
-            if (!validateEmail(partyData.operationalMail)) {
-                errors.operationalMail = "Invalid Operation Mail CC"
-                document.getElementById('operationalMail').classList.add('error-border');
-            }
+        // if (partyData.operationalMail) {
+        //     if (!validateEmail(partyData.operationalMail)) {
+        //         errors.operationalMail = "Invalid Operation Mail CC"
+        //         document.getElementById('operationalMail').classList.add('error-border');
+        //     }
 
-        }
-        if (partyData.financeMail) {
-            if (!validateEmail(partyData.financeMail)) {
-                errors.financeMail = "Invalid Finance Mail Id"
-                document.getElementById('financeMail').classList.add('error-border');
-            }
+        // }
+        // if (partyData.financeMail) {
+        //     if (!validateEmail(partyData.financeMail)) {
+        //         errors.financeMail = "Invalid Finance Mail Id"
+        //         document.getElementById('financeMail').classList.add('error-border');
+        //     }
 
-        }
+        // }
         // if (partyData.codecoMail) {
         //     if (!validateEmail(partyData.codecoMail)) {
         //         errors.codecoMail = "Invalid Codeco Mail Id"
@@ -683,7 +683,7 @@ export default function AddParty() {
             sanitizedValue = '';
         }
 
-        if (['operationalMail', 'financeMail', 'codecoMail', 'operationalMailCc', 'operationalMailBcc', 'agtOperationalMailTo', 'contactEmail'].includes(name)) {
+        if (['codecoMail', 'operationalMailCc', 'operationalMailBcc', 'agtOperationalMailTo', 'contactEmail'].includes(name)) {
 
             if (sanitizedValue.length > 0) {
                 if (!validateEmail(sanitizedValue)) {
@@ -1302,20 +1302,20 @@ export default function AddParty() {
                 document.getElementById('panNo').classList.add('error-border');
             }
         }
-        if (partyData.operationalMail) {
-            if (!validateEmail(partyData.operationalMail)) {
-                errors.operationalMail = "Invalid Operation Mail CC"
-                document.getElementById('operationalMail').classList.add('error-border');
-            }
+        // if (partyData.operationalMail) {
+        //     if (!validateEmail(partyData.operationalMail)) {
+        //         errors.operationalMail = "Invalid Operation Mail CC"
+        //         document.getElementById('operationalMail').classList.add('error-border');
+        //     }
 
-        }
-        if (partyData.financeMail) {
-            if (!validateEmail(partyData.financeMail)) {
-                errors.financeMail = "Invalid Finance Mail Id"
-                document.getElementById('financeMail').classList.add('error-border');
-            }
+        // }
+        // if (partyData.financeMail) {
+        //     if (!validateEmail(partyData.financeMail)) {
+        //         errors.financeMail = "Invalid Finance Mail Id"
+        //         document.getElementById('financeMail').classList.add('error-border');
+        //     }
 
-        }
+        // }
         // if (partyData.codecoMail) {
         //     if (!validateEmail(partyData.codecoMail)) {
         //         errors.codecoMail = "Invalid Codeco Mail Id"
@@ -2314,7 +2314,7 @@ export default function AddParty() {
                             <FormGroup>
                                 <Label className="partyFontSize">Operational Mail ID</Label>
                                 <Input
-                                    type="text"
+                                    type="textarea"
                                     name="operationalMail"
                                     id='operationalMail'
                                     className="form-control inputField"
@@ -2331,7 +2331,7 @@ export default function AddParty() {
                             <FormGroup>
                                 <Label className="partyFontSize">Finance Mail ID</Label>
                                 <Input
-                                    type="text"
+                                    type="textarea"
                                     name="financeMail"
                                     id='financeMail'
                                     className="form-control inputField"
