@@ -3671,7 +3671,7 @@ function GeneralGatePass({ acttab, listOfData, listOfGatePass, listOfExbond, fla
                   disabled={gatePass.status === "A"}
                   onClick={handleSaveCfBondGrid}
                 >
-                  <FontAwesomeIcon icon={faSearch} style={{ marginRight: "5px" }} />
+                  <FontAwesomeIcon icon={faSave} style={{ marginRight: "5px" }} />
                   Save
                 </button>
 
