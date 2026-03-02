@@ -4742,7 +4742,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         return true;
       }
 
-      if (inBond.spaceAllocated === 'COVERED') {
+      if (inBond.spaceAllocated === 'COVERED' || inBond.spaceAllocated === 'COVEREDGD') {
         // areaReleased must be greater than 0
         return !row.cellAreaAllocated || parseFloat(row.cellAreaAllocated) <= 0;
       }
@@ -5344,7 +5344,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
 
   const handleYardLocationData = (type) => {
     fetch(
-      `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === 'OPEN' ? 'O' : type === 'COVERED' ? 'C' : ''
+      `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === 'OPEN' ? 'O' : type === 'COVERED' ? 'C' : type === 'COVEREDGD' ? 'G' : ''
       }`
     ).then((response) => response.json())
       .then((data) => {
@@ -5415,6 +5415,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
           nocTransId: row.nocTransId,
           cellAreaAllocated: row.cellAreaAllocated,
           cellAreaUsed: row.cellAreaUsed,
+          palletWiseWt: row.palletWiseWt,
         }));
 
         // Update the rows state with new values
@@ -5575,6 +5576,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
       approvedDate: null,
       jobTransId: "",
       jobNo: "",
+      palletWiseWt: 0.000
     },
   ]);
   const handleInputChange = (index, e) => {
@@ -5653,6 +5655,22 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         });
       }
     }
+    setRows(newRows);
+  };
+
+  const handleInputChange1 = (index, e, val1, val2) => {
+    const { name, value } = e.target;
+    let newVal = value;
+
+    if (name === "palletWiseWt") {
+      newVal = handleInputChangeNew(value, val1, val2);
+    }
+
+    const newRows = [...rows];
+    newRows[index][name] = newVal;
+
+    // Check if the field being updated is inBondPackages
+
     setRows(newRows);
   };
 
@@ -5816,6 +5834,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         cellAreaUsed: "",
         receivedPackages: "",
         cellAreaAllocated: "",
+        palletWiseWt: ""
       },
     ]);
 
@@ -7149,6 +7168,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                 >
                   <option value="">Select Space</option>
                   <option value="COVERED">Covered Space</option>
+                  <option value="COVEREDGD">Covered Grounded Space</option>
                   <option value="OPEN">Open Space</option>
                 </select>
               </FormGroup>
@@ -7723,6 +7743,8 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Used</th>
                 <th scope="col" className="text-center" style={{ color: "black" }} >Yard Packages <span className="error-message">*</span></th>
                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Allocated <span className="error-message">*</span></th>
+                <th scope="col" className="text-center" style={{ color: "black" }} >Weight per Pallet</th>
+                <th scope="col" className="text-center" style={{ color: "black" }} >Action</th>
               </tr>
             </thead>
             <tbody>
@@ -7861,6 +7883,16 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                         {errors[`cellAreaAllocated-${index}`]}
                       </span>
                     )}
+                  </td>
+                  <td>
+                    <Input
+                      className="form-control"
+                      type="text"
+                      name="palletWiseWt"
+                      value={row.palletWiseWt}
+                      onChange={(e) => handleInputChange1(index, e, 13, 3)}
+                    />
+
                   </td>
                   {/* <td>
                 {row.inBondingId }

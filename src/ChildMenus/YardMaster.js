@@ -46,7 +46,7 @@ export default function YardMaster() {
     userType,
     tabMenus,
     userRights
-} = useContext(AuthContext);
+  } = useContext(AuthContext);
   const { isAuthenticated } = useContext(AuthContext);
 
   const location = useLocation();
@@ -105,7 +105,7 @@ export default function YardMaster() {
     if (!row.locationCategory) newErrors.locationCategory = 'Location Category is required';
     if (!row.blockId) newErrors.blockId = 'Cell ID is required';
     if (!row.cellNoRow) newErrors.cellNoRow = 'Stack Row is required';
-    if (row.locationCategory === 'C' && !row.cellArea) newErrors.cellArea = 'Stack Area is required for Covered Space';
+    if ((row.locationCategory === 'C' || row.locationCategory === 'G') && !row.cellArea) newErrors.cellArea = 'Stack Area is required for Covered Space';
     return newErrors;
   };
 
@@ -634,12 +634,12 @@ export default function YardMaster() {
         <Card className="table-responsive">
           <CardBody>
             <div className="d-flex justify-content-start mb-2">
-            {(role !== 'ROLE_ADMIN' && allowCreate) || (role === 'ROLE_ADMIN') ? (
-              <Button color="success" onClick={handleAddRow} outline style={{ marginRight: '5px' }}>
-                <FontAwesomeIcon icon={faPlus} style={{ marginRight: "5px" }} />
-                Add Locations
-              </Button>
-            ):(null)}
+              {(role !== 'ROLE_ADMIN' && allowCreate) || (role === 'ROLE_ADMIN') ? (
+                <Button color="success" onClick={handleAddRow} outline style={{ marginRight: '5px' }}>
+                  <FontAwesomeIcon icon={faPlus} style={{ marginRight: "5px" }} />
+                  Add Locations
+                </Button>
+              ) : (null)}
               <Button color="danger" onClick={handleReset} outline>
                 <FontAwesomeIcon icon={faXmark} style={{ marginRight: "5px" }} />
                 Reset
@@ -753,6 +753,7 @@ export default function YardMaster() {
                           <option value="">Select Space</option>
                           <option value="O">Open Space</option>
                           <option value="C">Covered Space</option>
+                          <option value="G">Covered Grounded Space</option>
                         </Input>
                         {errors.locationCategory && <FormFeedback>{errors.locationCategory}</FormFeedback>}
                       </FormGroup>
@@ -798,7 +799,7 @@ export default function YardMaster() {
                           style={{
                             backgroundColor: rowData.cellArea ? "#e3eefa" : ""
                           }}
-                          disabled={rowData.locationCategory !== 'C'}
+                          disabled={rowData.locationCategory === 'O'}
                           onKeyPress={(e) => {
                             const validKey = /[0-9.]/.test(e.key);
                             if (!validKey) {
@@ -964,7 +965,8 @@ export default function YardMaster() {
                       <td>{
                         item.locationCategory === "C" ? "Covered Space" :
                           item.locationCategory === "O" ? "Open Space" :
-                            ""
+                            item.locationCategory === "G" ? "Covered Grounded Space" :
+                              ""
                       }</td>
                       <td>{item.blockId}</td>
                       <td>{item.cellNoRow}</td>
@@ -983,12 +985,12 @@ export default function YardMaster() {
                             Action
                           </button>
                           <ul className="dropdown-menu">
-                          {(role !== 'ROLE_ADMIN' && allowEdit) || (role === 'ROLE_ADMIN') ? (
-                            <li>
-                              <button className="dropdown-item" onClick={() => handleModifyModel(item)}>
-                                <FontAwesomeIcon icon={faEdit} style={{ marginRight: "5px" }} />Modify Details
-                              </button>
-                            </li>):(null)}
+                            {(role !== 'ROLE_ADMIN' && allowEdit) || (role === 'ROLE_ADMIN') ? (
+                              <li>
+                                <button className="dropdown-item" onClick={() => handleModifyModel(item)}>
+                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: "5px" }} />Modify Details
+                                </button>
+                              </li>) : (null)}
 
                             {/* {(role !== 'ROLE_ADMIN' && allowDelete) || (role === 'ROLE_ADMIN') ? (
                             <li>

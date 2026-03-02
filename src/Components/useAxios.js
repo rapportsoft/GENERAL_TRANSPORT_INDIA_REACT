@@ -66,7 +66,7 @@ const useAxios = () => {
   const { jwtToken, logout } = useContext(AuthContext);
 
   const axiosInstance = axios.create({
-    baseURL: 'http://192.168.1.6:8082',
+    baseURL: 'http://103.240.90.122:8080/GENERAL',
   });
 
   axiosInstance.interceptors.request.use(
