@@ -752,7 +752,7 @@ export default function YardMaster() {
                         >
                           <option value="">Select Space</option>
                           <option value="O">Open Space</option>
-                          <option value="C">Covered Space</option>
+                          <option value="C">Racking System</option>
                           <option value="G">Covered Grounded Space</option>
                         </Input>
                         {errors.locationCategory && <FormFeedback>{errors.locationCategory}</FormFeedback>}
@@ -963,7 +963,7 @@ export default function YardMaster() {
                       <td>{item.yardLocationId}</td>
                       <td>{item.yardLocationDesc}</td>
                       <td>{
-                        item.locationCategory === "C" ? "Covered Space" :
+                        item.locationCategory === "C" ? "Racking System" :
                           item.locationCategory === "O" ? "Open Space" :
                             item.locationCategory === "G" ? "Covered Grounded Space" :
                               ""

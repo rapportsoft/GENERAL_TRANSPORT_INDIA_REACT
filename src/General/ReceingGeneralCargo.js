@@ -7167,7 +7167,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                   }}
                 >
                   <option value="">Select Space</option>
-                  <option value="COVERED">Covered Space</option>
+                  <option value="COVERED">Racking System</option>
                   <option value="COVEREDGD">Covered Grounded Space</option>
                   <option value="OPEN">Open Space</option>
                 </select>

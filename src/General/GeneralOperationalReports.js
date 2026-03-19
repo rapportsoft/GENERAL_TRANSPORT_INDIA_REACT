@@ -563,6 +563,7 @@ export default function GeneralOperationalReports() {
           <th scope="col" style={{ minWidth: 270 }}>CHA</th>
           <th scope="col" >Commodity</th>
           <th scope="col" style={{ minWidth: 270 }}>Commodity Desc</th>
+          <th scope="col">Cargo Value (INR)</th>
           <th scope="col">Gate In Packages</th>
           <th scope="col">Gross Weight</th>
           <th scope="col">Receiving Pkg</th>
@@ -591,6 +592,7 @@ export default function GeneralOperationalReports() {
             <td>{item[4] || ""}</td>  {/* CHA */}
             <td>{item[5] || ""}</td>  {/* Commodity */}
             <td>{item[6] || ""}</td>  {/* Commodity Desc */}
+            <td>{item[23] || ""}</td>  {/* Cargo Value */}
             <td>{item[7] || ""}</td>  {/* Gate In Packages */}
             <td>{item[8] || ""}</td>  {/* Gross Weight */}
             <td>{item[9] || ""}</td>  {/* Receiving Pkg */}
