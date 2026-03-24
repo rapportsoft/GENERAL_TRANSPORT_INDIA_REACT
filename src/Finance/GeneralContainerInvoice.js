@@ -1100,6 +1100,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
         const data = response.data.result;
 
+        console.log('final data ',data)
+
         setBeforeTax(response.data.finaltotalRateWithoutTax);
         setReceiptAmt(response.data.finaltotalRateWithTax);
         setBalanceAmt(response.data.finaltotalRateWithTax);

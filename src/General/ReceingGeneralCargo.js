@@ -1,3 +1,5 @@
+
+
 // import AuthContext from "../Components/AuthProvider";
 // import { useLocation, useNavigate } from "react-router-dom";
 // import React, { useEffect, useState, useContext } from "react";
@@ -33,6 +35,7 @@
 //   faPlaneArrival,
 //   faXmark,
 //   faEye,
+//   faAtom,
 // } from "@fortawesome/free-solid-svg-icons";
 // import "../assets/css/style.css";
 // import "../Components/Style.css";
@@ -346,11 +349,11 @@
 
 
 //   const [currentPage, setCurrentPage] = useState(1);
-//   const [itemsPerPage] = useState(5);
+//   const [itemsPerPage] = useState(10);
 
 //   const indexOfLastItem = currentPage * itemsPerPage;
 //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//   const currentItems = chaSearchedData;
+//   const currentItems = chaSearchedData.slice(indexOfFirstItem, indexOfLastItem);
 //   const totalPages = Math.ceil(chaSearchedData.length / itemsPerPage);
 
 //   // Function to handle page change
@@ -398,7 +401,7 @@
 
 //       return {
 //         ...updatedNOC,
-//         insuranceValue: (cifValue + cargoDuty).toFixed(2), // Update insuranceValue
+//         insuranceValue: (cifValue + cargoDuty).toFixed(3), // Update insuranceValue
 //       };
 //     });
 
@@ -490,6 +493,15 @@
 //       return;
 //     }
 
+//     if (!inBond.receivingDate) {
+//       errors.receivingDate = "Receiving date is required.";
+//       toast.error("Receiving date is required.", {
+//         // ... (toast options)
+//       });
+//       setLoading(false);
+//       return;
+//     }
+
 //     if (!inBond.cargoCondition) {
 //       errors.cargoCondition = "Please specify cargo condition...";
 //       document.getElementById("cargoCondition").classList.add("error-border");
@@ -544,7 +556,7 @@
 //         return true;
 //       }
 
-//       if (inBond.spaceAllocated === 'COVERED') {
+//       if (inBond.spaceAllocated === 'COVERED' || inBond.spaceAllocated === 'COVEREDGD') {
 //         // areaReleased must be greater than 0
 //         return !row.cellAreaAllocated || parseFloat(row.cellAreaAllocated) <= 0;
 //       }
@@ -604,7 +616,7 @@
 //       const perPackageWeight = dtl.grossWeight / dtl.nocPackages;
 //       updatedValues[index].inbondGrossWt = (
 //         perPackageWeight * parseFloat(values.inBondedPackages || 0)
-//       ).toFixed(2);
+//       ).toFixed(3);
 
 //       updatedValues[index].errorMessage = errorMessage;
 //     });
@@ -768,6 +780,9 @@
 //       }
 
 
+//       console.log('data : ', data);
+
+
 //       // setInputValues(data.map(mnr => ({
 //       //   ...mnr,
 //       //   receivingPackages: (mnr.noOfPackages - (mnr.receivingPackages || 0)),
@@ -802,14 +817,11 @@
 //             (mnr.gateInWeight || 0) - (
 //               ((mnr.jobGwt / (mnr.jobNop || 1)) *
 //                 (mnr.receivingPackages - (mnr.gateInPackages || 0)))
-//             ).toFixed(2)
+//             ).toFixed(3)
 //           ),
-//           // balanceReceivedWeight: (mnr.gateInWeight - (mnr.receivingWeight || 0)),
-
 //           shortagePackages: mnr.shortagePackages || 0,
 //           damagedQty: mnr.damagedQty || 0,
 //           breakage: mnr.breakage || 0,
-
 //           commodityId: mnr.commodityId,
 //           gateInPackages: mnr.noOfPackages,
 //           jobGwt: mnr.jobGwt,
@@ -820,13 +832,11 @@
 //             (mnr.gateInWeight || 0) - (
 //               ((mnr.jobGwt / (mnr.jobNop || 1)) *
 //                 (mnr.receivingPackages - (mnr.gateInPackages || 0)))
-//             ).toFixed(2)
+//             ).toFixed(3)
 //           ),
 
-//           oldReceivedPackages:
-//             (mnr.oldReceivedPackages || 0) + (mnr.receivingPackages || 0),
-
-
+//           oldReceivedPackages: (mnr.receivingPackages || 0),
+//           oldReceivedWeight: (mnr.receivingWeight || 0),
 
 //         }))
 //       );
@@ -885,23 +895,16 @@
 //         ...mnr,
 
 //         receivingPackages: mnr.receivingPackages || 0,
+//         oldReceivedPackagesThis: mnr.receivingPackages || 0,
+//         balanceReceivedPackages: (mnr.gateInPackages - (mnr.oldReceivingPackages || 0)),
 
-//         balanceReceivedPackages: (mnr.gateInPackages - (mnr.receivingPackages || 0)),
+//         balanceReceivedWeight: (mnr.gateInWeight || 0) - (mnr.oldReceivingPackages || 0),
 
-//         balanceReceivedWeight: (
-//           (
-//             (mnr.gateInWeight || 0) -
-//             ((mnr.jobGwt / (mnr.jobNop || 1)) * (mnr.receivingPackages || 0))
-//           ).toFixed(2)
-//         ),
+//         receivingWeight: mnr.receivingWeight || 0,
 
-//         receivingWeight: (
-//           (
-//             (mnr.jobGwt / (mnr.jobNop || 1)) * (mnr.receivingPackages || 0)
-//           ).toFixed(2)
-//         ),
+//         oldReceivedPackages: mnr.oldReceivingPackages || 0, // No increment after save
+//         oldReceivedWeight: mnr.oldReceivingWeight || 0, // No increment after save
 
-//         oldReceivedPackages: (mnr.oldReceivedPackages || 0) + (mnr.receivingPackages || 0), // No increment after save
 
 //         shortagePackages: mnr.shortagePackages || 0,
 //         damagedQty: mnr.damagedQty || 0,
@@ -980,6 +983,10 @@
 //     return sanitizedInput; // Return sanitized input
 //   }
 
+
+
+
+
 //   const handleInputChangeFotDtl = (event, fieldName, index, val, val1) => {
 //     const { value } = event.target;
 //     let newValue = value;
@@ -992,11 +999,8 @@
 //       const updatedValues = [...prevInputValues];
 //       // const dtl = currentItems[index]; 
 
-//       const selectedRow = selectedRows[index];
-
-//       console.log("selectedRow", selectedRow);
 //       const dtl = currentItems[index]; // Get the current item details for comparison
-
+//       const currentRow = updatedValues[index]; // Use from inputValues directly
 //       let errorMessage = "";
 
 
@@ -1007,11 +1011,10 @@
 //       );
 
 //       if (fieldName === "receivingPackages") {
-//         // Calculate per package weight and update inbondGrossWt
 //         const perPackageWeight = dtl.jobGwt / dtl.jobNop;
 //         updatedValues[index].receivingWeight = (
 //           perPackageWeight * parseFloat(newValue)
-//         ).toFixed(2);
+//         ).toFixed(3);
 
 //       }
 
@@ -1019,13 +1022,17 @@
 //       let addition;
 
 //       if (inBond.receivingId) {
-//         addition = dtl.gateInPackages;
+//         // addition = dtl.gateInPackages;
+
+//         const oldPkg = parseFloat(currentRow.oldReceivedPackagesThis || 0);
+//         const balancePkg = parseFloat(currentRow.balanceReceivedPackages || 0);
+//         addition = oldPkg + balancePkg;
+
+
 //       } else {
 //         addition = dtl.noOfPackages - dtl.receivingPackages;
-//         // addition=dtl.inBondedPackages;
 //       }
 
-//       //const addition=dtl.gateInPackages - dtl.inBondedPackages;
 //       console.log("addition", addition);
 
 //       if (fieldName === "receivingPackages" && parseFloat(newValue) > addition) {
@@ -1042,6 +1049,14 @@
 //       return updatedValues;
 //     });
 //   };
+
+
+
+
+
+
+
+
 
 
 //   const handleCheckboxChangeForDtl = (event, row) => {
@@ -1143,7 +1158,7 @@
 
 //   const handleYardLocationData = (type) => {
 //     fetch(
-//       `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === 'OPEN' ? 'O' : type === 'COVERED' ? 'C' : ''
+//       `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === 'OPEN' ? 'O' : type === 'COVERED' ? 'C' : type === 'COVEREDGD' ? 'G' : ''
 //       }`
 //     ).then((response) => response.json())
 //       .then((data) => {
@@ -1214,6 +1229,7 @@
 //           nocTransId: row.nocTransId,
 //           cellAreaAllocated: row.cellAreaAllocated,
 //           cellAreaUsed: row.cellAreaUsed,
+//           palletWiseWt: row.palletWiseWt,
 //         }));
 
 //         // Update the rows state with new values
@@ -1256,6 +1272,7 @@
 //         jobNo: selectedOption?.jobNo,
 //         jobTransDate: selectedOption?.jobTransDate,
 //         jobDate: selectedOption?.jobDate,
+//         receivingDate: selectedOption?.jobDate == null ? new Date() : new Date(selectedOption?.jobDate),
 //         boeNo: selectedOption?.value,
 //         cha: selectedOption?.cha,
 //         boeDate: selectedOption?.boeDate,
@@ -1373,6 +1390,7 @@
 //       approvedDate: null,
 //       jobTransId: "",
 //       jobNo: "",
+//       palletWiseWt: 0.000
 //     },
 //   ]);
 //   const handleInputChange = (index, e) => {
@@ -1451,6 +1469,22 @@
 //         });
 //       }
 //     }
+//     setRows(newRows);
+//   };
+
+//   const handleInputChange1 = (index, e, val1, val2) => {
+//     const { name, value } = e.target;
+//     let newVal = value;
+
+//     if (name === "palletWiseWt") {
+//       newVal = handleInputChangeNew(value, val1, val2);
+//     }
+
+//     const newRows = [...rows];
+//     newRows[index][name] = newVal;
+
+//     // Check if the field being updated is inBondPackages
+
 //     setRows(newRows);
 //   };
 
@@ -1614,6 +1648,7 @@
 //         cellAreaUsed: "",
 //         receivedPackages: "",
 //         cellAreaAllocated: "",
+//         palletWiseWt: ""
 //       },
 //     ]);
 
@@ -2002,37 +2037,183 @@
 //   };
 
 
+//   const [isModalOpenForAddBatch, setIsModalOpenForAddBatch] = useState(false);
+//   const [selectedSrNo, setSelectedSrNo] = useState("");
+
+//   const [batchData, setBatchData] = useState([{
+//     batchNo: "",
+//     receivingId: "",
+//     receivingSrNo: 0,
+//     srNo: 0,
+//     startDate: null,
+//     endDate: null
+//   }])
+
+//   const handleBatchChange = (e, index) => {
+//     const { name, value } = e.target;
+
+//     setBatchData((prevState) => {
+//       const updatedRows = [...prevState];
+//       updatedRows[index] = {
+//         ...updatedRows[index],
+//         [name]: value,
+//       };
+//       return updatedRows;
+//     });
+//   }
+
+//   const openAddBatchModal = (srNo) => {
+
+//     setIsModalOpenForAddBatch(true);
+//     setSelectedSrNo(srNo);
+//     getBatchData(srNo);
+//   }
+
+//   const closeAddBatchModal = () => {
+//     setIsModalOpenForAddBatch(false);
+//     setSelectedSrNo("");
+//     setBatchData([{
+//       batchNo: "",
+//       receivingId: "",
+//       receivingSrNo: 0,
+//       srNo: 0,
+//       startDate: null,
+//       endDate: null
+//     }])
+//   }
+
+//   const addBatch = () => {
+//     const addData = {
+//       batchNo: "",
+//       receivingId: "",
+//       receivingSrNo: 0,
+//       srNo: 0,
+//       startDate: null,
+//       endDate: null
+//     }
+
+//     setBatchData([...batchData, addData]);
+//   }
+
+//   const removeBatch = (index) => {
+//     const updated = batchData.filter((_, i) => i !== index);
+//     setBatchData(updated);
+//   };
+
+//   const handleSaveBatch = () => {
+
+//     if (batchData.length === 0) {
+//       toast.error('Please enter batch data', {
+//         autoClose: 800
+//       })
+//       return;
+//     }
+
+//     for (let i = 0; i < batchData.length; i++) {
+//       const { batchNo, startDate, endDate } = batchData[i];
+
+//       if (!batchNo) {
+//         toast.error(`Error: Batch no are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+
+//       if (!startDate) {
+//         toast.error(`Error: Mfg Date are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+
+//       if (!endDate) {
+//         toast.error(`Error: Exp Date are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+//     }
+
+//     setLoading(true);
+
+//     axios.post(`${ipaddress}api/receiving/saveBatchData`, batchData, {
+//       headers: {
+//         Authorization: `Bearer ${jwtToken}`
+//       },
+//       params: {
+//         cid: companyid,
+//         bid: branchId,
+//         user: userId,
+//         receivingId: inBond.receivingId,
+//         rSrNo: selectedSrNo
+//       }
+//     })
+//       .then((response) => {
+//         setLoading(false);
+
+//         toast.success("Batch data save successfully!!", {
+//           autoClose: 800
+//         })
+
+//         setBatchData(response.data.map((item) => ({
+//           batchNo: item.batchNo || "",
+//           receivingId: item.receivingId || "",
+//           receivingSrNo: item.receivingSrNo || 0,
+//           srNo: item.srNo || 0,
+//           startDate: item.startDate === null ? null : new Date(item.startDate),
+//           endDate: item.endDate === null ? null : new Date(item.endDate),
+//         })))
+
+//       })
+//       .catch((error) => {
+//         setLoading(false);
+//         if (error) {
+//           toast.error(error.response.data, {
+//             autoClose: 800
+//           })
+//         }
+//       })
+//   }
+
+//   const getBatchData = (srNo) => {
+//     setLoading(true);
+//     axios.get(`${ipaddress}api/receiving/getBatchData`, {
+//       headers: {
+//         Authorization: `Bearer ${jwtToken}`
+//       },
+//       params: {
+//         cid: companyid,
+//         bid: branchId,
+//         user: userId,
+//         receivingId: inBond.receivingId,
+//         rSrNo: srNo
+//       }
+//     })
+//       .then((response) => {
+//         setLoading(false);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//         setBatchData(response.data.map((item) => ({
+//           batchNo: item.batchNo || "",
+//           receivingId: item.receivingId || "",
+//           receivingSrNo: item.receivingSrNo || 0,
+//           srNo: item.srNo || 0,
+//           startDate: item.startDate === null ? null : new Date(item.startDate),
+//           endDate: item.endDate === null ? null : new Date(item.endDate),
+//         })))
+//       })
+//       .catch((error) => {
+//         setLoading(false);
+//         setBatchData([{
+//           batchNo: "",
+//           receivingId: "",
+//           receivingSrNo: 0,
+//           srNo: 0,
+//           startDate: null,
+//           endDate: null
+//         }])
+//       })
+//   }
 
 //   return (
 //     <>
@@ -2422,7 +2603,7 @@
 //                   className="forlabel bold-label"
 //                   htmlFor="receivingDate"
 //                 >
-//                   Receiving Date
+//                   Receiving Date <span style={{ color: 'red' }}>*</span>
 //                 </label>
 //                 <div style={{ position: "relative" }}>
 //                   <DatePicker
@@ -2431,9 +2612,9 @@
 //                     id="receivingDate"
 //                     name="receivingDate"
 //                     dateFormat="dd/MM/yyyy HH:mm"
-//                     showTimeSelect
+//                     showTimeInput
 //                     value={inBond.receivingDate}
-//                     disabled
+//                     //  disabled
 //                     timeFormat="HH:mm"
 //                     className="form-control border-right-0 inputField"
 //                     wrapperClassName="custom-react-datepicker-wrapper"
@@ -2800,7 +2981,8 @@
 //                   }}
 //                 >
 //                   <option value="">Select Space</option>
-//                   <option value="COVERED">Covered Space</option>
+//                   <option value="COVERED">Racking System</option>
+//                   <option value="COVEREDGD">Covered Grounded Space</option>
 //                   <option value="OPEN">Open Space</option>
 //                 </select>
 //               </FormGroup>
@@ -3188,6 +3370,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3212,6 +3395,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3238,6 +3422,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3372,6 +3557,8 @@
 //                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Used</th>
 //                 <th scope="col" className="text-center" style={{ color: "black" }} >Yard Packages <span className="error-message">*</span></th>
 //                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Allocated <span className="error-message">*</span></th>
+//                 <th scope="col" className="text-center" style={{ color: "black" }} >Weight per Pallet</th>
+//                 <th scope="col" className="text-center" style={{ color: "black" }} >Action</th>
 //               </tr>
 //             </thead>
 //             <tbody>
@@ -3510,6 +3697,16 @@
 //                         {errors[`cellAreaAllocated-${index}`]}
 //                       </span>
 //                     )}
+//                   </td>
+//                   <td>
+//                     <Input
+//                       className="form-control"
+//                       type="text"
+//                       name="palletWiseWt"
+//                       value={row.palletWiseWt}
+//                       onChange={(e) => handleInputChange1(index, e, 13, 3)}
+//                     />
+
 //                   </td>
 //                   {/* <td>
 //                 {row.inBondingId }
@@ -3722,31 +3919,41 @@
 //                   className="text-center"
 //                   style={{ color: "black" }}
 //                 >
-//                   Bal Receiving PKG <span className="error-message">*</span>
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Bal Receiving Weight  <span className="error-message">*</span>
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Receiving Package
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Receiving Weight
+//                   Old Recived Weight
 //                 </th>
 
-//                 <th scope="col" className="text-center" style={{ color: 'black' }}>Damage Documents</th>
+
+
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Bal Receiving PKG
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Bal Receiving Weight
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Receiving Package <span className="error-message">*</span>
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Receiving Weight <span className="error-message">*</span>
+//                 </th>
+
+//                 <th scope="col" className="text-center" style={{ color: 'black' }}>Action</th>
 //               </tr>
 //             </thead>
 //             <tbody>
@@ -3787,6 +3994,7 @@
 //                   {/* <td>{dtl.receivingPackages != null ? dtl.receivingPackages : 0}</td> */}
 
 //                   <td>{inputValues[index]?.oldReceivedPackages}</td>
+//                   <td>{inputValues[index]?.oldReceivedWeight}</td>
 //                   {/* <td>{dtl.balanceReceivedPackages}</td>
 //                   <td>{dtl.balanceReceivedWeight}</td> */}
 
@@ -3848,13 +4056,36 @@
 
 
 //                   <td className="text-center">
-//                     {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+//                     {/* {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
 //                       <FontAwesomeIcon
 //                         icon={faUpload}
 //                         onClick={() => handleOpenDocumentUpload(dtl)}
 //                         style={{ color: 'green', cursor: 'pointer', fontSize: '24px' }}
 //                       />
-//                     )}
+//                     )} */}
+//                     <td className="text-center">
+//                       <div className="">
+//                         <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+//                           <FontAwesomeIcon icon={faAtom} style={{ marginRight: '5px' }} />
+//                           Action
+//                         </button>
+//                         <ul className="dropdown-menu">
+//                           {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+//                             <li>
+//                               <button className="dropdown-item" onClick={() => handleOpenDocumentUpload(dtl)}>
+//                                 <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />Upload Damage Doc
+//                               </button>
+//                             </li>)}
+//                           {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+//                             <li>
+//                               <button className="dropdown-item" onClick={() => openAddBatchModal(dtl.srNo)}>
+//                                 <FontAwesomeIcon icon={faAdd} style={{ marginRight: "5px" }} />Add Batch
+//                               </button>
+//                             </li>)}
+
+//                         </ul>
+//                       </div>
+//                     </td>
 
 //                   </td>
 
@@ -4133,7 +4364,178 @@
 
 
 
+//       <Modal Modal isOpen={isModalOpenForAddBatch} onClose={closeAddBatchModal} toggle={closeAddBatchModal} style={{ maxWidth: '700px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
 
+//         <ModalHeader toggle={closeAddBatchModal} style={{
+//           backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+//           boxShadow: '0px 5px 10px rgba(0, 77, 64, 0.3)',
+//           border: '1px solid rgba(0, 0, 0, 0.3)',
+//           borderRadius: '0',
+//           backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+//           backgroundSize: 'cover',
+//           backgroundRepeat: 'no-repeat',
+//           backgroundPosition: 'center',
+//         }} >
+
+//           <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+//             icon={faAdd}
+//             style={{
+//               marginRight: '8px',
+//               color: 'white',
+//             }}
+//           />Add Batch</h5>
+
+//         </ModalHeader>
+//         <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+//           <Row>
+//             <Col className="text-center">
+//               <button
+//                 className="btn btn-outline-primary btn-margin newButton"
+//                 style={{ marginRight: 10 }}
+//                 id="submitbtn2"
+//                 onClick={handleSaveBatch}
+//               >
+//                 <FontAwesomeIcon
+//                   icon={faSave}
+//                   style={{ marginRight: "5px" }}
+//                 />
+//                 Save
+//               </button>
+//               <button
+//                 className="btn btn-outline-success btn-margin newButton"
+//                 style={{ marginRight: 10 }}
+//                 id="submitbtn2"
+//                 onClick={addBatch}
+//               >
+//                 <FontAwesomeIcon
+//                   icon={faAdd}
+//                   style={{ marginRight: "5px" }}
+//                 />
+//                 Add Batch
+//               </button>
+//             </Col>
+//           </Row>
+//           <div id="datepicker-portal10"></div>
+//           <div className="mt-3 table-responsive ">
+//             <table className="table table-bordered table-hover tableHeader">
+//               <thead className='tableHeader'>
+//                 <tr className='text-center'>
+//                   <th scope="col">Sr No</th>
+//                   <th scope="col">Batch No <span style={{ color: 'red' }}>*</span> </th>
+//                   <th scope="col">Mfg Date <span style={{ color: 'red' }}>*</span></th>
+//                   <th scope="col">Exp Date <span style={{ color: 'red' }}>*</span></th>
+//                   <th scope="col">Action</th>
+//                 </tr>
+
+//               </thead>
+//               <tbody>
+//                 {batchData.map((item, index) => (
+//                   <tr key={index}>
+//                     <td>{index + 1}</td>
+//                     <td>
+//                       <Input
+//                         type="text"
+//                         name="batchNo"
+//                         id="batchNo"
+//                         value={item.batchNo}
+//                         maxLength={30}
+//                         onChange={(e) => handleBatchChange(e, index)}
+//                       />
+//                     </td>
+//                     <td>
+//                       <div style={{ position: "relative" }}>
+//                         <DatePicker
+//                           selected={item.startDate}
+//                           onChange={(date) => {
+//                             setBatchData((prevState) => {
+//                               const updatedRows = [...prevState];
+//                               updatedRows[index] = {
+//                                 ...updatedRows[index],
+//                                 startDate: date,
+//                                 endDate: date >= prevState.endDate ? null : prevState.endDate,
+//                               };
+//                               return updatedRows;
+//                             });
+//                           }}
+//                           portalId="datepicker-portal10"
+//                           id="startDate"
+//                           name="startDate"
+//                           dateFormat="dd/MM/yyyy"
+//                           className="form-control border-right-0 inputField"
+//                           wrapperClassName="custom-react-datepicker-wrapper"
+//                         />
+//                         <FontAwesomeIcon
+//                           icon={faCalendarAlt}
+//                           style={{
+//                             position: "absolute",
+//                             right: "10px",
+//                             top: "50%",
+//                             transform: "translateY(-50%)",
+//                             pointerEvents: "none",
+//                             color: "#6c757d",
+//                           }}
+//                         />
+//                       </div>
+//                     </td>
+//                     <td>
+//                       <div style={{ position: "relative" }}>
+//                         <DatePicker
+//                           selected={item.endDate}
+//                           onChange={(date) => {
+//                             setBatchData((prevState) => {
+//                               const updatedRows = [...prevState];
+//                               updatedRows[index] = {
+//                                 ...updatedRows[index],
+//                                 endDate: date,
+//                               };
+//                               return updatedRows;
+//                             });
+//                           }}
+//                           minDate={(() => {
+//                             const date = new Date(item.startDate);
+//                             date.setDate(date.getDate() + 1);
+//                             return date;
+//                           })()}
+//                           portalId="datepicker-portal10"
+//                           id="endDate"
+//                           name="endDate"
+//                           dateFormat="dd/MM/yyyy"
+//                           className="form-control border-right-0 inputField"
+//                           wrapperClassName="custom-react-datepicker-wrapper"
+//                         />
+//                         <FontAwesomeIcon
+//                           icon={faCalendarAlt}
+//                           style={{
+//                             position: "absolute",
+//                             right: "10px",
+//                             top: "50%",
+//                             transform: "translateY(-50%)",
+//                             pointerEvents: "none",
+//                             color: "#6c757d",
+//                           }}
+//                         />
+//                       </div>
+//                     </td>
+//                     <td>
+//                       <button
+//                         className="btn btn-outline-danger btn-margin newButton"
+//                         id="submitbtn2"
+//                         onClick={() => removeBatch(index)}
+//                         disabled={item.receivingId}
+//                       >
+//                         <FontAwesomeIcon
+//                           icon={faTrash}
+//                         />
+//                       </button>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+
+//         </ModalBody>
+//       </Modal >
 
 
 
@@ -4176,12 +4578,6 @@
 // }
 
 // export default ReceingGeneralCargo;
-
-
-
-
-
-
 
 
 
@@ -5416,6 +5812,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
           cellAreaAllocated: row.cellAreaAllocated,
           cellAreaUsed: row.cellAreaUsed,
           palletWiseWt: row.palletWiseWt,
+          perPalletReciving: row.perPalletReciving,
         }));
 
         // Update the rows state with new values
@@ -5576,7 +5973,8 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
       approvedDate: null,
       jobTransId: "",
       jobNo: "",
-      palletWiseWt: 0.000
+      palletWiseWt: 0.000,
+      perPalletReciving: 0.000,
     },
   ]);
   const handleInputChange = (index, e) => {
@@ -5834,7 +6232,8 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
         cellAreaUsed: "",
         receivedPackages: "",
         cellAreaAllocated: "",
-        palletWiseWt: ""
+        palletWiseWt: "",
+        perPalletReciving: "",
       },
     ]);
 
@@ -7744,6 +8143,7 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                 <th scope="col" className="text-center" style={{ color: "black" }} >Yard Packages <span className="error-message">*</span></th>
                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Allocated <span className="error-message">*</span></th>
                 <th scope="col" className="text-center" style={{ color: "black" }} >Weight per Pallet</th>
+                <th scope="col" className="text-center" style={{ color: "black" }} >Per Pallet Receiving Rate</th>
                 <th scope="col" className="text-center" style={{ color: "black" }} >Action</th>
               </tr>
             </thead>
@@ -7890,6 +8290,17 @@ function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfI
                       type="text"
                       name="palletWiseWt"
                       value={row.palletWiseWt}
+                      onChange={(e) => handleInputChange1(index, e, 13, 3)}
+                    />
+
+                  </td>
+
+                  <td>
+                    <Input
+                      className="form-control"
+                      type="text"
+                      name="perPalletReciving"
+                      value={row.perPalletReciving}
                       onChange={(e) => handleInputChange1(index, e, 13, 3)}
                     />
 
