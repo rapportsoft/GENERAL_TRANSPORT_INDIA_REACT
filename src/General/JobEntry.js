@@ -300,7 +300,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
         setNOC(response.data);
         setNocErrors({});
         setNocDtlErrors({});
-
+        setSelectedDate(new Date(response.data.jobTransDate))
         // setNOC((prev) => ({
         //   ...prev,
         //   cha: data.cha,
@@ -716,6 +716,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
         onRequest();
         setLoading(false);
         setNocFlag('edit');
+        setSelectedDate(new Date(response.data.jobTransDate))
       })
       .catch((error) => {
         setLoading(false);
@@ -936,6 +937,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
     })
       .then((response) => {
         setNOC(response.data);
+        setSelectedDate(new Date(response.data.jobTransDate))
         toast.success("Data saved successfully!!", { autoClose: 800 });
         fetchData(companyid, branchId, response.data.jobTransId, response.data.jobNo);
         setLoading(false);
@@ -2242,7 +2244,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
                     name="jobTransDate"
                     dateFormat="dd/MM/yyyy HH:mm"
                     showTimeSelect
-                    value={noc.jobTransDate}
+                  //  value={new Date(noc.jobTransDate)}
                     disabled
                     timeFormat="HH:mm"
                     className="form-control border-right-0 inputField"
