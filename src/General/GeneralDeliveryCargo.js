@@ -338,7 +338,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(100);
 
   const currentItems = chaSearchedData;
   const totalPages = Math.ceil(chaSearchedData.length / itemsPerPage);

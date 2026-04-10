@@ -2,6 +2,6 @@
 
  const ipaddress = 'http://103.240.90.122:8080/GENERAL/';
 
- //const ipaddress = 'http://localhost:8082/';
+ // const ipaddress = 'http://localhost:8082/';
 
 export default ipaddress;

@@ -1,3 +1,5 @@
+
+
 // import AuthContext from "../Components/AuthProvider";
 // import { useLocation, useNavigate } from "react-router-dom";
 // import React, { useEffect, useState, useContext } from "react";
@@ -33,6 +35,8 @@
 //   faPlaneArrival,
 //   faXmark,
 //   faEye,
+//   faAtom,
+//   faPlus,
 // } from "@fortawesome/free-solid-svg-icons";
 // import "../assets/css/style.css";
 // import "../Components/Style.css";
@@ -59,7 +63,16 @@
 // import pdfLogo from "../Images/pdfLogo.png";
 // import xlsLogo from "../Images/xlsLogo.png";
 
-// function ReceingGeneralCargo({ noctrans, nocno, acttab, boe, listOfData, listOfInbond, flag, onRequest }) {
+// function ReceingGeneralCargo({
+//   noctrans,
+//   nocno,
+//   acttab,
+//   boe,
+//   listOfData,
+//   listOfInbond,
+//   flag,
+//   onRequest,
+// }) {
 //   const navigate = useNavigate();
 //   const axios = useAxios();
 //   const { isAuthenticated } = useContext(AuthContext);
@@ -68,7 +81,7 @@
 //   useEffect(() => {
 //     if (!isAuthenticated) {
 //       navigate(
-//         "/login?message=You need to be authenticated to access this page."
+//         "/login?message=You need to be authenticated to access this page.",
 //       );
 //     }
 //   }, [isAuthenticated, navigate]);
@@ -255,7 +268,7 @@
 //           headers: {
 //             Authorization: `Bearer ${jwtToken}`,
 //           },
-//         }
+//         },
 //       )
 //       .then((response) => {
 //         setCHASearchedData(response.data);
@@ -268,7 +281,29 @@
 //         setLoading(false);
 //       });
 //   };
+//   const canDeleteRow = (row) => {
+//     // Check if this specific row in the grid has delivered packages > 0
+//     if (row.deliveredPackages && parseFloat(row.deliveredPackages) > 0) {
+//       return false;
+//     }
 
+//     // If you need to check the corresponding commodity record for delivered packages
+//     // Find the corresponding commodity record in selectedRows or currentItems
+//     const commodityRecord = selectedRows.find(
+//       (item) =>
+//         item.gateInId === row.gateInId && item.commodityId === row.commodityId,
+//     );
+
+//     if (
+//       commodityRecord &&
+//       commodityRecord.deliveredPackages &&
+//       parseFloat(commodityRecord.deliveredPackages) > 0
+//     ) {
+//       return false;
+//     }
+
+//     return true;
+//   };
 //   const clearSearch = () => {
 //     setChaSearchId("");
 //     searchCHA("");
@@ -276,24 +311,32 @@
 //   const [chaName, setChaName] = useState("");
 //   useEffect(() => {
 //     if (acttab == "P01803") {
-
-//       if (listOfData.jobTransId && listOfData.jobNo && listOfData.boeNo && listOfInbond.receivingId) {
-//         selectIGMSearchRadio(listOfData.jobTransId, listOfInbond.receivingId, listOfData.jobNo);
-//       }
-//       else {
+//       if (
+//         listOfData.jobTransId &&
+//         listOfData.jobNo &&
+//         listOfData.boeNo &&
+//         listOfInbond.receivingId
+//       ) {
+//         selectIGMSearchRadio(
+//           listOfData.jobTransId,
+//           listOfInbond.receivingId,
+//           listOfData.jobNo,
+//         );
+//       } else {
 //         getBoeData(listOfData.boeNo);
 //       }
 //       if (flag) {
 //         handleClear();
 //       }
 //     }
-//   }, [listOfData.jobTransId, listOfInbond.receivingId, listOfData.jobNo, acttab]);
+//   }, [
+//     listOfData.jobTransId,
+//     listOfInbond.receivingId,
+//     listOfData.jobNo,
+//     acttab,
+//   ]);
 
-//   const selectIGMSearchRadio = (
-//     trasid,
-//     inbondingId,
-//     nocNo,
-//   ) => {
+//   const selectIGMSearchRadio = (trasid, inbondingId, nocNo) => {
 //     closeIGMSearchModal();
 //     axios
 //       .get(
@@ -302,13 +345,13 @@
 //           headers: {
 //             Authorization: `Bearer ${jwtToken}`,
 //           },
-//         }
+//         },
 //       )
 //       .then((response) => {
 //         const data = response.data;
 //         setInBondFlag("edit");
 //         console.log("getDataByPartyIdAndGstNo", data);
-//         setInBond(response.data)
+//         setInBond(response.data);
 
 //         setIsoName(response.data.boeNo);
 
@@ -325,24 +368,20 @@
 //         //   response.data.nocNo,
 //         // );
 //         handleGridData(response.data.receivingId);
-//         fetchDataAfterSave(
-//           companyid,
-//           branchId,
-//           response.data.receivingId,
-//         )
+//         fetchDataAfterSave(companyid, branchId, response.data.receivingId);
 //       })
-//       .catch((error) => { });
+//       .catch((error) => {});
 //   };
 
 //   const [importerSearchId, setImporterSearchId] = useState("");
 //   const [importerSearchedData, setImporterSearchedData] = useState([]);
 
 //   const [currentPage, setCurrentPage] = useState(1);
-//   const [itemsPerPage] = useState(5);
+//   const [itemsPerPage] = useState(100);
 
 //   const indexOfLastItem = currentPage * itemsPerPage;
 //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//   const currentItems = chaSearchedData;
+//   const currentItems = chaSearchedData.slice(indexOfFirstItem, indexOfLastItem);
 //   const totalPages = Math.ceil(chaSearchedData.length / itemsPerPage);
 
 //   // Function to handle page change
@@ -369,7 +408,7 @@
 
 //     return Array.from(
 //       { length: endPage - startPage + 1 },
-//       (_, i) => startPage + i
+//       (_, i) => startPage + i,
 //     );
 //   };
 
@@ -390,7 +429,7 @@
 
 //       return {
 //         ...updatedNOC,
-//         insuranceValue: (cifValue + cargoDuty).toFixed(2), // Update insuranceValue
+//         insuranceValue: (cifValue + cargoDuty).toFixed(3), // Update insuranceValue
 //       };
 //     });
 
@@ -435,7 +474,9 @@
 //     setInBond((prevNoc) => ({
 //       ...prevNoc,
 //       bondingDate: date,
-//       bondValidityDate: date ? new Date(date.getTime() + 364 * 24 * 60 * 60 * 1000) : null,
+//       bondValidityDate: date
+//         ? new Date(date.getTime() + 364 * 24 * 60 * 60 * 1000)
+//         : null,
 //     }));
 //     document.getElementById("bondingDate").classList.remove("error-border");
 //     setBondingErrors((prevErrors) => ({
@@ -462,211 +503,242 @@
 //   const handleSave = () => {
 //     setLoading(true);
 
-//     let errors = {};
-
-//     if (!inBond.boeNo) {
-//       errors.boeNo = "BOE No is required.";
-//       document.getElementById("boeNo").classList.add("error-border");
-//       toast.error("BOE No is required.", {
-//         // ... (toast options)
-//       });
-//       setLoading(false);
-//       return;
-//     }
-
-//     if (!inBond.cargoCondition) {
-//       errors.cargoCondition = "Please specify cargo condition...";
-//       document.getElementById("cargoCondition").classList.add("error-border");
-//       toast.error("Please specify cargo condition...", {
-//       });
-//       setLoading(false);
-//       return;
-//     }
-//     if (!inBond.handlingEquip1) {
-//       errors.handlingEquip1 = "Please specify handling equipment...";
-//       document.getElementById("handlingEquip1").classList.add("error-border");
-//       toast.error("Please specify cargo condition...", {
-//       });
-//       setLoading(false);
-//       return;
-//     }
-
-//     if (!inBond.handlingEquip2) {
-//       errors.handlingEquip2 = "Please specify handling2 equipment...";
-//       document.getElementById("handlingEquip2").classList.add("error-border");
-//       toast.error("Please specify cargo condition...", {
-//       });
-//       setLoading(false);
-//       return;
-//     }
-
-//     if (selectedRows.length === 0) {
-//       toast.error(
-//         "Commodity not selected. Please select commodity to add..."
-//       );
-//       setLoading(false);
-//       return;
-//     }
-
-//     // const hasEmptyFields = rows.some(row =>
-//     //   !row.yardLocation || !row.yardBlock || !row.blockCellNo || row.areaReleased
-//     // );
-
-//     // if (hasEmptyFields) {
-//     //   const errorMsg = "Required fields in location must be filled before saving.";
-//     //   setErrors((prevErrors) => ({
-//     //     ...prevErrors,
-//     //     save: errorMsg, // Set error message for save
-//     //   }));
-//     //   setLoading(false);
-//     //   toast.error(errorMsg); // Display error toast
-//     //   return; // Exit the function to prevent saving
-//     // }
-
-//     const hasEmptyFields = rows.some(row => {
-//       if (!row.yardLocation || !row.yardBlock || !row.blockCellNo) {
-//         return true;
-//       }
-
-//       if (inBond.spaceAllocated === 'COVERED') {
-//         // areaReleased must be greater than 0
-//         return !row.cellAreaAllocated || parseFloat(row.cellAreaAllocated) <= 0;
-//       }
-
-//       // If OPEN, skip areaReleased check
-//       return false;
-//     });
-
-//     if (hasEmptyFields) {
-//       const errorMsg = "Required fields in location must be filled before saving.";
-//       setErrors((prevErrors) => ({
-//         ...prevErrors,
-//         save: errorMsg,
-//       }));
-//       setLoading(false);
-//       toast.error(errorMsg);
-//       return;
-//     }
-
-//     let isValid = true;
-//     const updatedValues = [...inputValues];
-//     selectedRows.forEach((dtl, index) => {
-//       if (!updatedValues[index]) {
-//         updatedValues[index] = {};
-//       }
-
-//       const values = updatedValues[index];
-//       let errorMessage = "";
-
-//       if (!values.receivingPackages) {
-//         errorMessage = "Receiving Packages is required";
-//         toast.error("Receiving Packages is required.", {
-//         });
-//         setLoading(false);
-//         isValid = false;
-//       } else if (parseFloat(values.receivingPackages) > dtl.noOfPackages) {
-//         errorMessage =
-//           "Receiving Packages should not be greater than gate in Packages";
-//         toast.error(
-//           "Receiving Packages should not be greater than gate in Packages.",
+//     // First, delete marked rows if any
+//     if (rowsToDelete.length > 0) {
+//       // Create an array of delete promises
+//       const deletePromises = rowsToDelete.map((rowToDelete) => {
+//         return axios.delete(
+//           `${ipaddress}api/receiving/deleteYardLocationGridOnly`,
 //           {
-//           }
-//         );
-//         setLoading(false);
-//         isValid = false;
-//       }
-
-//       // Automatically calculate inbondInsuranceValue
-//       updatedValues[index].inbondInsuranceValue =
-//         parseFloat(values.inbondCifValue || 0) +
-//         parseFloat(values.inbondCargoDuty || 0);
-
-//       // Automatically calculate inbondGrossWt
-//       const perPackageWeight = dtl.grossWeight / dtl.nocPackages;
-//       updatedValues[index].inbondGrossWt = (
-//         perPackageWeight * parseFloat(values.inBondedPackages || 0)
-//       ).toFixed(2);
-
-//       updatedValues[index].errorMessage = errorMessage;
-//     });
-
-//     const dataToSave = selectedRows.map((row) => {
-//       const index = currentItems.findIndex(
-//         (item) =>
-//           item.jobTransId === row.jobTransId &&
-//           item.jobNo === row.jobNo &&
-//           item.commodityId === row.commodityId &&
-//           item.srNo === row.srNo
-//       );
-//       const inputValuesForRow = inputValues[index] || {};
-//       const updatedFields = {};
-
-//       Object.keys(inputValuesForRow).forEach((field) => {
-//         if (inputValuesForRow[field] !== undefined) {
-//           updatedFields[field] = inputValuesForRow[field];
-//         }
-//       });
-
-//       return {
-//         ...row,
-//         ...updatedFields,
-//       };
-//     });
-
-//     const requestBody = {
-//       inBond: {
-//         ...inBond,
-//       },
-//       nocDtl: {
-//         ...dataToSave,
-//       },
-//       grid: {
-//         ...rows
-//       }
-//     };
-
-//     // return;
-
-//     // setLoading(false);
-//     if (isValid) {
-//       axios
-//         .post(
-//           `${ipaddress}api/receiving/saveCfInbondCrg?companyId=${companyid}&branchId=${branchId}&user=${userId}&flag=${inbondFlag}`,
-//           requestBody,
-//           {
+//             params: {
+//               companyId: companyid,
+//               branchId: branchId,
+//               receivingId: rowToDelete.receivingId,
+//               yardLocation: rowToDelete.yardLocation,
+//               yardBlock: rowToDelete.yardBlock,
+//               blockCellNo: rowToDelete.blockCellNo,
+//               cellAreaAllocated: rowToDelete.cellAreaAllocated, // Pass the area to subtract
+//               user: userId,
+//             },
 //             headers: {
 //               Authorization: `Bearer ${jwtToken}`,
 //             },
-//           }
-//         )
-//         .then((response) => {
-//           setInBond(response.data);
-//           fetchDataAfterSave(
-//             companyid,
-//             branchId,
-//             response.data.receivingId,
-//           );
-//           handleGridData(response.data.receivingId)
-//           setInBondFlag("edit");
-//           toast.success("Data save successfully!!", {
-//             autoClose: 800,
-//           });
-//           onRequest();
-//           setLoading(false);
+//           },
+//         );
+//       });
+
+//       // Execute all delete operations
+//       Promise.all(deletePromises)
+//         .then(() => {
+//           // Clear the rowsToDelete state after successful deletion
+//           setRowsToDelete([]);
+//           // Continue with the main save operation
+//           proceedWithSave();
 //         })
 //         .catch((error) => {
+//           console.error("Error deleting rows:", error);
+//           toast.error("Failed to delete some rows. Please try again.", {
+//             autoClose: 3000,
+//           });
 //           setLoading(false);
-//           if (error.response) {
-//             // This will log detailed error information from the backend
-//             console.error("Error data:", error.response.data);
-//             toast.error(error.response.data || "An error occurred. Please try again.", {
-//               autoClose: 9000,
-//             });
-//           }
 //         });
 //     } else {
-//       // Update state to reflect errors
-//       setInputValues(updatedValues);
+//       // No rows to delete, proceed directly with save
+//       proceedWithSave();
+//     }
+
+//     function proceedWithSave() {
+//       // Your existing save logic from handleSave goes here
+//       // ... (all your existing validation and save code)
+
+//       let errors = {};
+
+//       if (!inBond.boeNo) {
+//         errors.boeNo = "BOE No is required.";
+//         document.getElementById("boeNo").classList.add("error-border");
+//         toast.error("BOE No is required.", {});
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (!inBond.receivingDate) {
+//         errors.receivingDate = "Receiving date is required.";
+//         toast.error("Receiving date is required.", {});
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (!inBond.cargoCondition) {
+//         errors.cargoCondition = "Please specify cargo condition...";
+//         document.getElementById("cargoCondition").classList.add("error-border");
+//         toast.error("Please specify cargo condition...", {});
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (!inBond.handlingEquip1) {
+//         errors.handlingEquip1 = "Please specify handling equipment...";
+//         document.getElementById("handlingEquip1").classList.add("error-border");
+//         toast.error("Please specify handling equipment...", {});
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (!inBond.handlingEquip2) {
+//         errors.handlingEquip2 = "Please specify handling2 equipment...";
+//         document.getElementById("handlingEquip2").classList.add("error-border");
+//         toast.error("Please specify handling equipment...", {});
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (selectedRows.length === 0) {
+//         toast.error(
+//           "Commodity not selected. Please select commodity to add...",
+//         );
+//         setLoading(false);
+//         return;
+//       }
+
+//       const hasEmptyFields = rows.some((row) => {
+//         if (!row.yardLocation || !row.yardBlock || !row.blockCellNo) {
+//           return true;
+//         }
+
+//         if (
+//           inBond.spaceAllocated === "COVERED" ||
+//           inBond.spaceAllocated === "COVEREDGD"
+//         ) {
+//           return (
+//             !row.cellAreaAllocated || parseFloat(row.cellAreaAllocated) <= 0
+//           );
+//         }
+
+//         return false;
+//       });
+
+//       if (hasEmptyFields) {
+//         const errorMsg =
+//           "Required fields in location must be filled before saving.";
+//         setErrors((prevErrors) => ({
+//           ...prevErrors,
+//           save: errorMsg,
+//         }));
+//         setLoading(false);
+//         toast.error(errorMsg);
+//         return;
+//       }
+
+//       let isValid = true;
+//       const updatedValues = [...inputValues];
+//       selectedRows.forEach((dtl, index) => {
+//         if (!updatedValues[index]) {
+//           updatedValues[index] = {};
+//         }
+
+//         const values = updatedValues[index];
+//         let errorMessage = "";
+
+//         if (!values.receivingPackages) {
+//           errorMessage = "Receiving Packages is required";
+//           toast.error("Receiving Packages is required.", {});
+//           setLoading(false);
+//           isValid = false;
+//         } else if (parseFloat(values.receivingPackages) > dtl.noOfPackages) {
+//           errorMessage =
+//             "Receiving Packages should not be greater than gate in Packages";
+//           toast.error(
+//             "Receiving Packages should not be greater than gate in Packages.",
+//             {},
+//           );
+//           setLoading(false);
+//           isValid = false;
+//         }
+
+//         updatedValues[index].inbondInsuranceValue =
+//           parseFloat(values.inbondCifValue || 0) +
+//           parseFloat(values.inbondCargoDuty || 0);
+
+//         const perPackageWeight = dtl.grossWeight / dtl.nocPackages;
+//         updatedValues[index].inbondGrossWt = (
+//           perPackageWeight * parseFloat(values.inBondedPackages || 0)
+//         ).toFixed(3);
+
+//         updatedValues[index].errorMessage = errorMessage;
+//       });
+
+//       const dataToSave = selectedRows.map((row) => {
+//         const index = currentItems.findIndex(
+//           (item) =>
+//             item.jobTransId === row.jobTransId &&
+//             item.jobNo === row.jobNo &&
+//             item.commodityId === row.commodityId &&
+//             item.srNo === row.srNo,
+//         );
+//         const inputValuesForRow = inputValues[index] || {};
+//         const updatedFields = {};
+
+//         Object.keys(inputValuesForRow).forEach((field) => {
+//           if (inputValuesForRow[field] !== undefined) {
+//             updatedFields[field] = inputValuesForRow[field];
+//           }
+//         });
+
+//         return {
+//           ...row,
+//           ...updatedFields,
+//         };
+//       });
+
+//       const requestBody = {
+//         inBond: {
+//           ...inBond,
+//         },
+//         nocDtl: {
+//           ...dataToSave,
+//         },
+//         grid: {
+//           ...rows,
+//         },
+//       };
+
+//       if (isValid) {
+//         axios
+//           .post(
+//             `${ipaddress}api/receiving/saveCfInbondCrg?companyId=${companyid}&branchId=${branchId}&user=${userId}&flag=${inbondFlag}`,
+//             requestBody,
+//             {
+//               headers: {
+//                 Authorization: `Bearer ${jwtToken}`,
+//               },
+//             },
+//           )
+//           .then((response) => {
+//             setInBond(response.data);
+//             fetchDataAfterSave(companyid, branchId, response.data.receivingId);
+//             handleGridData(response.data.receivingId);
+//             setInBondFlag("edit");
+//             toast.success("Data save successfully!!", {
+//               autoClose: 800,
+//             });
+//             onRequest();
+//             setLoading(false);
+//           })
+//           .catch((error) => {
+//             setLoading(false);
+//             if (error.response) {
+//               console.error("Error data:", error.response.data);
+//               toast.error(
+//                 error.response.data || "An error occurred. Please try again.",
+//                 {
+//                   autoClose: 9000,
+//                 },
+//               );
+//             }
+//           });
+//       } else {
+//         setInputValues(updatedValues);
+//       }
 //     }
 //   };
 
@@ -681,24 +753,31 @@
 //     setInBondFlag("add");
 //     setChaName("");
 //     setCHASearchedData([]);
-//     setIsoName('');
+//     setIsoName("");
 //     setModalDataInput((prev) => ({
 //       ...prev,
-//       yardLocation: '',
-//       yardBlock: '',
-//       blockCellNo: '',
-//       cellArea: '',
-//       cellAreaAllocated: '',
-//       cellAreaUsed: '',
+//       yardLocation: "",
+//       yardBlock: "",
+//       blockCellNo: "",
+//       cellArea: "",
+//       cellAreaAllocated: "",
+//       cellAreaUsed: "",
 //     }));
 //     setRows([]);
-//     setErrors('');
+//     setErrors("");
+//     setRowsToDelete([]); // Clear deletion list
 //   };
 
 //   const [modal, setModal] = useState(false);
 //   const toggle = () => setModal(!modal);
 
-//   const fetchData = async (companyid, branchId, nocTransId, nocNo, areaAllocated) => {
+//   const fetchData = async (
+//     companyid,
+//     branchId,
+//     nocTransId,
+//     nocNo,
+//     areaAllocated,
+//   ) => {
 //     try {
 //       const response = await fetch(
 //         `${ipaddress}api/receiving/getALLCfbondNocDtl?companyId=${companyid}&branchId=${branchId}&nocTransId=${nocTransId}&nocNo=${nocNo}`,
@@ -706,7 +785,7 @@
 //           headers: {
 //             Authorization: `Bearer ${jwtToken}`,
 //           },
-//         }
+//         },
 //       );
 //       if (!response.ok) {
 //         throw new Error("Network response was not ok");
@@ -720,24 +799,24 @@
 
 //       const newTotalPackages = data.reduce(
 //         (sum, row) => sum + (parseFloat(row.gateInPackages) || 0),
-//         0
+//         0,
 //       );
 
-//       const differences = data.map(row =>
-//         parseFloat(row.gateInPackages) - parseFloat(row.inBondedPackages)
+//       const differences = data.map(
+//         (row) =>
+//           parseFloat(row.gateInPackages) - parseFloat(row.inBondedPackages),
 //       );
 
-//       const packages = data.map(row =>
-//         parseFloat(row.inBondedPackages || 0)
-//       );
+//       const packages = data.map((row) => parseFloat(row.inBondedPackages || 0));
 
 //       let area;
 //       if (inBond.inBondingId != null) {
-//         area = a / newTotalPackages * packages;
+//         area = (a / newTotalPackages) * packages;
+//       } else {
+//         area = (a / newTotalPackages) * differences;
 //       }
-//       else {
-//         area = a / newTotalPackages * differences;
-//       }
+
+//       console.log("data : ", data);
 
 //       // setInputValues(data.map(mnr => ({
 //       //   ...mnr,
@@ -760,42 +839,39 @@
 //       // })));
 
 //       setInputValues(
-//         data.map(mnr => ({
+//         data.map((mnr) => ({
 //           ...mnr,
 
-//           receivingPackages: (mnr.gateInPackages - (mnr.receivingPackages || 0)),
+//           receivingPackages: mnr.gateInPackages - (mnr.receivingPackages || 0),
 
-//           balanceReceivedPackages: (mnr.gateInPackages - (mnr.receivingPackages || 0)),
+//           balanceReceivedPackages:
+//             mnr.gateInPackages - (mnr.receivingPackages || 0),
 
-//           balanceReceivedWeight: (
-//             (mnr.gateInWeight || 0) - (
-//               ((mnr.jobGwt / (mnr.jobNop || 1)) *
-//                 (mnr.receivingPackages - (mnr.gateInPackages || 0)))
-//             ).toFixed(2)
-//           ),
-//           // balanceReceivedWeight: (mnr.gateInWeight - (mnr.receivingWeight || 0)),
-
+//           balanceReceivedWeight:
+//             (mnr.gateInWeight || 0) -
+//             (
+//               (mnr.jobGwt / (mnr.jobNop || 1)) *
+//               (mnr.receivingPackages - (mnr.gateInPackages || 0))
+//             ).toFixed(3),
 //           shortagePackages: mnr.shortagePackages || 0,
 //           damagedQty: mnr.damagedQty || 0,
 //           breakage: mnr.breakage || 0,
-
 //           commodityId: mnr.commodityId,
 //           gateInPackages: mnr.noOfPackages,
 //           jobGwt: mnr.jobGwt,
 //           jobNop: mnr.jobNop,
 //           actCommodityId: mnr.actCommodityId,
-//           editedBy: '',
-//           receivingWeight: (
-//             (mnr.gateInWeight || 0) - (
-//               ((mnr.jobGwt / (mnr.jobNop || 1)) *
-//                 (mnr.receivingPackages - (mnr.gateInPackages || 0)))
-//             ).toFixed(2)
-//           ),
+//           editedBy: "",
+//           receivingWeight:
+//             (mnr.gateInWeight || 0) -
+//             (
+//               (mnr.jobGwt / (mnr.jobNop || 1)) *
+//               (mnr.receivingPackages - (mnr.gateInPackages || 0))
+//             ).toFixed(3),
 
-//           oldReceivedPackages:
-//             (mnr.oldReceivedPackages || 0) + (mnr.receivingPackages || 0),
-
-//         }))
+//           oldReceivedPackages: mnr.receivingPackages || 0,
+//           oldReceivedWeight: mnr.receivingWeight || 0,
+//         })),
 //       );
 
 //       console.log("cfbodnNocDtl records ", data);
@@ -814,7 +890,7 @@
 //           headers: {
 //             Authorization: `Bearer ${jwtToken}`,
 //           },
-//         }
+//         },
 //       );
 //       if (!response.ok) {
 //         throw new Error("Network response was not ok");
@@ -823,7 +899,9 @@
 //       const data = await response.json();
 //       setCHASearchedData(data);
 
-//       const selectedData = data.filter((row) => row.receivingId !== undefined && row.receivingId !== null);
+//       const selectedData = data.filter(
+//         (row) => row.receivingId !== undefined && row.receivingId !== null,
+//       );
 //       setSelectedRows(selectedData);
 //       setSelectAll(true);
 //       //setIsDataFetched(true);
@@ -841,40 +919,36 @@
 
 //       // })));
 
-//       setInputValues(data.map(mnr => ({
-//         ...mnr,
+//       setInputValues(
+//         data.map((mnr) => ({
+//           ...mnr,
 
-//         receivingPackages: mnr.receivingPackages || 0,
+//           receivingPackages: mnr.receivingPackages || 0,
+//           oldReceivedPackagesThis: mnr.receivingPackages || 0,
+//           balanceReceivedPackages:
+//             mnr.gateInPackages - (mnr.oldReceivingPackages || 0),
 
-//         balanceReceivedPackages: (mnr.gateInPackages - (mnr.receivingPackages || 0)),
+//           balanceReceivedWeight:
+//             (mnr.gateInWeight || 0) - (mnr.oldReceivingPackages || 0),
 
-//         balanceReceivedWeight: (
-//           (
-//             (mnr.gateInWeight || 0) -
-//             ((mnr.jobGwt / (mnr.jobNop || 1)) * (mnr.receivingPackages || 0))
-//           ).toFixed(2)
-//         ),
+//           receivingWeight: mnr.receivingWeight || 0,
 
-//         receivingWeight: (
-//           (
-//             (mnr.jobGwt / (mnr.jobNop || 1)) * (mnr.receivingPackages || 0)
-//           ).toFixed(2)
-//         ),
+//           oldReceivedPackages: mnr.oldReceivingPackages || 0, // No increment after save
+//           oldReceivedWeight: mnr.oldReceivingWeight || 0, // No increment after save
 
-//         oldReceivedPackages: (mnr.oldReceivedPackages || 0) + (mnr.receivingPackages || 0), // No increment after save
+//           shortagePackages: mnr.shortagePackages || 0,
+//           damagedQty: mnr.damagedQty || 0,
+//           breakage: mnr.breakage || 0,
 
-//         shortagePackages: mnr.shortagePackages || 0,
-//         damagedQty: mnr.damagedQty || 0,
-//         breakage: mnr.breakage || 0,
-
-//         commodityId: mnr.commodityId,
-//         actCommodityId: mnr.actCommodityId,
-//         gateInPackages: mnr.noOfPackages,
-//         jobGwt: mnr.jobGwt,
-//         jobNop: mnr.jobNop,
-
-//         editedBy: '',
-//       })));
+//           commodityId: mnr.commodityId,
+//           actCommodityId: mnr.actCommodityId,
+//           gateInPackages: mnr.noOfPackages,
+//           jobGwt: mnr.jobGwt,
+//           jobNop: mnr.jobNop,
+//           deliveredPackages: mnr.deliveredPackages || 0,
+//           editedBy: "",
+//         })),
+//       );
 
 //       console.log("cfbodnNocDtl records ", data);
 //     } catch (error) {
@@ -913,8 +987,8 @@
 
 //   function handleInputChangeNew(e, val1, val2) {
 //     const inputValue = e.toString(); // Convert e to string
-//     const numericInput = inputValue.replace(/[^0-9.]/g, ''); // Remove non-numeric characters
-//     const parts = numericInput.split('.'); // Split on decimal point
+//     const numericInput = inputValue.replace(/[^0-9.]/g, ""); // Remove non-numeric characters
+//     const parts = numericInput.split("."); // Split on decimal point
 //     const integerPart = parts[0].slice(0, val1); // Limit integer part to val1 digits
 
 //     let decimalPart = parts[1]; // Get decimal part
@@ -930,7 +1004,8 @@
 //     }
 
 //     // Combine integer and decimal parts
-//     const sanitizedInput = decimalPart !== undefined ? `${integerPart}${decimalPart}` : integerPart;
+//     const sanitizedInput =
+//       decimalPart !== undefined ? `${integerPart}${decimalPart}` : integerPart;
 //     return sanitizedInput; // Return sanitized input
 //   }
 
@@ -938,48 +1013,48 @@
 //     const { value } = event.target;
 //     let newValue = value;
 
-//     if (['receivingPackages', 'receivingWeight'].includes(fieldName)) {
-//       newValue = handleInputChangeNew(value, val, val1)
+//     if (["receivingPackages", "receivingWeight"].includes(fieldName)) {
+//       newValue = handleInputChangeNew(value, val, val1);
 //     }
 
 //     setInputValues((prevInputValues) => {
 //       const updatedValues = [...prevInputValues];
 //       // const dtl = currentItems[index];
 
-//       const selectedRow = selectedRows[index];
-
-//       console.log("selectedRow", selectedRow);
 //       const dtl = currentItems[index]; // Get the current item details for comparison
-
+//       const currentRow = updatedValues[index]; // Use from inputValues directly
 //       let errorMessage = "";
 
 //       const newTotalPackages = updatedValues.reduce(
 //         (sum, row) => sum + (parseFloat(row.gateInPackages) || 0),
-//         0
+//         0,
 //       );
 
 //       if (fieldName === "receivingPackages") {
-//         // Calculate per package weight and update inbondGrossWt
 //         const perPackageWeight = dtl.jobGwt / dtl.jobNop;
 //         updatedValues[index].receivingWeight = (
 //           perPackageWeight * parseFloat(newValue)
-//         ).toFixed(2);
-
+//         ).toFixed(3);
 //       }
 
 //       let addition;
 
 //       if (inBond.receivingId) {
-//         addition = dtl.gateInPackages;
+//         // addition = dtl.gateInPackages;
+
+//         const oldPkg = parseFloat(currentRow.oldReceivedPackagesThis || 0);
+//         const balancePkg = parseFloat(currentRow.balanceReceivedPackages || 0);
+//         addition = oldPkg + balancePkg;
 //       } else {
 //         addition = dtl.noOfPackages - dtl.receivingPackages;
-//         // addition=dtl.inBondedPackages;
 //       }
 
-//       //const addition=dtl.gateInPackages - dtl.inBondedPackages;
 //       console.log("addition", addition);
 
-//       if (fieldName === "receivingPackages" && parseFloat(newValue) > addition) {
+//       if (
+//         fieldName === "receivingPackages" &&
+//         parseFloat(newValue) > addition
+//       ) {
 //         errorMessage = `Receiving Packages should not be greater than ${addition}`;
 //       }
 
@@ -1004,7 +1079,7 @@
 //             selectedRow.jobTransId === row.jobTransId &&
 //             selectedRow.jobNo === row.jobNo &&
 //             selectedRow.commodityId === row.commodityId &&
-//             selectedRow.srNo === row.srNo
+//             selectedRow.srNo === row.srNo,
 //         )
 //       ) {
 //         setSelectedRows([...selectedRows, row]);
@@ -1016,7 +1091,7 @@
 //           selectedRow.jobTransId !== row.jobTransId ||
 //           selectedRow.jobNo !== row.jobNo ||
 //           selectedRow.commodityId !== row.commodityId ||
-//           selectedRow.srNo !== row.srNo
+//           selectedRow.srNo !== row.srNo,
 //       );
 //       setSelectedRows(updatedRows);
 //     }
@@ -1038,20 +1113,20 @@
 //     let totalAreaOccupied = 0;
 
 //     selectedRows.forEach((row) => {
-//       const isInBondingIdValid = inBond?.receivingId != null && inBond?.receivingId !== '';
-//       const index = currentItems.findIndex(
-//         (item) =>
-//           inBond?.receivingId
-//             ? // If srNo exists, use commodityId
+//       const isInBondingIdValid =
+//         inBond?.receivingId != null && inBond?.receivingId !== "";
+//       const index = currentItems.findIndex((item) =>
+//         inBond?.receivingId
+//           ? // If srNo exists, use commodityId
 //             item.jobTransId === row.jobTransId &&
 //             item.jobNo === row.jobNo &&
 //             item.commodityId === row.commodityId &&
 //             item.srNo === row.srNo
-//             : // Otherwise, use cfBondDtlId
+//           : // Otherwise, use cfBondDtlId
 //             item.jobTransId === row.jobTransId &&
 //             item.jobNo === row.jobNo &&
 //             item.commodityId === row.commodityId &&
-//             item.srNo === row.srNo
+//             item.srNo === row.srNo,
 //       );
 //       if (index !== -1) {
 //         const source = isInBondingIdValid ? row : inputValues[index];
@@ -1067,7 +1142,7 @@
 //     setTotals({
 //       totalInBondedPackages,
 //       totalShortagePackages,
-//       totalAreaOccupied
+//       totalAreaOccupied,
 //     });
 
 //     setInBond((pre) => ({
@@ -1087,11 +1162,19 @@
 
 //   const handleYardLocationData = (type) => {
 //     fetch(
-//       `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === 'OPEN' ? 'O' : type === 'COVERED' ? 'C' : ''
-//       }`
-//     ).then((response) => response.json())
+//       `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${
+//         type === "OPEN"
+//           ? "O"
+//           : type === "COVERED"
+//             ? "C"
+//             : type === "COVEREDGD"
+//               ? "G"
+//               : ""
+//       }`,
+//     )
+//       .then((response) => response.json())
+
 //       .then((data) => {
-//         console.log(data);
 //         setYardLocationsData(data);
 //       })
 //       .catch((error) => console.error("Error:", error));
@@ -1104,38 +1187,39 @@
 //   const initialYardGrid = {
 //     companyId: companyid,
 //     branchId: branchId,
-//     receivingId: '',
-//     gateInId: '',
+//     receivingId: "",
+//     gateInId: "",
 //     srNo: 1,
-//     yardLocation: '',
-//     yardBlock: '',
-//     blockCellNo: '',
-//     cellArea: 0.000,
-//     cellAreaUsed: 0.000,
-//     cellAreaAllocated: 0.000,
+//     yardLocation: "",
+//     yardBlock: "",
+//     blockCellNo: "",
+//     cellArea: 0.0,
+//     cellAreaUsed: 0.0,
+//     cellAreaAllocated: 0.0,
 //     qtyTakenOut: 0,
-//     areaReleased: 0.000,
-//     gridReleased: '',
+//     areaReleased: 0.0,
+//     gridReleased: "",
 //     receivedPackages: 0,
 //     deliveredPackages: 0,
-//     status: '',
-//     createdBy: '',
+//     status: "",
+//     createdBy: "",
 //     createdDate: null,
-//     editedBy: '',
+//     editedBy: "",
 //     editedDate: null,
-//     approvedBy: '',
+//     approvedBy: "",
 //     approvedDate: null,
 //   };
 
 //   const [modalDataInput, setModalDataInput] = useState(initialYardGrid);
 
 //   const handleGridData = (inBid) => {
-//     axios.get(
-//       `${ipaddress}api/receiving/getAfterSaveGrid?companyId=${companyid}&branchId=${branchId}&inBondingId=${inBid}`,
-//       {
-//         headers: `Authorization ${jwtToken}`
-//       }
-//     )
+//     axios
+//       .get(
+//         `${ipaddress}api/receiving/getAfterSaveGrid?companyId=${companyid}&branchId=${branchId}&inBondingId=${inBid}`,
+//         {
+//           headers: `Authorization ${jwtToken}`,
+//         },
+//       )
 //       .then((response) => {
 //         console.log(response.data);
 //         const data = response.data;
@@ -1151,6 +1235,9 @@
 //           nocTransId: row.nocTransId,
 //           cellAreaAllocated: row.cellAreaAllocated,
 //           cellAreaUsed: row.cellAreaUsed,
+//           palletWiseWt: row.palletWiseWt,
+//           perPalletReciving: row.perPalletReciving,
+//           deliveredPackages: row.deliveredPackages || 0,
 //         }));
 
 //         // Update the rows state with new values
@@ -1163,31 +1250,34 @@
 //   };
 
 //   const [boeData, setBOEData] = useState([]);
-//   const [isoName, setIsoName] = useState('');
+//   const [isoName, setIsoName] = useState("");
 
 //   const handleBoeChange = async (selectedOption, { action }) => {
-//     if (action === 'clear') {
-//       setIsoName('');
+//     if (action === "clear") {
+//       setIsoName("");
 //       setCHASearchedData([]);
-//       setChaName('');
+//       setChaName("");
 //       setInBond(initialNoc);
 
-//       document.getElementById('boeNo').classList.remove('error-border');
+//       document.getElementById("boeNo").classList.remove("error-border");
 //       setBondingErrors((prevErrors) => ({
 //         ...prevErrors,
-//         ['boeNo']: "",
+//         ["boeNo"]: "",
 //       }));
-//     }
-//     else {
-//       setIsoName(selectedOption?.label)
+//     } else {
+//       setIsoName(selectedOption?.label);
 //       setInBond((pri) => ({
 //         ...pri,
-//         boeNo: selectedOption ? selectedOption.value : '',
+//         boeNo: selectedOption ? selectedOption.value : "",
 //         cha: selectedOption?.cha,
 //         jobTransId: selectedOption?.jobTransId,
 //         jobNo: selectedOption?.jobNo,
 //         jobTransDate: selectedOption?.jobTransDate,
 //         jobDate: selectedOption?.jobDate,
+//         receivingDate:
+//           selectedOption?.jobDate == null
+//             ? new Date()
+//             : new Date(selectedOption?.jobDate),
 //         boeNo: selectedOption?.value,
 //         cha: selectedOption?.cha,
 //         boeDate: selectedOption?.boeDate,
@@ -1202,7 +1292,7 @@
 //         transporterName: selectedOption?.transporterName,
 //       }));
 
-//       setChaName(selectedOption?.editedBy)
+//       setChaName(selectedOption?.editedBy);
 //       fetchData(
 //         companyid,
 //         branchId,
@@ -1210,31 +1300,35 @@
 //         selectedOption?.jobNo,
 //         selectedOption?.area,
 //       );
-//       document.getElementById('boeNo').classList.remove('error-border');
+//       document.getElementById("boeNo").classList.remove("error-border");
 //       setBondingErrors((prevErrors) => ({
 //         ...prevErrors,
-//         ['boeNo']: "",
+//         ["boeNo"]: "",
 //       }));
 //     }
 //   };
 
 //   const getBoeData = (val) => {
-//     if (val === '') {
+//     if (val === "") {
 //       setBOEData([]);
 //       return;
 //     }
 
-//     axios.get(`${ipaddress}api/receiving/dataAllDataOfCfBondNocForInbondScreen?companyId=${companyid}&branchId=${branchId}&partyName=${val}`, {
-//       headers: {
-//         Authorization: `Bearer ${jwtToken}`
-//       }
-//     })
+//     axios
+//       .get(
+//         `${ipaddress}api/receiving/dataAllDataOfCfBondNocForInbondScreen?companyId=${companyid}&branchId=${branchId}&partyName=${val}`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${jwtToken}`,
+//           },
+//         },
+//       )
 //       .then((response) => {
 //         const data = response.data;
 
 //         // Filter unique (boeNo, gateInId) combinations
 //         const uniqueMap = new Map();
-//         data.forEach(port => {
+//         data.forEach((port) => {
 //           const key = `${port.boeNo}-${port.gateInId}`;
 //           if (!uniqueMap.has(key)) {
 //             uniqueMap.set(key, port);
@@ -1243,7 +1337,7 @@
 
 //         const uniqueData = Array.from(uniqueMap.values());
 
-//         const portOptions = uniqueData.map(port => ({
+//         const portOptions = uniqueData.map((port) => ({
 //           value: port.boeNo,
 //           label: `${port.boeNo}-${port.gateInId}`,
 //           boeNo: port.boeNo,
@@ -1272,44 +1366,82 @@
 //         // Set BOE Data
 //         setBOEData(portOptions);
 //       })
-//       .catch((error) => {
-
-//       })
-//   }
+//       .catch((error) => {});
+//   };
 
 //   const [totalPackages, setTotalPackages] = useState(0);
 //   const [rows, setRows] = useState([
 //     {
 //       companyId: companyid,
 //       branchId: branchId,
-//       receivingId: '',
-//       gateInId: '',
+//       receivingId: "",
+//       gateInId: "",
 //       srNo: 1,
-//       yardLocation: '',
-//       yardBlock: '',
-//       blockCellNo: '',
-//       cellArea: 0.000,
-//       cellAreaUsed: 0.000,
-//       cellAreaAllocated: 0.000,
+//       yardLocation: "",
+//       yardBlock: "",
+//       blockCellNo: "",
+//       cellArea: 0.0,
+//       cellAreaUsed: 0.0,
+//       cellAreaAllocated: 0.0,
 //       qtyTakenOut: 0,
-//       areaReleased: 0.000,
-//       gridReleased: '',
+//       areaReleased: 0.0,
+//       gridReleased: "",
 //       receivedPackages: 0,
 //       deliveredPackages: 0,
-//       status: '',
-//       createdBy: '',
+//       status: "",
+//       createdBy: "",
 //       createdDate: null,
-//       editedBy: '',
+//       editedBy: "",
 //       editedDate: null,
-//       approvedBy: '',
+//       approvedBy: "",
 //       approvedDate: null,
 //       jobTransId: "",
 //       jobNo: "",
+//       palletWiseWt: 0.0,
+//       perPalletReciving: 0.0,
 //     },
 //   ]);
 //   const handleInputChange = (index, e) => {
 //     const { name, value } = e.target;
 //     const newRows = [...rows];
+
+//     if (name === "receivedPackages" && inBond.spaceAllocated === "COVEREDGD") {
+//       const numValue = parseFloat(value);
+
+//       // Check if value is empty or not a number
+//       if (value === "" || isNaN(numValue)) {
+//         setErrors((prevErrors) => ({
+//           ...prevErrors,
+//           [`receivedPackages-${index}`]: "Yard Packages is required",
+//         }));
+//         newRows[index][name] = "";
+//         setRows(newRows);
+//         return;
+//       }
+
+//       // Check if value is 0, 1, or 2
+//       if (numValue !== 1 && numValue !== 2) {
+//         const errorMessage =
+//           "For Covered Grounded Space, Yard Packages can only be 1, or 2";
+//         setErrors((prevErrors) => ({
+//           ...prevErrors,
+//           [`receivedPackages-${index}`]: errorMessage,
+//         }));
+//         toast.error(errorMessage);
+//         // Reset to empty or previous valid value
+//         newRows[index][name] = "";
+//         setRows(newRows);
+//         return;
+//       } else {
+//         // Clear error if value is valid
+//         setErrors((prevErrors) => {
+//           const newErrors = { ...prevErrors };
+//           delete newErrors[`receivedPackages-${index}`];
+//           return newErrors;
+//         });
+//       }
+//     }
+
 //     newRows[index][name] = value;
 
 //     // Check if the field being updated is inBondPackages
@@ -1335,7 +1467,7 @@
 //       // Calculate the new total packages
 //       const newTotalPackages = newRows.reduce(
 //         (sum, row) => sum + (parseFloat(row.receivedPackages) || 0),
-//         0
+//         0,
 //       );
 //       setTotalPackages(newTotalPackages);
 
@@ -1364,13 +1496,12 @@
 
 //       let addtion;
 //       if (inBond.receivingId) {
-//         addtion = cellArea
-//       }
-//       else {
-//         addtion = cellArea - cellAreaUsed
+//         addtion = cellArea;
+//       } else {
+//         addtion = cellArea - cellAreaUsed;
 //       }
 //       // Validation: Cell Area Allocated should not exceed available area
-//       if (cellAreaAllocated > (addtion)) {
+//       if (cellAreaAllocated > addtion) {
 //         setErrors((prevErrors) => ({
 //           ...prevErrors,
 //           [`cellAreaAllocated-${index}`]: `Allocated area cannot exceed ${addtion}`,
@@ -1386,8 +1517,74 @@
 //     setRows(newRows);
 //   };
 
+//   const handleInputChange1 = (index, e, val1, val2) => {
+//     const { name, value } = e.target;
+//     let newVal = value;
+
+//     if (name === "palletWiseWt") {
+//       newVal = handleInputChangeNew(value, val1, val2);
+//     }
+
+//     const newRows = [...rows];
+//     newRows[index][name] = newVal;
+
+//     // Check if the field being updated is inBondPackages
+
+//     setRows(newRows);
+//   };
+//   // Add this state near your other state declarations
+//   const [rowsToDelete, setRowsToDelete] = useState([]);
+//   // Replace the deleteYardLocation function with this
+//   // const markRowForDeletion = (row, index) => {
+//   //   // Check if the row has a receivingId (already saved)
+//   //   if (row.receivingId) {
+//   //     // Add to deletion list
+//   //     setRowsToDelete(prev => [...prev, {
+//   //       receivingId: row.receivingId,
+//   //       yardLocation: row.yardLocation,
+//   //       yardBlock: row.yardBlock,
+//   //       blockCellNo: row.blockCellNo,
+//   //       index: index
+//   //     }]);
+//   //     // Remove from UI
+//   //     deleteRow(index);
+//   //     toast.info("Row marked for deletion. It will be deleted when you save.", {
+//   //       autoClose: 2000,
+//   //     });
+//   //   } else {
+//   //     // If not saved, just remove from UI (no need to track for deletion)
+//   //     deleteRow(index);
+//   //   }
+//   // };
+
+//   const markRowForDeletion = (row, index) => {
+//     // Check if the row has a receivingId (already saved)
+//     if (row.receivingId) {
+//       // Add to deletion list with cellAreaAllocated
+//       setRowsToDelete((prev) => [
+//         ...prev,
+//         {
+//           receivingId: row.receivingId,
+//           yardLocation: row.yardLocation,
+//           yardBlock: row.yardBlock,
+//           blockCellNo: row.blockCellNo,
+//           cellAreaAllocated: row.cellAreaAllocated, // Capture the allocated area
+//           index: index,
+//         },
+//       ]);
+//       // Remove from UI
+//       deleteRow(index);
+//       toast.info("Row marked for deletion. It will be deleted when you save.", {
+//         autoClose: 2000,
+//       });
+//     } else {
+//       // If not saved, just remove from UI (no need to track for deletion)
+//       deleteRow(index);
+//     }
+//   };
 //   const deleteRow = (index) => {
 //     const newRows = [...rows];
+
 //     newRows.splice(index, 1);
 //     setErrors((prevErrors) => {
 //       const newErrors = { ...prevErrors };
@@ -1399,19 +1596,19 @@
 //   };
 
 //   const handleSelectChange = (index, selectedOption) => {
-
-//     const fieldName = 'yardLocation';
+//     const fieldName = "yardLocation";
 //     // Prepare the new values from selectedOption
-//     const newYardLocation = selectedOption ? selectedOption.yard : '';
-//     const newYardBlock = selectedOption ? selectedOption.yardBlock : '';
-//     const newBlockCellNo = selectedOption ? selectedOption.yardBCell : '';
+//     const newYardLocation = selectedOption ? selectedOption.yard : "";
+//     const newYardBlock = selectedOption ? selectedOption.yardBlock : "";
+//     const newBlockCellNo = selectedOption ? selectedOption.yardBCell : "";
 
 //     // Check for duplicates in the yardCellArray
-//     const isDuplicate = rows.some((cell, i) =>
-//       i !== index &&
-//       cell.yardLocation === newYardLocation &&
-//       cell.yardBlock === newYardBlock &&
-//       cell.blockCellNo === newBlockCellNo
+//     const isDuplicate = rows.some(
+//       (cell, i) =>
+//         i !== index &&
+//         cell.yardLocation === newYardLocation &&
+//         cell.yardBlock === newYardBlock &&
+//         cell.blockCellNo === newBlockCellNo,
 //     );
 
 //     if (isDuplicate) {
@@ -1429,15 +1626,15 @@
 //       const updatedRows = rows.map((row, i) =>
 //         i === index
 //           ? {
-//             yardLocation: "",
-//             yardBlock: "",
-//             blockCellNo: "",
-//             cellArea: "",
-//             cellAreaUsed: "",
-//             inBondPackages: "",
-//             cellAreaAllocated: "",
-//           }
-//           : row
+//               yardLocation: "",
+//               yardBlock: "",
+//               blockCellNo: "",
+//               cellArea: "",
+//               cellAreaUsed: "",
+//               inBondPackages: "",
+//               cellAreaAllocated: "",
+//             }
+//           : row,
 //       );
 //       setRows(updatedRows);
 
@@ -1448,16 +1645,16 @@
 //       const updatedRows = rows.map((row, i) =>
 //         i === index
 //           ? {
-//             ...row,
-//             yardLocation: selectedOption.yard,
-//             yardBlock: selectedOption.yardBlock,
-//             blockCellNo: selectedOption.yardBCell,
-//             cellArea: selectedOption.area,
-//             cellAreaUsed: selectedOption.areaUsed,
-//             receivedPackages: selectedOption.receivedPackages,
-//             cellAreaAllocated: selectedOption.cellAreaAllocated,
-//           }
-//           : row
+//               ...row,
+//               yardLocation: selectedOption.yard,
+//               yardBlock: selectedOption.yardBlock,
+//               blockCellNo: selectedOption.yardBCell,
+//               cellArea: selectedOption.area,
+//               cellAreaUsed: selectedOption.areaUsed,
+//               receivedPackages: selectedOption.receivedPackages,
+//               cellAreaAllocated: selectedOption.cellAreaAllocated,
+//             }
+//           : row,
 //       );
 //       setRows(updatedRows);
 //     } else {
@@ -1465,15 +1662,15 @@
 //       const updatedRows = rows.map((row, i) =>
 //         i === index
 //           ? {
-//             yardLocation: "",
-//             yardBlock: "",
-//             blockCellNo: "",
-//             cellArea: "",
-//             cellAreaUsed: "",
-//             receivedPackages: "",
-//             cellAreaAllocated: "",
-//           }
-//           : row
+//               yardLocation: "",
+//               yardBlock: "",
+//               blockCellNo: "",
+//               cellArea: "",
+//               cellAreaUsed: "",
+//               receivedPackages: "",
+//               cellAreaAllocated: "",
+//             }
+//           : row,
 //       );
 
 //       setRows(updatedRows);
@@ -1481,7 +1678,15 @@
 //   };
 
 //   const addRow = () => {
-
+//     // if (inBond.spaceAllocated === 'COVEREDGD' && rows.length >= 2) {
+//     //   const errorMsg = "Maximum 2 rows allowed for Covered Grounded Space.";
+//     //   setErrors((prevErrors) => ({
+//     //     ...prevErrors,
+//     //     addRow: errorMsg,
+//     //   }));
+//     //   toast.error(errorMsg);
+//     //   return; // Exit the function to prevent adding more rows
+//     // }
 //     // const hasEmptyFields = rows.some(row =>
 //     //   !row.yardLocation || !row.yardBlock || !row.blockCellNo ||
 //     //   !row.cellArea || !row.inBondPackages ||
@@ -1501,7 +1706,7 @@
 
 //     const newTotalPackages = rows.reduce(
 //       (sum, row) => sum + (parseFloat(row.inBondPackages) || 0),
-//       0
+//       0,
 //     );
 
 //     // Check if adding a new row exceeds oldInBondPackages
@@ -1528,7 +1733,10 @@
 //     });
 
 //     // setModalFlag('add');
-//     const nextSrNo = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.srNo, 10))) + 1 : 1;
+//     const nextSrNo =
+//       rows.length > 0
+//         ? Math.max(...rows.map((row) => parseInt(row.srNo, 10))) + 1
+//         : 1;
 //     // Add new row
 //     setRows([
 //       ...rows,
@@ -1541,60 +1749,67 @@
 //         cellAreaUsed: "",
 //         receivedPackages: "",
 //         cellAreaAllocated: "",
+//         palletWiseWt: "",
+//         perPalletReciving: "",
 //       },
 //     ]);
-
 //   };
 
 //   const handlePrint = async (type) => {
 //     setLoading(true);
 //     let inBondingId = inBond.inBondingId;
 //     try {
-//       const response = await axios.get(`${ipaddress}api/cfinbondcrg/generateCustomeInBondPrint?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&inBondingId=${inBondingId}`,
+//       const response = await axios.get(
+//         `${ipaddress}api/cfinbondcrg/generateCustomeInBondPrint?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&inBondingId=${inBondingId}`,
 //         {
 //           headers: {
-//             Authorization: `Bearer ${jwtToken}`
-//           }
-//         });
+//             Authorization: `Bearer ${jwtToken}`,
+//           },
+//         },
+//       );
 
 //       console.log("Response Data");
 //       console.log(response.data);
 
-//       if (type === 'PDF') {
-
+//       if (type === "PDF") {
 //         const pdfBase64 = response.data;
 
-//         const pdfBlob = new Blob([Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
+//         const pdfBlob = new Blob(
+//           [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
+//           { type: "application/pdf" },
+//         );
 
 //         const blobUrl = URL.createObjectURL(pdfBlob);
 
-//         const downloadLink = document.createElement('a');
+//         const downloadLink = document.createElement("a");
 //         downloadLink.href = blobUrl;
-//         downloadLink.download = 'BOND GATEPASS';
-//         downloadLink.style.display = 'none';
+//         downloadLink.download = "BOND GATEPASS";
+//         downloadLink.style.display = "none";
 //         document.body.appendChild(downloadLink);
 //         downloadLink.click();
 //         document.body.removeChild(downloadLink);
 //         window.URL.revokeObjectURL(blobUrl);
 
 //         toast.success("Downloading PDF!", {
-//           position: 'top-center',
+//           position: "top-center",
 //           autoClose: 800,
 //         });
-//       } else if (type === 'PRINT') {
+//       } else if (type === "PRINT") {
 //         const pdfBase64 = response.data;
 
-//         const pdfBlob = new Blob([Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
+//         const pdfBlob = new Blob(
+//           [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
+//           { type: "application/pdf" },
+//         );
 
 //         const blobUrl = URL.createObjectURL(pdfBlob);
 
-//         window.open(blobUrl, '_blank');
+//         window.open(blobUrl, "_blank");
 //       } else {
-//         throw new Error('Invalid print type');
+//         throw new Error("Invalid print type");
 //       }
 //     } catch (error) {
-//       console.error('Error in handlePrint:', error.message);
-
+//       console.error("Error in handlePrint:", error.message);
 //     } finally {
 //       setLoading(false);
 //     }
@@ -1604,26 +1819,29 @@
 //   const CFSService = new cfsService(axiosInstance);
 
 //   // Document upload
-//   const [isModalOpenForDocumentUpload, setIsModalOpenForDocumentUpload] = useState(false);
+//   const [isModalOpenForDocumentUpload, setIsModalOpenForDocumentUpload] =
+//     useState(false);
 
 //   const initialDocumentUpload = {
 //     companyId: companyid,
 //     branchId: branchId,
-//     sbNo: '',
-//     sbTransId: '',
-//     hSbTransId: '',
-//     sbLineNo: '',
-//     fileName: '',
-//     base64Url: '',
-//     fileType: '',
-//     isSaved: 'N',
-//     isContainerDamage: 'N',
-//     isCargoDamage: 'N',
-//     damageRemark: '',
-//     commodityDescription: ''
-//   }
+//     sbNo: "",
+//     sbTransId: "",
+//     hSbTransId: "",
+//     sbLineNo: "",
+//     fileName: "",
+//     base64Url: "",
+//     fileType: "",
+//     isSaved: "N",
+//     isContainerDamage: "N",
+//     isCargoDamage: "N",
+//     damageRemark: "",
+//     commodityDescription: "",
+//   };
 
-//   const [sbDocumentUpload, setSbDocumentUpload] = useState([initialDocumentUpload]);
+//   const [sbDocumentUpload, setSbDocumentUpload] = useState([
+//     initialDocumentUpload,
+//   ]);
 //   const [removedList, setRemovedList] = useState([]);
 
 //   const handleOpenDocumentUpload = async (sbNoEntry) => {
@@ -1632,22 +1850,35 @@
 //         companyid,
 //         branchId,
 //         sbNoEntry.receivingId,
-//         sbNoEntry.gateInId, sbNoEntry.srNo, sbNoEntry.containerNo, jwtToken
+//         sbNoEntry.gateInId,
+//         sbNoEntry.srNo,
+//         sbNoEntry.containerNo,
+//         jwtToken,
 //       );
 
-//       console.log(' response.data \n', response.data);
+//       console.log(" response.data \n", response.data);
 
 //       setSbDocumentUpload(
 //         response.data?.length > 0
 //           ? response.data
-//           : [{ ...initialDocumentUpload, sbNo: sbNoEntry.receivingId, commodityDescription: sbNoEntry.commodityDescription, sbTransId: sbNoEntry.containerNo, hSbTransId: sbNoEntry.gateInId, sbLineNo: sbNoEntry.srNo, isSaved: 'N' }]
+//           : [
+//               {
+//                 ...initialDocumentUpload,
+//                 sbNo: sbNoEntry.receivingId,
+//                 commodityDescription: sbNoEntry.commodityDescription,
+//                 sbTransId: sbNoEntry.containerNo,
+//                 hSbTransId: sbNoEntry.gateInId,
+//                 sbLineNo: sbNoEntry.srNo,
+//                 isSaved: "N",
+//               },
+//             ],
 //       );
 
 //       setIsModalOpenForDocumentUpload(true);
 //     } catch (error) {
-//       console.error('Error fetching data for document get upload : \n', error);
-//       toast.error('An error occurred while fetching data. Please try again.', {
-//         position: 'top-center',
+//       console.error("Error fetching data for document get upload : \n", error);
+//       toast.error("An error occurred while fetching data. Please try again.", {
+//         position: "top-center",
 //         autoClose: 700,
 //       });
 //     }
@@ -1657,7 +1888,7 @@
 //     setIsModalOpenForDocumentUpload(false);
 //     setSbDocumentUpload([initialDocumentUpload]);
 //     setRemovedList([]);
-//   }
+//   };
 
 //   const handleFileUploadFileChange = (event) => {
 //     const files = Array.from(event.target.files);
@@ -1675,7 +1906,7 @@
 //     ];
 
 //     const validFiles = files.filter(
-//       (file) => allowedTypes.includes(file.type) && file.size <= maxSize
+//       (file) => allowedTypes.includes(file.type) && file.size <= maxSize,
 //     );
 
 //     if (validFiles.length === 0) {
@@ -1694,10 +1925,9 @@
 //       }
 
 //       reader.onload = () => {
-//         const base64String =
-//           file.type.includes("excel")
-//             ? btoa(reader.result) // Convert binary to base64
-//             : reader.result;
+//         const base64String = file.type.includes("excel")
+//           ? btoa(reader.result) // Convert binary to base64
+//           : reader.result;
 
 //         setSbDocumentUpload((prev) => {
 //           const existingIndex = prev.findIndex((doc) => doc.fileName === "");
@@ -1744,26 +1974,41 @@
 //     });
 //   };
 
-//   const handleRemoveFile = (index, sbNo, sbLineNo, sbTransId, hsbTransId, isSaved, fileName, commodityDescription, isCargoDamage, isContainerDamage, damageRemark) => {
-
+//   const handleRemoveFile = (
+//     index,
+//     sbNo,
+//     sbLineNo,
+//     sbTransId,
+//     hsbTransId,
+//     isSaved,
+//     fileName,
+//     commodityDescription,
+//     isCargoDamage,
+//     isContainerDamage,
+//     damageRemark,
+//   ) => {
 //     const updatedFiles = sbDocumentUpload.filter((_, i) => i !== index);
 
 //     // If the file is saved, add its name to removedList
-//     if (isSaved === 'Y') {
-//       setRemovedList(prevList => [...prevList, fileName]);
+//     if (isSaved === "Y") {
+//       setRemovedList((prevList) => [...prevList, fileName]);
 //     }
 
 //     if (updatedFiles.length === 0) {
-//       setSbDocumentUpload([{
-//         ...initialDocumentUpload,
-//         sbNo: sbNo,
-//         sbTransId: sbTransId,
-//         hSbTransId: hsbTransId,
-//         sbLineNo: sbLineNo,
-//         isSaved: 'N',
-//         commodityDescription,
-//         isCargoDamage, isContainerDamage, damageRemark
-//       }]);
+//       setSbDocumentUpload([
+//         {
+//           ...initialDocumentUpload,
+//           sbNo: sbNo,
+//           sbTransId: sbTransId,
+//           hSbTransId: hsbTransId,
+//           sbLineNo: sbLineNo,
+//           isSaved: "N",
+//           commodityDescription,
+//           isCargoDamage,
+//           isContainerDamage,
+//           damageRemark,
+//         },
+//       ]);
 //     } else {
 //       setSbDocumentUpload(updatedFiles);
 //     }
@@ -1774,27 +2019,41 @@
 
 //     let sbFile = sbDocumentUpload[0];
 //     try {
-//       const response = await CFSService.uploadGeneralDocument(companyid, branchId, sbFile.sbNo, sbFile.sbTransId, sbFile.hSbTransId, sbFile.sbLineNo, sbDocumentUpload, removedList, userId, jwtToken);
+//       const response = await CFSService.uploadGeneralDocument(
+//         companyid,
+//         branchId,
+//         sbFile.sbNo,
+//         sbFile.sbTransId,
+//         sbFile.hSbTransId,
+//         sbFile.sbLineNo,
+//         sbDocumentUpload,
+//         removedList,
+//         userId,
+//         jwtToken,
+//       );
 
 //       setSbDocumentUpload(response.data);
-//       toast.success('Document uploaded successfully', {
-//         position: 'top-center',
+//       toast.success("Document uploaded successfully", {
+//         position: "top-center",
 //         autoClose: 700,
 //       });
-
 //     } catch {
-//       toast.error('An error occurred while uploading the files. Please try again.', {
-//         position: 'top-center',
-//         style: { width: '29vw' },
-//         autoClose: 700,
-//       });
+//       toast.error(
+//         "An error occurred while uploading the files. Please try again.",
+//         {
+//           position: "top-center",
+//           style: { width: "29vw" },
+//           autoClose: 700,
+//         },
+//       );
 //     } finally {
 //       setLoading(false);
 //     }
-//   }
+//   };
 
-//   const [isModalOpenForViewDocument, setIsModalOpenForViewDocument] = useState(false);
-//   const [viewFile, setViewFile] = useState('');
+//   const [isModalOpenForViewDocument, setIsModalOpenForViewDocument] =
+//     useState(false);
+//   const [viewFile, setViewFile] = useState("");
 
 //   const handleView = (file) => {
 //     setViewFile(file);
@@ -1804,20 +2063,31 @@
 //   const renderFile = () => {
 //     if (!viewFile) return null;
 
-//     if (viewFile.fileType === 'application/pdf') {
-//       return <iframe src={viewFile.base64Url} title="PDF Viewer" style={{ width: '100%', height: '500px' }} />;
-//     }
-//     else if (viewFile.fileType.startsWith('image/')) {
-//       return <img src={viewFile.base64Url} alt="Preview" style={{ width: '100%', height: 'auto', borderRadius: '10px' }} />;
-//     }
-//     else if (
-//       viewFile.fileType === 'application/vnd.ms-excel' ||
-//       viewFile.fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+//     if (viewFile.fileType === "application/pdf") {
+//       return (
+//         <iframe
+//           src={viewFile.base64Url}
+//           title="PDF Viewer"
+//           style={{ width: "100%", height: "500px" }}
+//         />
+//       );
+//     } else if (viewFile.fileType.startsWith("image/")) {
+//       return (
+//         <img
+//           src={viewFile.base64Url}
+//           alt="Preview"
+//           style={{ width: "100%", height: "auto", borderRadius: "10px" }}
+//         />
+//       );
+//     } else if (
+//       viewFile.fileType === "application/vnd.ms-excel" ||
+//       viewFile.fileType ===
+//         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 //     ) {
 //       const handleDownload = () => {
-//         const link = document.createElement('a');
+//         const link = document.createElement("a");
 //         link.href = viewFile.base64Url;
-//         link.download = viewFile.fileName || 'file.xlsx';
+//         link.download = viewFile.fileName || "file.xlsx";
 //         document.body.appendChild(link);
 //         link.click();
 //         document.body.removeChild(link);
@@ -1831,32 +2101,35 @@
 //             className="newButton mt-2 mb-2"
 //             color="primary"
 //             outline
-//             style={{ marginRight: '10px' }}
+//             style={{ marginRight: "10px" }}
 //             onClick={handleDownload}
 //           >
-//             <FontAwesomeIcon
-//               icon={faDownload}
-//               style={{ marginRight: "5px" }}
-//             />
+//             <FontAwesomeIcon icon={faDownload} style={{ marginRight: "5px" }} />
 //             Download {viewFile.fileName}
 //           </Button>
-
 //         </div>
 //       );
-//     }
-//     else if (viewFile.fileType === 'text/csv') {
+//     } else if (viewFile.fileType === "text/csv") {
 //       try {
-//         const csvText = atob(viewFile.split(',')[1]);
-//         const rows = csvText.split('\n').map((row) => row.split(','));
+//         const csvText = atob(viewFile.split(",")[1]);
+//         const rows = csvText.split("\n").map((row) => row.split(","));
 
 //         return (
 //           <table className="table table-bordered">
 //             <thead>
-//               <tr>{rows[0].map((col, i) => <th key={i}>{col}</th>)}</tr>
+//               <tr>
+//                 {rows[0].map((col, i) => (
+//                   <th key={i}>{col}</th>
+//                 ))}
+//               </tr>
 //             </thead>
 //             <tbody>
 //               {rows.slice(1).map((row, i) => (
-//                 <tr key={i}>{row.map((col, j) => <td key={j}>{col}</td>)}</tr>
+//                 <tr key={i}>
+//                   {row.map((col, j) => (
+//                     <td key={j}>{col}</td>
+//                   ))}
+//                 </tr>
 //               ))}
 //             </tbody>
 //           </table>
@@ -1865,33 +2138,500 @@
 //         return (
 //           <div>
 //             <p>Error loading CSV preview. Click below to download:</p>
-//             <a href={viewFile} download={viewFile.fileName} className="btn btn-primary">
+//             <a
+//               href={viewFile}
+//               download={viewFile.fileName}
+//               className="btn btn-primary"
+//             >
 //               Download {viewFile.fileName}
 //             </a>
 //           </div>
 //         );
 //       }
-//     }
-//     else {
+//     } else {
 //       return <p>Unsupported file format</p>;
 //     }
 //   };
 
 //   const handleCloseViewDocument = async () => {
 //     setIsModalOpenForViewDocument(false);
-//   }
+//   };
 
 //   const handleChangeDamageDetails = (e) => {
 //     const { name } = e.target;
-//     const value = e.target.type === 'checkbox' ? (e.target.checked ? 'Y' : 'N') : e.target.value;
+//     const value =
+//       e.target.type === "checkbox"
+//         ? e.target.checked
+//           ? "Y"
+//           : "N"
+//         : e.target.value;
 
 //     setSbDocumentUpload((prev) =>
 //       prev.map((item) => ({
 //         ...item,
-//         [name]: value
-//       }))
+//         [name]: value,
+//       })),
 //     );
 //   };
+
+//   const [isModalOpenForAddBatch, setIsModalOpenForAddBatch] = useState(false);
+//   const [selectedSrNo, setSelectedSrNo] = useState("");
+
+//   const [batchData, setBatchData] = useState([
+//     {
+//       batchNo: "",
+//       receivingId: "",
+//       receivingSrNo: 0,
+//       srNo: 0,
+//       startDate: null,
+//       endDate: null,
+//     },
+//   ]);
+
+//   const handleBatchChange = (e, index) => {
+//     const { name, value } = e.target;
+
+//     setBatchData((prevState) => {
+//       const updatedRows = [...prevState];
+//       updatedRows[index] = {
+//         ...updatedRows[index],
+//         [name]: value,
+//       };
+//       return updatedRows;
+//     });
+//   };
+
+//   const openAddBatchModal = (srNo) => {
+//     setIsModalOpenForAddBatch(true);
+//     setSelectedSrNo(srNo);
+//     getBatchData(srNo);
+//   };
+
+//   const closeAddBatchModal = () => {
+//     setIsModalOpenForAddBatch(false);
+//     setSelectedSrNo("");
+//     setBatchData([
+//       {
+//         batchNo: "",
+//         receivingId: "",
+//         receivingSrNo: 0,
+//         srNo: 0,
+//         startDate: null,
+//         endDate: null,
+//       },
+//     ]);
+//   };
+
+//   const addBatch = () => {
+//     const addData = {
+//       batchNo: "",
+//       receivingId: "",
+//       receivingSrNo: 0,
+//       srNo: 0,
+//       startDate: null,
+//       endDate: null,
+//     };
+
+//     setBatchData([...batchData, addData]);
+//   };
+
+//   const removeBatch = (index) => {
+//     const updated = batchData.filter((_, i) => i !== index);
+//     setBatchData(updated);
+//   };
+
+//   const handleSaveBatch = () => {
+//     if (batchData.length === 0) {
+//       toast.error("Please enter batch data", {
+//         autoClose: 800,
+//       });
+//       return;
+//     }
+
+//     for (let i = 0; i < batchData.length; i++) {
+//       const { batchNo, startDate, endDate } = batchData[i];
+
+//       if (!batchNo) {
+//         toast.error(`Error: Batch no are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+
+//       if (!startDate) {
+//         toast.error(`Error: Mfg Date are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+
+//       if (!endDate) {
+//         toast.error(`Error: Exp Date are missing for batch entry ${i + 1}.`, {
+//           autoClose: 800,
+//         });
+//         return; // Stop the process if validation fails
+//       }
+//     }
+
+//     setLoading(true);
+
+//     axios
+//       .post(`${ipaddress}api/receiving/saveBatchData`, batchData, {
+//         headers: {
+//           Authorization: `Bearer ${jwtToken}`,
+//         },
+//         params: {
+//           cid: companyid,
+//           bid: branchId,
+//           user: userId,
+//           receivingId: inBond.receivingId,
+//           rSrNo: selectedSrNo,
+//         },
+//       })
+//       .then((response) => {
+//         setLoading(false);
+
+//         toast.success("Batch data save successfully!!", {
+//           autoClose: 800,
+//         });
+
+//         setBatchData(
+//           response.data.map((item) => ({
+//             batchNo: item.batchNo || "",
+//             receivingId: item.receivingId || "",
+//             receivingSrNo: item.receivingSrNo || 0,
+//             srNo: item.srNo || 0,
+//             startDate:
+//               item.startDate === null ? null : new Date(item.startDate),
+//             endDate: item.endDate === null ? null : new Date(item.endDate),
+//           })),
+//         );
+//       })
+//       .catch((error) => {
+//         setLoading(false);
+//         if (error) {
+//           toast.error(error.response.data, {
+//             autoClose: 800,
+//           });
+//         }
+//       });
+//   };
+
+//   const getBatchData = (srNo) => {
+//     setLoading(true);
+//     axios
+//       .get(`${ipaddress}api/receiving/getBatchData`, {
+//         headers: {
+//           Authorization: `Bearer ${jwtToken}`,
+//         },
+//         params: {
+//           cid: companyid,
+//           bid: branchId,
+//           user: userId,
+//           receivingId: inBond.receivingId,
+//           rSrNo: srNo,
+//         },
+//       })
+//       .then((response) => {
+//         setLoading(false);
+
+//         setBatchData(
+//           response.data.map((item) => ({
+//             batchNo: item.batchNo || "",
+//             receivingId: item.receivingId || "",
+//             receivingSrNo: item.receivingSrNo || 0,
+//             srNo: item.srNo || 0,
+//             startDate:
+//               item.startDate === null ? null : new Date(item.startDate),
+//             endDate: item.endDate === null ? null : new Date(item.endDate),
+//           })),
+//         );
+//       })
+//       .catch((error) => {
+//         setLoading(false);
+//         setBatchData([
+//           {
+//             batchNo: "",
+//             receivingId: "",
+//             receivingSrNo: 0,
+//             srNo: 0,
+//             startDate: null,
+//             endDate: null,
+//           },
+//         ]);
+//       });
+//   };
+
+//   const [drumModalMode, setDrumModalMode] = useState("add");
+
+//   const [isModalOpenForDrumUpload, setIsModalOpenForDrumUpload] =
+//     useState(false);
+//   const [selectedDrumRow, setSelectedDrumRow] = useState(null);
+//   const [drumRows, setDrumRows] = useState([
+//     {
+//       drumNo: "",
+//       commodity: "",
+//       netWeight: "",
+//       srNo: 1,
+//     },
+//   ]);
+//   // Open drum upload modal
+//   // const handleOpenDrumUpload = (row) => {
+//   //   setSelectedDrumRow(row);
+//   //   setIsModalOpenForDrumUpload(true);
+//   //   setDrumRows([{ drumNo: "", commodity: "", netWeight: "", srNo: 1 }]);
+//   //   fetchCommodityOptions(row.receivingId);
+
+//   //   fetchDrumDetails(row);
+//   // };
+//   const handleOpenDrumUpload = (row, mode = "add") => {
+//     setSelectedDrumRow(row);
+//     setDrumModalMode(mode);
+//     setIsModalOpenForDrumUpload(true);
+
+//     if (mode === "view") {
+//             fetchCommodityOptions(row.receivingId);
+
+//       fetchDrumDetails(row);
+//     } else {
+//       setDrumRows([{ drumNo: "", commodity: "", netWeight: "", srNo: 1 }]);
+//       fetchCommodityOptions(row.receivingId);
+//       fetchDrumDetails(row);
+//     }
+//   };
+//   // Handle drum input change in table
+//   const handleDrumInputChange = (index, e) => {
+//     const { name, value } = e.target;
+//     const updatedRows = [...drumRows];
+//     updatedRows[index][name] = value;
+//     setDrumRows(updatedRows);
+//   };
+
+//   // Add new row to drum table
+//   const addDrumRow = () => {
+//     const nextSrNo =
+//       drumRows.length > 0
+//         ? Math.max(...drumRows.map((row) => parseInt(row.srNo, 10))) + 1
+//         : 1;
+//     setDrumRows([
+//       ...drumRows,
+//       {
+//         drumNo: "",
+//         commodity: "",
+//         netWeight: "",
+//         srNo: nextSrNo,
+//       },
+//     ]);
+//   };
+
+//   const deleteDrumRow = (index) => {
+//     const rowToDelete = drumRows[index];
+
+//     // If this row has a valid SR number (already saved in DB), add to deleted list
+//     if (rowToDelete.srNo && rowToDelete.srNo > 0) {
+//       setDeletedDrumSrNos((prev) => [...prev, rowToDelete.srNo]);
+//     }
+
+//     const updatedRows = drumRows.filter((_, i) => i !== index);
+
+//     setDrumRows(updatedRows);
+//     setCommodityErrors((prev) => {
+//       const newErrors = {};
+//       Object.keys(prev).forEach((key) => {
+//         const keyNum = parseInt(key);
+//         if (keyNum < index) {
+//           newErrors[key] = prev[key];
+//         } else if (keyNum > index) {
+//           newErrors[keyNum - 1] = prev[key];
+//         }
+//       });
+//       return newErrors;
+//     });
+//   };
+
+//   // Reset deleted list when closing modal
+//   const handleCloseDrumUpload = () => {
+//     setIsModalOpenForDrumUpload(false);
+//     setSelectedDrumRow(null);
+//     setDrumRows([{ drumNo: "", commodity: "", netWeight: "", srNo: 1 }]);
+//     setDeletedDrumSrNos([]);
+//     setCommodityOptions([]);
+//     setCommodityErrors({});
+//     setDrumModalMode("add");
+//   };
+//   const [commodityErrors, setCommodityErrors] = useState({});
+
+//   const handleSaveDrumDetails = () => {
+//     const hasValidData = drumRows.some((row) => row.commodity);
+
+//     if (!hasValidData) {
+//       toast.error("Please add at least one drum detail");
+//       return;
+//     }
+
+//     let hasErrors = false;
+//     const newErrors = {};
+
+//     drumRows.forEach((row, index) => {
+//       if (!row.commodity) {
+//         newErrors[index] = "Commodity is required";
+//         hasErrors = true;
+//       }
+//     });
+
+//     if (hasErrors) {
+//       setCommodityErrors(newErrors);
+//       toast.error("Please select commodity for all rows");
+//       return;
+//     }
+
+//     // Filter out completely empty rows
+//     const validRows = drumRows.filter((row) => row.commodity);
+
+//     if (validRows.length === 0) {
+//       toast.error("Please add at least one drum detail");
+//       return;
+//     }
+
+//     // Validate commodities
+//     for (let i = 0; i < validRows.length; i++) {
+//       const row = validRows[i];
+//       if (
+//         row.commodity &&
+//         !commodityOptions.find((opt) => opt.value === row.commodity)
+//       ) {
+//         toast.error(`Invalid commodity selected in row ${i + 1}`);
+//         return;
+//       }
+//       if (row.netWeight && isNaN(parseFloat(row.netWeight))) {
+//         toast.error(`Invalid net weight in row ${i + 1}`);
+//         return;
+//       }
+//     }
+
+//     setLoading(true);
+
+//     const drumList = validRows.map((row, idx) => ({
+//       drumNo: row.drumNo || "",
+//       commodityId: row.commodity || "",
+//       commodityDescription: row.commodityDescription || "",
+//       netWeight: row.netWeight || "0",
+//       srNo: row.srNo || "",
+//       gridSrNo: selectedDrumRow?.srNo || 0,
+//     }));
+
+//     axios
+//       .post(`${ipaddress}api/receiving/saveDrumDetails`, drumList, {
+//         params: {
+//           companyId: companyid,
+//           branchId: branchId,
+//           receivingId: selectedDrumRow?.receivingId,
+//           userId: userId,
+//           deletedSrNos: deletedDrumSrNos?.join(","),
+//         },
+//         headers: {
+//           Authorization: `Bearer ${jwtToken}`,
+//           "Content-Type": "application/json",
+//         },
+//       })
+//       .then((response) => {
+//         setLoading(false);
+//         toast.success("Drum details saved successfully!", {
+//           autoClose: 800,
+//         });
+
+//         setDeletedDrumSrNos([]);
+//         setCommodityErrors({});
+
+//         fetchDrumDetails(selectedDrumRow);
+//       })
+//       .catch((error) => {
+//         setLoading(false);
+//         toast.error(
+//           error.response?.data?.message ||
+//             error.response?.data ||
+//             "Error saving drum details.",
+//           {
+//             autoClose: 3000,
+//           },
+//         );
+//       });
+//   };
+//   const fetchDrumDetails = (row) => {
+//     axios
+//       .get(`${ipaddress}api/receiving/getDrumDetails`, {
+//         params: {
+//           companyId: companyid,
+//           branchId: branchId,
+//           receivingId: row?.receivingId,
+//           gridSrNo: row?.srNo || 0,
+//         },
+//         headers: {
+//           Authorization: `Bearer ${jwtToken}`,
+//         },
+//       })
+//       .then((response) => {
+//         if (
+//           response.data &&
+//           Array.isArray(response.data) &&
+//           response.data.length > 0
+//         ) {
+//           const formattedRows = response.data.map((item, idx) => ({
+//             drumNo: item.drumNo || "",
+//             commodity: item.commodityId || "",
+//             commodityDescription: item.commodityDescription || "",
+//             netWeight: item.netWeight || "",
+//             srNo: item.srNo || "", // Preserve the SR number from DB
+//           }));
+//           setDrumRows(formattedRows);
+//         } else {
+//           // Reset to empty row if no data
+//           setDrumRows([{ drumNo: "", commodity: "", netWeight: "", srNo: 1 }]);
+//         }
+//         // Clear deleted SR numbers when fetching fresh data
+//         setDeletedDrumSrNos([]);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching drum details:", error);
+//         setDrumRows([{ drumNo: "", commodity: "", netWeight: "", srNo: 1 }]);
+//         setDeletedDrumSrNos([]);
+//       });
+//   };
+
+//   const [commodityOptions, setCommodityOptions] = useState([]);
+//   const fetchCommodityOptions = (receivingId) => {
+//     if (!receivingId) {
+//       setCommodityOptions([]);
+//       return;
+//     }
+
+//     axios
+//       .get(`${ipaddress}api/receiving/getCommoditiesByReceivingId`, {
+//         params: {
+//           companyId: companyid,
+//           branchId: branchId,
+//           receivingId: receivingId,
+//         },
+//         headers: {
+//           Authorization: `Bearer ${jwtToken}`,
+//         },
+//       })
+//       .then((response) => {
+//         if (response.data && Array.isArray(response.data)) {
+//           const options = response.data.map((commodity) => ({
+//             value: commodity.commodityId,
+//             label: commodity.commodityDescription,
+//           }));
+//           setCommodityOptions(options);
+//         }
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching commodities:", error);
+//         toast.error("Error loading commodities");
+//       });
+//   };
+
+//   const [deletedDrumSrNos, setDeletedDrumSrNos] = useState([]);
 
 //   return (
 //     <>
@@ -2031,7 +2771,6 @@
 //           <CardBody> */}
 //         <div>
 //           <Row>
-
 //             <Modal
 //               Modal
 //               isOpen={isModalOpenForIGMSearch}
@@ -2103,9 +2842,7 @@
 //                         maxLength={15}
 //                         name="chaSearchId"
 //                         value={chaSearchId}
-//                         onChange={(e) =>
-//                           setChaSearchId(e.target.value)
-//                         }
+//                         onChange={(e) => setChaSearchId(e.target.value)}
 //                       />
 //                     </FormGroup>
 //                   </Col>
@@ -2163,7 +2900,6 @@
 //                         <th scope="col"></th>
 //                         <th scope="col"></th>
 //                         <th scope="col"></th>
-
 //                       </tr>
 //                     </thead>
 //                     <tbody>
@@ -2178,18 +2914,31 @@
 //                                   item.jobTransId,
 //                                   item.receivingId,
 //                                   item.jobNo,
-
 //                                 )
 //                               }
 //                               value={item[0]}
 //                             />
 //                           </td>
 //                           <td>{item.receivingId}</td>
-//                           <td>{item.receivingDate ? format(new Date(item.receivingDate), 'dd/MM/yyyy HH:mm') : null}</td>
+//                           <td>
+//                             {item.receivingDate
+//                               ? format(
+//                                   new Date(item.receivingDate),
+//                                   "dd/MM/yyyy HH:mm",
+//                                 )
+//                               : null}
+//                           </td>
 //                           <td>{item.jobTransId}</td>
 //                           <td>{item.jobNo}</td>
 //                           <td>{item.boeNo}</td>
-//                           <td>{item.boeDate ? format(new Date(item.boeDate), 'dd/MM/yyyy HH:mm') : null}</td>
+//                           <td>
+//                             {item.boeDate
+//                               ? format(
+//                                   new Date(item.boeDate),
+//                                   "dd/MM/yyyy HH:mm",
+//                                 )
+//                               : null}
+//                           </td>
 //                           <td>{item.importerName}</td>
 //                           <td>{item.status}</td>
 //                         </tr>
@@ -2254,34 +3003,35 @@
 //                       value={inBond.receivingId}
 //                       maxLength={27}
 //                       disabled
-
 //                     />
 //                   </FormGroup>
 //                 </Col>
 
-//                 <Col md={3} className="d-flex justify-content-end" style={{ marginTop: 21 }}>
+//                 <Col
+//                   md={3}
+//                   className="d-flex justify-content-end"
+//                   style={{ marginTop: 21 }}
+//                 >
 //                   <button
 //                     className="btn btn-outline-primary btn-margin newButton"
-//                     style={{ height: 31, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+//                     style={{
+//                       height: 31,
+//                       display: "flex",
+//                       alignItems: "center",
+//                       justifyContent: "center",
+//                     }}
 //                     id="submitbtn2"
 //                     onClick={openIGMSearchModal}
 //                   >
-//                     <FontAwesomeIcon
-//                       icon={faSearch}
-//                     />
-
+//                     <FontAwesomeIcon icon={faSearch} />
 //                   </button>
 //                 </Col>
 //               </Row>
-
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="receivingDate"
-//                 >
-//                   Receiving Date
+//                 <label className="forlabel bold-label" htmlFor="receivingDate">
+//                   Receiving Date <span style={{ color: "red" }}>*</span>
 //                 </label>
 //                 <div style={{ position: "relative" }}>
 //                   <DatePicker
@@ -2290,9 +3040,9 @@
 //                     id="receivingDate"
 //                     name="receivingDate"
 //                     dateFormat="dd/MM/yyyy HH:mm"
-//                     showTimeSelect
+//                     showTimeInput
 //                     value={inBond.receivingDate}
-//                     disabled
+//                     //  disabled
 //                     timeFormat="HH:mm"
 //                     className="form-control border-right-0 inputField"
 //                     wrapperClassName="custom-react-datepicker-wrapper"
@@ -2318,11 +3068,15 @@
 //                   BE/Job No <span className="error-message">*</span>
 //                 </label>
 //                 <Select
-//                   value={inBond.boeNo ? { value: inBond.boeNo, label: isoName } : null}
+//                   value={
+//                     inBond.boeNo
+//                       ? { value: inBond.boeNo, label: isoName }
+//                       : null
+//                   }
 //                   onChange={handleBoeChange}
 //                   // onInputChange={getBoeData}
 //                   onInputChange={(inputValue, { action }) => {
-//                     if (action === 'input-change') {
+//                     if (action === "input-change") {
 //                       getBoeData(inputValue);
 //                     }
 //                   }}
@@ -2335,9 +3089,11 @@
 //                   styles={{
 //                     control: (provided, state) => ({
 //                       ...provided,
-//                       height: 32,  // Set the height of the select input
+//                       height: 32, // Set the height of the select input
 //                       minHeight: 32,
-//                       border: state.isFocused ? '1px solid #ccc' : '1px solid #ccc',
+//                       border: state.isFocused
+//                         ? "1px solid #ccc"
+//                         : "1px solid #ccc",
 //                       // display: 'flex',
 //                       // alignItems: 'center',  // Vertically center the content
 //                       // padding: '0 10px',     // Ensure padding is consistent
@@ -2350,62 +3106,64 @@
 //                     valueContainer: (provided) => ({
 //                       ...provided,
 //                       // display: 'flex',
-//                       alignItems: 'center',  // Vertically center the text
-//                       padding: '0 8px',
-//                       height: '100%',
-//                       whiteSpace: 'nowrap',
-//                       textOverflow: 'ellipsis',
-//                       lineHeight: '28px',
-//                       maxWidth: 'calc(100% - 20px)',
-//                       position: 'relative',
-//                       overflow: 'visible',
+//                       alignItems: "center", // Vertically center the text
+//                       padding: "0 8px",
+//                       height: "100%",
+//                       whiteSpace: "nowrap",
+//                       textOverflow: "ellipsis",
+//                       lineHeight: "28px",
+//                       maxWidth: "calc(100% - 20px)",
+//                       position: "relative",
+//                       overflow: "visible",
 //                     }),
 
 //                     input: (provided) => ({
 //                       ...provided,
-//                       width: '100%',
-//                       overflow: 'hidden',
-//                       textOverflow: 'ellipsis',
-//                       whiteSpace: 'nowrap',
-//                       outline: 'none', // Avoid outline clashes
+//                       width: "100%",
+//                       overflow: "hidden",
+//                       textOverflow: "ellipsis",
+//                       whiteSpace: "nowrap",
+//                       outline: "none", // Avoid outline clashes
 //                     }),
 
 //                     singleValue: (provided) => ({
 //                       ...provided,
-//                       lineHeight: '32px',
-//                       overflow: 'hidden',
-//                       whiteSpace: 'nowrap',
-//                       textOverflow: 'ellipsis',
+//                       lineHeight: "32px",
+//                       overflow: "hidden",
+//                       whiteSpace: "nowrap",
+//                       textOverflow: "ellipsis",
 //                     }),
 
 //                     clearIndicator: (provided) => ({
 //                       ...provided,
 //                       padding: 2,
-//                       display: 'flex',
-//                       alignItems: 'center',
-//                       justifyContent: 'center',
-//                       position: 'absolute',
+//                       display: "flex",
+//                       alignItems: "center",
+//                       justifyContent: "center",
+//                       position: "absolute",
 //                       right: 5,
-//                       top: '50%',
-//                       transform: 'translateY(-50%)', // Vertically center the clear indicator
+//                       top: "50%",
+//                       transform: "translateY(-50%)", // Vertically center the clear indicator
 //                     }),
 
 //                     indicatorSeparator: () => ({
-//                       display: 'none', // Remove the separator between indicators
+//                       display: "none", // Remove the separator between indicators
 //                     }),
 
 //                     dropdownIndicator: () => ({
-//                       display: 'none', // Remove the dropdown arrow
+//                       display: "none", // Remove the dropdown arrow
 //                     }),
 
 //                     placeholder: (provided) => ({
 //                       ...provided,
-//                       lineHeight: '32px',
-//                       color: 'gray',
+//                       lineHeight: "32px",
+//                       color: "gray",
 //                     }),
 //                   }}
 //                 />
-//                 <div style={{ color: 'red' }} className="error-message">{errors.boeNo}</div>
+//                 <div style={{ color: "red" }} className="error-message">
+//                   {errors.boeNo}
+//                 </div>
 //               </FormGroup>
 //             </Col>
 
@@ -2421,7 +3179,6 @@
 //                     id="boeDate"
 //                     name="boeDate"
 //                     disabled
-
 //                     dateFormat="dd/MM/yyyy"
 //                     className="form-control border-right-0 inputField"
 //                     wrapperClassName="custom-react-datepicker-wrapper"
@@ -2446,10 +3203,7 @@
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="sbRequestId"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="sbRequestId">
 //                   Approved By
 //                 </label>
 //                 <input
@@ -2457,7 +3211,6 @@
 //                   type="text"
 //                   id="approvedBy"
 //                   disabled
-
 //                   maxLength={15}
 //                   name="approvedBy"
 //                   value={inBond.approvedBy}
@@ -2467,10 +3220,7 @@
 
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="sbRequestId"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="sbRequestId">
 //                   Status
 //                 </label>
 //                 <input
@@ -2479,13 +3229,17 @@
 //                   id="status"
 //                   maxLength={15}
 //                   disabled
-
 //                   name="status"
-//                   value={inBond.status === "A" ? "Approved" : inBond.status === "N" ? "New" : ""}
+//                   value={
+//                     inBond.status === "A"
+//                       ? "Approved"
+//                       : inBond.status === "N"
+//                         ? "New"
+//                         : ""
+//                   }
 //                 />
 //               </FormGroup>
 //             </Col>
-
 //           </Row>
 //           <Row>
 //             <Col md={2}>
@@ -2501,7 +3255,6 @@
 //                   name="gateInId"
 //                   value={inBond.gateInId}
 //                   disabled
-
 //                 />
 //                 <div style={{ color: "red" }} className="error-message">
 //                   {bondingErrors.gateInId}
@@ -2521,7 +3274,6 @@
 //                   name="jobNo"
 //                   value={inBond.jobNo}
 //                   disabled
-
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -2536,11 +3288,9 @@
 //                     onChange={handleDocDateChange}
 //                     id="nocDate"
 //                     disabled
-
 //                     name="nocDate"
 //                     dateFormat="dd/MM/yyyy"
 //                     className="form-control border-right-0 inputField"
-
 //                     wrapperClassName="custom-react-datepicker-wrapper"
 //                   />
 //                   <FontAwesomeIcon
@@ -2560,10 +3310,7 @@
 
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="jobTransDate"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="jobTransDate">
 //                   Job Trans Date
 //                 </label>
 //                 <div style={{ position: "relative" }}>
@@ -2576,10 +3323,8 @@
 //                     showTimeSelect
 //                     value={inBond.jobTransDate}
 //                     disabled
-
 //                     timeFormat="HH:mm"
 //                     className="form-control border-right-0 inputField"
-
 //                     wrapperClassName="custom-react-datepicker-wrapper"
 //                   />
 //                   <FontAwesomeIcon
@@ -2610,16 +3355,12 @@
 //                   name="depositNo"
 //                   value={inBond.depositNo}
 //                   disabled
-
 //                 />
 //               </FormGroup>
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="sbRequestId"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="sbRequestId">
 //                   Created By <span className="error-message"></span>
 //                 </label>
 //                 <input
@@ -2627,14 +3368,12 @@
 //                   type="text"
 //                   id="createdBy"
 //                   disabled
-
 //                   maxLength={15}
 //                   name="createdBy"
 //                   value={inBond.createdBy}
 //                 />
 //               </FormGroup>
 //             </Col>
-
 //           </Row>
 
 //           <Row>
@@ -2657,7 +3396,8 @@
 //                   }}
 //                 >
 //                   <option value="">Select Space</option>
-//                   <option value="COVERED">Covered Space</option>
+//                   <option value="COVERED">Racking System</option>
+//                   <option value="COVEREDGD">Covered Grounded Space</option>
 //                   <option value="OPEN">Open Space</option>
 //                 </select>
 //               </FormGroup>
@@ -2669,7 +3409,7 @@
 //                   Cargo Condition <span className="error-message">*</span>
 //                 </label>
 //                 <select
-//                   className={`form-control ${inBond.cargoCondition ? 'border-reset' : ''}`}
+//                   className={`form-control ${inBond.cargoCondition ? "border-reset" : ""}`}
 //                   id="cargoCondition"
 //                   name="cargoCondition"
 //                   value={inBond.cargoCondition} // Should match option values
@@ -2691,10 +3431,7 @@
 
 //             <Col md={4}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="importerName"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="importerName">
 //                   Importer Name
 //                 </label>
 //                 <input
@@ -2705,7 +3442,6 @@
 //                   name="importerName"
 //                   value={inBond.importerName}
 //                   disabled
-
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -2719,7 +3455,6 @@
 //                   type="text"
 //                   id="cha"
 //                   disabled
-
 //                   maxLength={15}
 //                   name="cha"
 //                   value={chaName}
@@ -2733,13 +3468,9 @@
 //           </Row>
 
 //           <Row>
-
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="areaAllocated"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="areaAllocated">
 //                   Area Allocated
 //                 </label>
 //                 <input
@@ -2750,16 +3481,12 @@
 //                   name="areaAllocated"
 //                   value={inBond.areaAllocated}
 //                   disabled
-
 //                 />
 //               </FormGroup>
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="areaOccupied"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="areaOccupied">
 //                   Area Occupied
 //                 </label>
 //                 <input
@@ -2770,7 +3497,6 @@
 //                   name="areaOccupied"
 //                   value={inBond.areaOccupied}
 //                   disabled
-
 //                 />
 //                 <div style={{ color: "red" }} className="error-message">
 //                   {bondingErrors.uom}
@@ -2779,10 +3505,7 @@
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="gateInPackages"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="gateInPackages">
 //                   Gate In Packages
 //                 </label>
 //                 <input
@@ -2794,7 +3517,6 @@
 //                   value={inBond.gateInPackages}
 //                   onChange={handleNocChange}
 //                   disabled
-
 //                 />
 
 //                 <div style={{ color: "red" }} className="error-message">
@@ -2818,16 +3540,12 @@
 //                   name="receivedPackages"
 //                   value={inBond.receivedPackages}
 //                   disabled
-
 //                 />
 //               </FormGroup>
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="gateInWeight"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="gateInWeight">
 //                   Gate In Weight
 //                 </label>
 //                 <input
@@ -2837,7 +3555,6 @@
 //                   maxLength={15}
 //                   name="gateInWeight"
 //                   disabled
-
 //                   value={inBond.gateInWeight}
 //                   onChange={handleNocChange}
 //                 />
@@ -2845,15 +3562,11 @@
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="receivedWeight"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="receivedWeight">
 //                   Receiving Weight
 //                 </label>
 //                 <input
 //                   disabled
-
 //                   className="form-control"
 //                   type="text"
 //                   id="receivedWeight"
@@ -2864,11 +3577,9 @@
 //                 />
 //               </FormGroup>
 //             </Col>
-
 //           </Row>
 
 //           <Row>
-
 //             <Col md={2}>
 //               <FormGroup>
 //                 <label className="forlabel bold-label" htmlFor="noOf20Ft">
@@ -2900,16 +3611,12 @@
 //                   name="noOf40Ft"
 //                   value={inBond.noOf40Ft}
 //                   onChange={handleNocChange}
-
 //                 />
 //               </FormGroup>
 //             </Col>
 //             <Col md={2}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="noOfMarks"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="noOfMarks">
 //                   Mark Nos
 //                 </label>
 //                 <input
@@ -2918,13 +3625,8 @@
 //                   id="noOfMarks"
 //                   maxLength={15}
 //                   name="noOfMarks"
-//                   value={
-//                     inBond.noOfMarks != null
-//                       ? inBond.noOfMarks
-//                       : "0"
-//                   }
+//                   value={inBond.noOfMarks != null ? inBond.noOfMarks : "0"}
 //                   onChange={handleNocChange}
-
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -2948,7 +3650,6 @@
 //                 >
 //                   <option value="N">NO</option>
 //                   <option value="Y">YES</option>
-
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -2966,7 +3667,6 @@
 //                   name="comments"
 //                   value={inBond.comments}
 //                   onChange={handleNocChange}
-
 //                 />
 //               </FormGroup>
 //             </Col>
@@ -3027,7 +3727,7 @@
 //                   Handling Equipment <span className="error-message">*</span>
 //                 </label>
 //                 <select
-//                   className={`form-control ${inBond.handlingEquip1 ? 'border-reset' : ''}`}
+//                   className={`form-control ${inBond.handlingEquip1 ? "border-reset" : ""}`}
 //                   id="handlingEquip1"
 //                   name="handlingEquip1"
 //                   value={inBond.handlingEquip1} // Should match option values
@@ -3042,6 +3742,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3051,7 +3752,7 @@
 //                   Handling Equipment 2 <span className="error-message">*</span>
 //                 </label>
 //                 <select
-//                   className={`form-control ${inBond.handlingEquip2 ? 'border-reset' : ''}`}
+//                   className={`form-control ${inBond.handlingEquip2 ? "border-reset" : ""}`}
 //                   id="handlingEquip2"
 //                   name="handlingEquip2"
 //                   value={inBond.handlingEquip2} // Should match option values
@@ -3066,6 +3767,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3073,11 +3775,10 @@
 //             <Col md={2}>
 //               <FormGroup>
 //                 <label className="forlabel bold-label" htmlFor="handlingEquip3">
-
 //                   Handling Equipment 3
 //                 </label>
 //                 <select
-//                   className={`form-control ${inBond.handlingEquip3 ? 'border-reset' : ''}`}
+//                   className={`form-control ${inBond.handlingEquip3 ? "border-reset" : ""}`}
 //                   id="handlingEquip3"
 //                   name="handlingEquip3"
 //                   value={inBond.handlingEquip3} // Should match option values
@@ -3092,6 +3793,7 @@
 //                   <option value="Fork">Fork</option>
 //                   <option value="Labour">Labour</option>
 //                   <option value="Hydra">Hydra</option>
+//                   <option value="Kalmar">Kalmar</option>
 //                 </select>
 //               </FormGroup>
 //             </Col>
@@ -3142,7 +3844,6 @@
 //               </FormGroup>
 //             </Col>
 //           </Row>
-
 //         </div>
 //         <hr />
 //         <Row className="text-center">
@@ -3154,10 +3855,7 @@
 //               // disabled={inBond.status==="A"}
 //               onClick={handleSave}
 //             >
-//               <FontAwesomeIcon
-//                 icon={faSave}
-//                 style={{ marginRight: "5px" }}
-//               />
+//               <FontAwesomeIcon icon={faSave} style={{ marginRight: "5px" }} />
 //               Save
 //             </button>
 
@@ -3192,7 +3890,8 @@
 //               className="btn btn-outline-primary btn-margin newButton"
 //               style={{ marginRight: 10 }}
 //               // disabled={inBond.status==="A"}
-//               onClick={addRow} >
+//               onClick={addRow}
+//             >
 //               <FontAwesomeIcon icon={faAdd} style={{ marginRight: "5px" }} />
 //               Add Row
 //             </button>
@@ -3215,16 +3914,87 @@
 
 //         <div className="mt-1 table-responsive ">
 //           <table className="table table-bordered table-hover tableHeader">
-//             <thead className='tableHeader'>
+//             <thead className="tableHeader">
 //               <tr>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Select Yard Location <span className="error-message">*</span></th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >   Yard Location  <span className="error-message">*</span>   </th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >   Yard Block    </th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell</th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area</th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Used</th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Yard Packages <span className="error-message">*</span></th>
-//                 <th scope="col" className="text-center" style={{ color: "black" }} >Cell Area Allocated <span className="error-message">*</span></th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Select Yard Location <span className="error-message">*</span>
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   {" "}
+//                   Yard Location <span className="error-message">*</span>{" "}
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   {" "}
+//                   Yard Block{" "}
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ width: "200px !important", color: "black" }}
+//                 >
+//                   Cell
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Cell Area
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Cell Area Used
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Yard Packages <span className="error-message">*</span>
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Cell Area Allocated <span className="error-message">*</span>
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Weight per Pallet
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Per Pallet Receiving
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Action
+//                 </th>
 //               </tr>
 //             </thead>
 //             <tbody>
@@ -3232,16 +4002,14 @@
 //                 <tr key={index}>
 //                   <td>
 //                     <Select
-
 //                       isClearable
 //                       menuPortalTarget={document.body} // Renders dropdown in the document body to avoid clipping
 //                       menuPosition="fixed" // Sets the dropdown menu position to fixed
 //                       menuPlacement="top"
 //                       onMenuOpen={() => {
 //                         if (!inBond.spaceAllocated) {
-
 //                           toast.error("Select Space Allocated first", {
-//                             position: 'top-center',
+//                             position: "top-center",
 //                             autoClose: 1000,
 //                           });
 //                           // alert("Space Allocated is not available.");
@@ -3263,10 +4031,9 @@
 //                         handleSelectChange(index, selectedOption)
 //                       }
 //                       styles={{
-//                         container: (base) => ({ ...base, width: '180px' }),
+//                         container: (base) => ({ ...base, width: "180px" }),
 //                         menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Ensure the dropdown is above other elements
 //                       }}
-
 //                     />
 //                   </td>
 //                   <td>
@@ -3274,11 +4041,12 @@
 //                       className="form-control"
 //                       type="text"
 //                       value={row.yardLocation}
-//                       name='yardLocation'
+//                       name="yardLocation"
 //                       disabled
 //                       style={{
-//                         borderColor:
-//                           errors[`yardLocation-${index}`] ? "red" : "",
+//                         borderColor: errors[`yardLocation-${index}`]
+//                           ? "red"
+//                           : "",
 //                       }}
 //                     />
 //                     {errors[`yardLocation-${index}`] && (
@@ -3286,7 +4054,6 @@
 //                         {errors[`yardLocation-${index}`]}
 //                       </span>
 //                     )}
-
 //                   </td>
 //                   <td>
 //                     <Input
@@ -3296,15 +4063,13 @@
 //                       value={row.yardBlock}
 //                       disabled
 //                     />
-
 //                   </td>
-//                   <td>
+//                   <td style={{ width: "100px", minWidth: "100px" }}>
 //                     <Input
 //                       className="form-control"
 //                       type="text"
 //                       name="blockCellNo"
 //                       value={row.blockCellNo}
-
 //                       disabled
 //                     />
 //                   </td>
@@ -3314,7 +4079,6 @@
 //                       type="text"
 //                       value={row.cellArea}
 //                       name="cellArea"
-
 //                       disabled
 //                     />
 //                   </td>
@@ -3324,7 +4088,6 @@
 //                       type="text"
 //                       name="cellAreaUsed"
 //                       value={row.cellAreaUsed}
-
 //                       disabled
 //                     />
 //                   </td>
@@ -3336,7 +4099,9 @@
 //                       name="receivedPackages"
 //                       onChange={(e) => handleInputChange(index, e)}
 //                       style={{
-//                         borderColor: errors[`receivedPackages-${index}`] ? "red" : "",
+//                         borderColor: errors[`receivedPackages-${index}`]
+//                           ? "red"
+//                           : "",
 //                       }}
 //                     />
 //                     {errors[`receivedPackages-${index}`] && (
@@ -3352,10 +4117,11 @@
 //                       name="cellAreaAllocated"
 //                       value={row.cellAreaAllocated}
 //                       onChange={(e) => handleInputChange(index, e)}
-//                       disabled={inBond.spaceAllocated === 'OPEN'}
+//                       disabled={inBond.spaceAllocated === "OPEN"}
 //                       style={{
-//                         borderColor:
-//                           errors[`cellAreaAllocated-${index}`] ? "red" : "",
+//                         borderColor: errors[`cellAreaAllocated-${index}`]
+//                           ? "red"
+//                           : "",
 //                       }}
 //                     />
 //                     {errors[`cellAreaAllocated-${index}`] && (
@@ -3363,6 +4129,25 @@
 //                         {errors[`cellAreaAllocated-${index}`]}
 //                       </span>
 //                     )}
+//                   </td>
+//                   <td>
+//                     <Input
+//                       className="form-control"
+//                       type="text"
+//                       name="palletWiseWt"
+//                       value={row.palletWiseWt}
+//                       onChange={(e) => handleInputChange1(index, e, 13, 3)}
+//                     />
+//                   </td>
+
+//                   <td>
+//                     <Input
+//                       className="form-control"
+//                       type="text"
+//                       name="perPalletReciving"
+//                       value={row.perPalletReciving}
+//                       onChange={(e) => handleInputChange1(index, e, 13, 3)}
+//                     />
 //                   </td>
 //                   {/* <td>
 //                 {row.inBondingId }
@@ -3374,28 +4159,98 @@
 //                 </button>
 //                               </td> */}
 
-//                   {!row.inBondingId && row.status !== 'A' && (
+//                   {/*   {!row.inBondingId && row.status === "A" && (
 //                     <>
 //                       <td>
-//                         {/* <button
-//                           onClick={() => deleteRow(index)}
-//                           disabled={row.status === 'A'}
-//                           className="btn btn-danger"
-//                         >
-//                           <FontAwesomeIcon icon={faXmark} />
-//                         </button> */}
-
-//                         <Button type="button" onClick={() => deleteRow(index)}
+//                          <Button
+//                           type="button"
+//                           onClick={() => markRowForDeletion(row, index)}
 //                           className="newButton"
 //                           color="danger"
-//                           outline>
+//                           outline
+//                           disabled={row.deliveredPackages > 0}
+//                           title={
+//                             row.deliveredPackages > 0
+//                               ? "Cannot delete row with delivered packages"
+//                               : "Delete row"
+//                           }
+//                         >
 //                           <FontAwesomeIcon icon={faTrash} />
-//                         </Button>
+//                         </Button> 
 
 //                       </td>
 //                     </>
 //                   )}
+//                     */}
 
+//                   {!row.inBondingId &&
+//                     row.status === "A" &&
+//                      (
+//                       <div className="">
+//                         <button
+//                           type="button"
+//                           className="btn btn-primary dropdown-toggle"
+//                           data-bs-toggle="dropdown"
+//                           aria-expanded="false"
+//                         >
+//                           <FontAwesomeIcon
+//                             icon={faAtom}
+//                             style={{ marginRight: "5px" }}
+//                           />
+//                           Action
+//                         </button>
+//                         <ul className="dropdown-menu">
+//                           {/* <li>
+//                             <button
+//                               className="dropdown-item"
+//                               onClick={() => markRowForDeletion(row, index)}
+//                               disabled={row.deliveredPackages > 0}
+//                             >
+//                               <FontAwesomeIcon
+//                                 icon={faTrash}
+//                                 style={{ marginRight: "5px" }}
+//                               />
+//                               Delete
+//                             </button>
+//                           </li> */}
+
+//                           {(role === "ROLE_ADMIN" || allowEdit) &&
+//                             row.receivingId && (
+//                               <li>
+//                                 <button
+//                                   className="dropdown-item"
+//                                   onClick={() =>
+//                                     handleOpenDrumUpload(row, "add")
+//                                   }
+//                                   disabled={row.deliveredPackages > 0}
+//                                 >
+//                                   <FontAwesomeIcon
+//                                     icon={faPlus}
+//                                     style={{ marginRight: "5px" }}
+//                                   />
+//                                   Add Drum Details
+//                                 </button>
+//                               </li>
+//                             )}
+
+//                           {(role === "ROLE_ADMIN" || allowRead) &&
+//                             row.receivingId && (
+//                               <li>
+//                                 <button
+//                                   className="dropdown-item"
+//                                 onClick={() => handleOpenDrumUpload(row, 'view')}
+//                                 >
+//                                   <FontAwesomeIcon
+//                                     icon={faEye}
+//                                     style={{ marginRight: "5px" }}
+//                                   />
+//                                   View Drum Details
+//                                 </button>
+//                               </li>
+//                             )}
+//                         </ul>
+//                       </div>
+//                     )}
 //                 </tr>
 //               ))}
 //             </tbody>
@@ -3416,6 +4271,7 @@
 //             <FontAwesomeIcon icon={faSearch} style={{ marginRight: "5px" }} />
 //             Save
 //         </button>
+
 
 //         <button
 //             className="btn btn-outline-danger btn-margin newButton"
@@ -3452,8 +4308,8 @@
 //             />
 //             Receiving Cargo Details
 //           </h5>
-//           <table className="table table-bordered table-hover tableHeader" >
-//             <thead className="tableHeader"  >
+//           <table className="table table-bordered table-hover tableHeader">
+//             <thead className="tableHeader">
 //               <tr>
 //                 <th
 //                   scope="col"
@@ -3573,31 +4429,45 @@
 //                   className="text-center"
 //                   style={{ color: "black" }}
 //                 >
-//                   Bal Receiving PKG <span className="error-message">*</span>
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Bal Receiving Weight  <span className="error-message">*</span>
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Receiving Package
-//                 </th>
-//                 <th
-//                   scope="col"
-//                   className="text-center"
-//                   style={{ color: "black" }}
-//                 >
-//                   Receiving Weight
+//                   Old Recived Weight
 //                 </th>
 
-//                 <th scope="col" className="text-center" style={{ color: 'black' }}>Damage Documents</th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Bal Receiving PKG
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Bal Receiving Weight
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Receiving Package <span className="error-message">*</span>
+//                 </th>
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Receiving Weight <span className="error-message">*</span>
+//                 </th>
+
+//                 <th
+//                   scope="col"
+//                   className="text-center"
+//                   style={{ color: "black" }}
+//                 >
+//                   Action
+//                 </th>
 //               </tr>
 //             </thead>
 //             <tbody>
@@ -3609,14 +4479,14 @@
 //                       style={{ transform: "scale(1.5)" }}
 //                       disabled={dtl.receivingId}
 //                       checked={
-//                         (inBond.receivingId === dtl.receivingId) ||
-//                         selectedRows.some
-//                           ((selectedRow) =>
+//                         inBond.receivingId === dtl.receivingId ||
+//                         selectedRows.some(
+//                           (selectedRow) =>
 //                             selectedRow.jobTransId === dtl.jobTransId &&
 //                             selectedRow.jobNo === dtl.jobNo &&
 //                             selectedRow.commodityId === dtl.commodityId &&
-//                             selectedRow.srNo === dtl.srNo
-//                           )
+//                             selectedRow.srNo === dtl.srNo,
+//                         )
 //                       }
 //                       onChange={(e) => handleCheckboxChangeForDtl(e, dtl)}
 //                     />
@@ -3629,7 +4499,11 @@
 //                   <td>{dtl.grossWeight || dtl.gateInWeight}</td>
 
 //                   <td>{dtl.gateInId}</td>
-//                   <td>{dtl.gateInDate ? format(new Date(dtl.gateInDate), 'dd/MM/yyyy HH:mm') : ''}</td>
+//                   <td>
+//                     {dtl.gateInDate
+//                       ? format(new Date(dtl.gateInDate), "dd/MM/yyyy HH:mm")
+//                       : ""}
+//                   </td>
 //                   <td>{dtl.vehicleNo}</td>
 //                   <td>{dtl.containerNo}</td>
 //                   <td>{dtl.containerSize}</td>
@@ -3638,10 +4512,11 @@
 //                   {/* <td>{dtl.receivingPackages != null ? dtl.receivingPackages : 0}</td> */}
 
 //                   <td>{inputValues[index]?.oldReceivedPackages}</td>
+//                   <td>{inputValues[index]?.oldReceivedWeight}</td>
 //                   {/* <td>{dtl.balanceReceivedPackages}</td>
 //                   <td>{dtl.balanceReceivedWeight}</td> */}
 
-//                   {/*
+//                   {/* 
 
 //                   <td>{dtl.balanceReceivedPackages || dtl.balanceReceivedPackages}</td>
 //                   <td>{dtl.balanceReceivedWeight || dtl.balanceReceivedWeight}</td> */}
@@ -3663,8 +4538,8 @@
 //                           handleInputChangeFotDtl(
 //                             e,
 //                             "receivingPackages",
-//                             index
-//                           )
+//                             index,
+//                           );
 //                         }
 //                       }}
 //                       onPaste={(e) => {
@@ -3677,7 +4552,7 @@
 
 //                     {inputValues[index]?.errorMessage &&
 //                       inputValues[index]?.errorMessage.includes(
-//                         "Receiving Packages"
+//                         "Receiving Packages",
 //                       ) && (
 //                         <span style={{ color: "red", fontSize: "12px" }}>
 //                           {inputValues[index]?.errorMessage}
@@ -3692,58 +4567,135 @@
 //                       type="number"
 //                       value={inputValues[index]?.receivingWeight}
 //                       onChange={(e) =>
-//                         handleInputChangeFotDtl(e, "receivingWeight", index, 13, 3)
+//                         handleInputChangeFotDtl(
+//                           e,
+//                           "receivingWeight",
+//                           index,
+//                           13,
+//                           3,
+//                         )
 //                       }
 //                     />
 //                   </td>
 
 //                   <td className="text-center">
-//                     {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
+//                     {/* {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
 //                       <FontAwesomeIcon
 //                         icon={faUpload}
 //                         onClick={() => handleOpenDocumentUpload(dtl)}
 //                         style={{ color: 'green', cursor: 'pointer', fontSize: '24px' }}
 //                       />
-//                     )}
-
+//                     )} */}
+//                     <td className="text-center">
+//                       <div className="">
+//                         <button
+//                           type="button"
+//                           className="btn btn-primary dropdown-toggle"
+//                           data-bs-toggle="dropdown"
+//                           aria-expanded="false"
+//                         >
+//                           <FontAwesomeIcon
+//                             icon={faAtom}
+//                             style={{ marginRight: "5px" }}
+//                           />
+//                           Action
+//                         </button>
+//                         <ul className="dropdown-menu">
+//                           {(role === "ROLE_ADMIN" || allowEdit) &&
+//                             dtl.receivingId && (
+//                               <li>
+//                                 <button
+//                                   className="dropdown-item"
+//                                   onClick={() => handleOpenDocumentUpload(dtl)}
+//                                 >
+//                                   <FontAwesomeIcon
+//                                     icon={faUpload}
+//                                     style={{ marginRight: "5px" }}
+//                                   />
+//                                   Upload Damage Doc
+//                                 </button>
+//                               </li>
+//                             )}
+//                           {(role === "ROLE_ADMIN" || allowEdit) &&
+//                             dtl.receivingId && (
+//                               <li>
+//                                 <button
+//                                   className="dropdown-item"
+//                                   onClick={() => openAddBatchModal(dtl.srNo)}
+//                                 >
+//                                   <FontAwesomeIcon
+//                                     icon={faAdd}
+//                                     style={{ marginRight: "5px" }}
+//                                   />
+//                                   Add Batch
+//                                 </button>
+//                               </li>
+//                             )}
+//                         </ul>
+//                       </div>
+//                     </td>
 //                   </td>
-
 //                 </tr>
 //               ))}
 //             </tbody>
 //           </table>
-
 //         </div>
-
 //       </div>
 
 //       {/* Document Upload */}
 
-//       <Modal Modal isOpen={isModalOpenForDocumentUpload} onClose={handleCloseDocumentUpload} toggle={handleCloseDocumentUpload} style={{ maxWidth: '1000px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
-
-//         <ModalHeader toggle={handleCloseDocumentUpload} style={{
-//           backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
-//           boxShadow: '0px 5px 10px rgba(0, 77, 64, 0.3)',
-//           border: '1px solid rgba(0, 0, 0, 0.3)',
-//           borderRadius: '0',
-//           backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
-//           backgroundSize: 'cover',
-//           backgroundRepeat: 'no-repeat',
-//           backgroundPosition: 'center',
-//         }} >
-
-//           <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
-//             icon={faUpload}
-//             style={{
-//               marginRight: '8px',
-//               color: 'white',
-//             }}
-//           />Container Document Upload</h5>
-
+//       <Modal
+//         Modal
+//         isOpen={isModalOpenForDocumentUpload}
+//         onClose={handleCloseDocumentUpload}
+//         toggle={handleCloseDocumentUpload}
+//         style={{
+//           maxWidth: "1000px",
+//           fontSize: 14,
+//           wioverflow: "-moz-hidden-unscrollable",
+//         }}
+//       >
+//         <ModalHeader
+//           toggle={handleCloseDocumentUpload}
+//           style={{
+//             backgroundColor: "#80cbc4",
+//             color: "black",
+//             fontFamily: "Your-Heading-Font",
+//             textAlign: "center",
+//             background: "#26a69a",
+//             boxShadow: "0px 5px 10px rgba(0, 77, 64, 0.3)",
+//             border: "1px solid rgba(0, 0, 0, 0.3)",
+//             borderRadius: "0",
+//             backgroundImage:
+//               "radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )",
+//             backgroundSize: "cover",
+//             backgroundRepeat: "no-repeat",
+//             backgroundPosition: "center",
+//           }}
+//         >
+//           <h5
+//             className="pageHead"
+//             style={{ fontFamily: "Your-Heading-Font", color: "white" }}
+//           >
+//             {" "}
+//             <FontAwesomeIcon
+//               icon={faUpload}
+//               style={{
+//                 marginRight: "8px",
+//                 color: "white",
+//               }}
+//             />
+//             Container Document Upload
+//           </h5>
 //         </ModalHeader>
-//         <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+//         <ModalBody
+//           style={{
+//             backgroundImage:
+//               "url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)",
+//             backgroundSize: "cover",
+//           }}
+//         >
 //           <Row>
-
 //             <Col md={3}>
 //               <FormGroup>
 //                 <label className="forlabel bold-label" htmlFor="sbNo">
@@ -3753,7 +4705,7 @@
 //                   className="form-control"
 //                   type="text"
 //                   maxLength={15}
-//                   name='sbNo'
+//                   name="sbNo"
 //                   value={sbDocumentUpload[0]?.sbTransId || ""}
 //                   disabled
 //                 />
@@ -3769,7 +4721,7 @@
 //                   className="form-control"
 //                   type="text"
 //                   maxLength={15}
-//                   name='SbTransId'
+//                   name="SbTransId"
 //                   value={sbDocumentUpload[0]?.commodityDescription || ""}
 //                   disabled
 //                 />
@@ -3794,39 +4746,52 @@
 //           </Row>
 
 //           <Row>
-
 //             <Col xs={12} md={6}>
-
 //               <Row>
-
 //                 <Col xs={12} md={6}>
 //                   <FormGroup>
-//                     <label className="forlabel bold-label" htmlFor="isContainerDamage">
+//                     <label
+//                       className="forlabel bold-label"
+//                       htmlFor="isContainerDamage"
+//                     >
 //                       Container Damage
 //                     </label>
 //                     <Input
 //                       className={`form-control`}
 //                       type="checkbox"
-//                       name='isContainerDamage'
-//                       checked={sbDocumentUpload[0]?.isContainerDamage === 'Y'}
+//                       name="isContainerDamage"
+//                       checked={sbDocumentUpload[0]?.isContainerDamage === "Y"}
 //                       onChange={handleChangeDamageDetails}
-//                       style={{ width: '20px', height: '24px', cursor: 'pointer', margin: '0' }}
+//                       style={{
+//                         width: "20px",
+//                         height: "24px",
+//                         cursor: "pointer",
+//                         margin: "0",
+//                       }}
 //                     />
 //                   </FormGroup>
 //                 </Col>
 
 //                 <Col xs={12} md={6}>
 //                   <FormGroup>
-//                     <label className="forlabel bold-label" htmlFor="isCargoDamage">
+//                     <label
+//                       className="forlabel bold-label"
+//                       htmlFor="isCargoDamage"
+//                     >
 //                       Cargo Damage
 //                     </label>
 //                     <Input
 //                       className={`form-control`}
 //                       type="checkbox"
-//                       name='isCargoDamage'
-//                       checked={sbDocumentUpload[0]?.isCargoDamage === 'Y'}
+//                       name="isCargoDamage"
+//                       checked={sbDocumentUpload[0]?.isCargoDamage === "Y"}
 //                       onChange={handleChangeDamageDetails}
-//                       style={{ width: '20px', height: '24px', cursor: 'pointer', margin: '0' }}
+//                       style={{
+//                         width: "20px",
+//                         height: "24px",
+//                         cursor: "pointer",
+//                         margin: "0",
+//                       }}
 //                     />
 //                   </FormGroup>
 //                 </Col>
@@ -3835,16 +4800,13 @@
 
 //             <Col md={6}>
 //               <FormGroup>
-//                 <label
-//                   className="forlabel bold-label"
-//                   htmlFor="damageRemark"
-//                 >
+//                 <label className="forlabel bold-label" htmlFor="damageRemark">
 //                   Remark
 //                 </label>
 //                 <textarea
 //                   className="form-control"
 //                   id="damageRemark"
-//                   name='damageRemark'
+//                   name="damageRemark"
 //                   value={sbDocumentUpload[0]?.damageRemark}
 //                   onChange={handleChangeDamageDetails}
 //                   maxLength={300}
@@ -3852,87 +4814,730 @@
 //                 ></textarea>
 //               </FormGroup>
 //             </Col>
-
 //           </Row>
 
-//           {sbDocumentUpload.length > 0 && sbDocumentUpload.some(file => file.fileName) && (
-//             <div className="file-scroll-container">
-//               <Row className="flex-nowrap">
-//                 {sbDocumentUpload.map((file, index) => (
-//                   file.base64Url && (
-//                     <Col key={index} md="auto">
-//                       <div className="file-preview-wrapper">
-//                         <div className="file-preview">
-//                           <span className="remove-btn" onClick={() => handleRemoveFile(index, file.sbNo, file.sbLineNo, file.sbTransId, file.hSbTransId, file.isSaved, file.fileName, file.commodityDescription, file.isCargoDamage, file.isContainerDamage, file.damageRemark)}>&times;</span>
-//                           <div onClick={() => handleView(file)}>
-//                             {file.fileType === "application/pdf" ? (
-//                               <img src={pdfLogo} alt="PDF Preview" className="file-thumbnail" />
-//                             ) : file.fileType === "application/vnd.ms-excel" ||
-//                               file.fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-//                               file.fileType === "text/csv" ? (
-//                               <img src={xlsLogo} alt="Excel/CSV Preview" className="file-thumbnail" />
-//                             ) : (
-//                               <img src={file.base64Url} alt={file.fileName} className="file-thumbnail" />
-//                             )}
+//           {sbDocumentUpload.length > 0 &&
+//             sbDocumentUpload.some((file) => file.fileName) && (
+//               <div className="file-scroll-container">
+//                 <Row className="flex-nowrap">
+//                   {sbDocumentUpload.map(
+//                     (file, index) =>
+//                       file.base64Url && (
+//                         <Col key={index} md="auto">
+//                           <div className="file-preview-wrapper">
+//                             <div className="file-preview">
+//                               <span
+//                                 className="remove-btn"
+//                                 onClick={() =>
+//                                   handleRemoveFile(
+//                                     index,
+//                                     file.sbNo,
+//                                     file.sbLineNo,
+//                                     file.sbTransId,
+//                                     file.hSbTransId,
+//                                     file.isSaved,
+//                                     file.fileName,
+//                                     file.commodityDescription,
+//                                     file.isCargoDamage,
+//                                     file.isContainerDamage,
+//                                     file.damageRemark,
+//                                   )
+//                                 }
+//                               >
+//                                 &times;
+//                               </span>
+//                               <div onClick={() => handleView(file)}>
+//                                 {file.fileType === "application/pdf" ? (
+//                                   <img
+//                                     src={pdfLogo}
+//                                     alt="PDF Preview"
+//                                     className="file-thumbnail"
+//                                   />
+//                                 ) : file.fileType ===
+//                                     "application/vnd.ms-excel" ||
+//                                   file.fileType ===
+//                                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+//                                   file.fileType === "text/csv" ? (
+//                                   <img
+//                                     src={xlsLogo}
+//                                     alt="Excel/CSV Preview"
+//                                     className="file-thumbnail"
+//                                   />
+//                                 ) : (
+//                                   <img
+//                                     src={file.base64Url}
+//                                     alt={file.fileName}
+//                                     className="file-thumbnail"
+//                                   />
+//                                 )}
+//                               </div>
+//                             </div>
+//                             <p className="file-name">{file.fileName}</p>
 //                           </div>
-
-//                         </div>
-//                         <p className="file-name">{file.fileName}</p>
-//                       </div>
-//                     </Col>
-//                   )
-//                 ))}
-//               </Row>
-//             </div>
-//           )}
+//                         </Col>
+//                       ),
+//                   )}
+//                 </Row>
+//               </div>
+//             )}
 
 //           <Row className="text-center mt-1 mb-1">
 //             <Col>
 //               <button
 //                 className="btn btn-outline-primary btn-margin newButton"
-//                 style={{ marginRight: 10, fontWeight: 'bold' }}
+//                 style={{ marginRight: 10, fontWeight: "bold" }}
 //                 id="submitbtn2"
 //                 onClick={uploadGeneralDocument}
 //               >
-//                 <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+//                 <FontAwesomeIcon
+//                   icon={faUpload}
+//                   style={{ marginRight: "5px" }}
+//                 />
 //                 Upload
 //               </button>
 //             </Col>
 //           </Row>
 //         </ModalBody>
-//       </Modal >
+//       </Modal>
 
-//       <Modal Modal isOpen={isModalOpenForViewDocument} onClose={handleCloseViewDocument} toggle={handleCloseViewDocument} style={{ maxWidth: '1000px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
-
-//         <ModalHeader toggle={handleCloseViewDocument} style={{
-//           backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
-//           boxShadow: '0px 5px 10px rgba(0, 77, 64, 0.3)',
-//           border: '1px solid rgba(0, 0, 0, 0.3)',
-//           borderRadius: '0',
-//           backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
-//           backgroundSize: 'cover',
-//           backgroundRepeat: 'no-repeat',
-//           backgroundPosition: 'center',
-//         }} >
-//           <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
-//             icon={faEye}
-//             style={{
-//               marginRight: '8px',
-//               color: 'white',
-//             }}
-//           />View Document</h5>
-
+//       <Modal
+//         Modal
+//         isOpen={isModalOpenForViewDocument}
+//         onClose={handleCloseViewDocument}
+//         toggle={handleCloseViewDocument}
+//         style={{
+//           maxWidth: "1000px",
+//           fontSize: 14,
+//           wioverflow: "-moz-hidden-unscrollable",
+//         }}
+//       >
+//         <ModalHeader
+//           toggle={handleCloseViewDocument}
+//           style={{
+//             backgroundColor: "#80cbc4",
+//             color: "black",
+//             fontFamily: "Your-Heading-Font",
+//             textAlign: "center",
+//             background: "#26a69a",
+//             boxShadow: "0px 5px 10px rgba(0, 77, 64, 0.3)",
+//             border: "1px solid rgba(0, 0, 0, 0.3)",
+//             borderRadius: "0",
+//             backgroundImage:
+//               "radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )",
+//             backgroundSize: "cover",
+//             backgroundRepeat: "no-repeat",
+//             backgroundPosition: "center",
+//           }}
+//         >
+//           <h5
+//             className="pageHead"
+//             style={{ fontFamily: "Your-Heading-Font", color: "white" }}
+//           >
+//             {" "}
+//             <FontAwesomeIcon
+//               icon={faEye}
+//               style={{
+//                 marginRight: "8px",
+//                 color: "white",
+//               }}
+//             />
+//             View Document
+//           </h5>
 //         </ModalHeader>
-//         <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg)', backgroundSize: 'cover' }}>
+//         <ModalBody
+//           style={{
+//             backgroundImage:
+//               "url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg)",
+//             backgroundSize: "cover",
+//           }}
+//         >
 //           {renderFile()}
 //         </ModalBody>
-//       </Modal >
+//       </Modal>
 
+//       <Modal
+//         Modal
+//         isOpen={isModalOpenForAddBatch}
+//         onClose={closeAddBatchModal}
+//         toggle={closeAddBatchModal}
+//         style={{
+//           maxWidth: "700px",
+//           fontSize: 14,
+//           wioverflow: "-moz-hidden-unscrollable",
+//         }}
+//       >
+//         <ModalHeader
+//           toggle={closeAddBatchModal}
+//           style={{
+//             backgroundColor: "#80cbc4",
+//             color: "black",
+//             fontFamily: "Your-Heading-Font",
+//             textAlign: "center",
+//             background: "#26a69a",
+//             boxShadow: "0px 5px 10px rgba(0, 77, 64, 0.3)",
+//             border: "1px solid rgba(0, 0, 0, 0.3)",
+//             borderRadius: "0",
+//             backgroundImage:
+//               "radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )",
+//             backgroundSize: "cover",
+//             backgroundRepeat: "no-repeat",
+//             backgroundPosition: "center",
+//           }}
+//         >
+//           <h5
+//             className="pageHead"
+//             style={{ fontFamily: "Your-Heading-Font", color: "white" }}
+//           >
+//             {" "}
+//             <FontAwesomeIcon
+//               icon={faAdd}
+//               style={{
+//                 marginRight: "8px",
+//                 color: "white",
+//               }}
+//             />
+//             Add Batch
+//           </h5>
+//         </ModalHeader>
+//         <ModalBody
+//           style={{
+//             backgroundImage:
+//               "url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)",
+//             backgroundSize: "cover",
+//           }}
+//         >
+//           <Row>
+//             <Col className="text-center">
+//               <button
+//                 className="btn btn-outline-primary btn-margin newButton"
+//                 style={{ marginRight: 10 }}
+//                 id="submitbtn2"
+//                 onClick={handleSaveBatch}
+//               >
+//                 <FontAwesomeIcon icon={faSave} style={{ marginRight: "5px" }} />
+//                 Save
+//               </button>
+//               <button
+//                 className="btn btn-outline-success btn-margin newButton"
+//                 style={{ marginRight: 10 }}
+//                 id="submitbtn2"
+//                 onClick={addBatch}
+//               >
+//                 <FontAwesomeIcon icon={faAdd} style={{ marginRight: "5px" }} />
+//                 Add Batch
+//               </button>
+//             </Col>
+//           </Row>
+//           <div id="datepicker-portal10"></div>
+//           <div className="mt-3 table-responsive ">
+//             <table className="table table-bordered table-hover tableHeader">
+//               <thead className="tableHeader">
+//                 <tr className="text-center">
+//                   <th scope="col">Sr No</th>
+//                   <th scope="col">
+//                     Batch No <span style={{ color: "red" }}>*</span>{" "}
+//                   </th>
+//                   <th scope="col">
+//                     Mfg Date <span style={{ color: "red" }}>*</span>
+//                   </th>
+//                   <th scope="col">
+//                     Exp Date <span style={{ color: "red" }}>*</span>
+//                   </th>
+//                   <th scope="col">Action</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {batchData.map((item, index) => (
+//                   <tr key={index}>
+//                     <td>{index + 1}</td>
+//                     <td>
+//                       <Input
+//                         type="text"
+//                         name="batchNo"
+//                         id="batchNo"
+//                         value={item.batchNo}
+//                         maxLength={30}
+//                         onChange={(e) => handleBatchChange(e, index)}
+//                       />
+//                     </td>
+//                     <td>
+//                       <div style={{ position: "relative" }}>
+//                         <DatePicker
+//                           selected={item.startDate}
+//                           onChange={(date) => {
+//                             setBatchData((prevState) => {
+//                               const updatedRows = [...prevState];
+//                               updatedRows[index] = {
+//                                 ...updatedRows[index],
+//                                 startDate: date,
+//                                 endDate:
+//                                   date >= prevState.endDate
+//                                     ? null
+//                                     : prevState.endDate,
+//                               };
+//                               return updatedRows;
+//                             });
+//                           }}
+//                           portalId="datepicker-portal10"
+//                           id="startDate"
+//                           name="startDate"
+//                           dateFormat="dd/MM/yyyy"
+//                           className="form-control border-right-0 inputField"
+//                           wrapperClassName="custom-react-datepicker-wrapper"
+//                         />
+//                         <FontAwesomeIcon
+//                           icon={faCalendarAlt}
+//                           style={{
+//                             position: "absolute",
+//                             right: "10px",
+//                             top: "50%",
+//                             transform: "translateY(-50%)",
+//                             pointerEvents: "none",
+//                             color: "#6c757d",
+//                           }}
+//                         />
+//                       </div>
+//                     </td>
+//                     <td>
+//                       <div style={{ position: "relative" }}>
+//                         <DatePicker
+//                           selected={item.endDate}
+//                           onChange={(date) => {
+//                             setBatchData((prevState) => {
+//                               const updatedRows = [...prevState];
+//                               updatedRows[index] = {
+//                                 ...updatedRows[index],
+//                                 endDate: date,
+//                               };
+//                               return updatedRows;
+//                             });
+//                           }}
+//                           minDate={(() => {
+//                             const date = new Date(item.startDate);
+//                             date.setDate(date.getDate() + 1);
+//                             return date;
+//                           })()}
+//                           portalId="datepicker-portal10"
+//                           id="endDate"
+//                           name="endDate"
+//                           dateFormat="dd/MM/yyyy"
+//                           className="form-control border-right-0 inputField"
+//                           wrapperClassName="custom-react-datepicker-wrapper"
+//                         />
+//                         <FontAwesomeIcon
+//                           icon={faCalendarAlt}
+//                           style={{
+//                             position: "absolute",
+//                             right: "10px",
+//                             top: "50%",
+//                             transform: "translateY(-50%)",
+//                             pointerEvents: "none",
+//                             color: "#6c757d",
+//                           }}
+//                         />
+//                       </div>
+//                     </td>
+//                     <td>
+//                       <button
+//                         className="btn btn-outline-danger btn-margin newButton"
+//                         id="submitbtn2"
+//                         onClick={() => removeBatch(index)}
+//                         disabled={item.receivingId}
+//                       >
+//                         <FontAwesomeIcon icon={faTrash} />
+//                       </button>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//         </ModalBody>
+//       </Modal>
+
+//       {/* Drum Upload Modal */}
+//       <Modal
+//         Modal
+//         isOpen={isModalOpenForDrumUpload}
+//         onClose={handleCloseDrumUpload}
+//         toggle={handleCloseDrumUpload}
+//         style={{ maxWidth: "800px", fontSize: 14 }}
+//       >
+//         <ModalHeader
+//           toggle={handleCloseDrumUpload}
+//           style={{
+//             backgroundColor: "#80cbc4",
+//             color: "black",
+//             fontFamily: "Your-Heading-Font",
+//             textAlign: "center",
+//             background: "#26a69a",
+//             boxShadow: "0px 5px 10px rgba(0, 77, 64, 0.3)",
+//             border: "1px solid rgba(0, 0, 0, 0.3)",
+//             borderRadius: "0",
+//             backgroundImage:
+//               "radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )",
+//             backgroundSize: "cover",
+//             backgroundRepeat: "no-repeat",
+//             backgroundPosition: "center",
+//           }}
+//         >
+//           <h5
+//             className="pageHead"
+//             style={{ fontFamily: "Your-Heading-Font", color: "white" }}
+//           >
+//             <FontAwesomeIcon
+//               icon={faUpload}
+//               style={{ marginRight: "8px", color: "white" }}
+//             />
+//             Drum Details
+//           </h5>
+//         </ModalHeader>
+//         <ModalBody
+//           style={{
+//             backgroundImage:
+//               "url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)",
+//             backgroundSize: "cover",
+//           }}
+//         >
+//           {/* Location Info Display */}
+//           <Row className="mb-3">
+//             <Col md={4}>
+//               <FormGroup>
+//                 <label className="forlabel bold-label">Yard Location</label>
+//                 <Input
+//                   type="text"
+//                   value={selectedDrumRow?.yardLocation || ""}
+//                   disabled
+//                   className="form-control"
+//                 />
+//               </FormGroup>
+//             </Col>
+//             <Col md={4}>
+//               <FormGroup>
+//                 <label className="forlabel bold-label">Yard Block</label>
+//                 <Input
+//                   type="text"
+//                   value={selectedDrumRow?.yardBlock || ""}
+//                   disabled
+//                   className="form-control"
+//                 />
+//               </FormGroup>
+//             </Col>
+//             <Col md={4}>
+//               <FormGroup>
+//                 <label className="forlabel bold-label">Cell No</label>
+//                 <Input
+//                   type="text"
+//                   value={selectedDrumRow?.blockCellNo || ""}
+//                   disabled
+//                   className="form-control"
+//                 />
+//               </FormGroup>
+//             </Col>
+//           </Row>
+
+//           {/* Drum Details Table */}
+//           <div
+//             className="table-responsive"
+//             style={{ maxHeight: "300px", overflowY: "auto" }}
+//           >
+//             <table className="table table-bordered table-hover">
+//               <thead className="tableHeader">
+//                 <tr className="text-center">
+//                   <th scope="col" style={{ width: "50px" }}>
+//                     Sr No
+//                   </th>
+//                   <th scope="col" style={{ width: "150px" }}>
+//                     Drum No
+//                   </th>
+//                   <th scope="col" style={{ width: "300px" }}>
+//                     Commodity <span className="error-message">*</span>
+//                   </th>
+//                   <th scope="col" style={{ width: "160px" }}>
+//                     Net Weight
+//                   </th>
+//                   <th scope="col" style={{ width: "80px" }}>
+//                     Action
+//                   </th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {drumRows.map((row, index) => (
+//                   <tr key={index}>
+//                     <td className="text-center">{index + 1}</td>
+//                     <td>
+//                       <Input
+//                         type="text"
+//                         name="drumNo"
+//                         value={row.drumNo}
+//                         onChange={(e) => handleDrumInputChange(index, e)}
+//                         placeholder="Enter Drum No"
+//                         maxLength={50}
+//                         className="form-control"
+//                         disabled={drumModalMode === "view"}
+//                       />
+//                     </td>
+//                     <td>
+//                       <Select
+//                         value={
+//                           row.commodity
+//                             ? {
+//                                 value: row.commodity,
+//                                 label:
+//                                   commodityOptions.find(
+//                                     (opt) => opt.value === row.commodity,
+//                                   )?.label || "",
+//                               }
+//                             : null
+//                         }
+//                         onChange={(selectedOption) => {
+//                           const updatedRows = [...drumRows];
+//                           updatedRows[index].commodity = selectedOption
+//                             ? selectedOption.value
+//                             : "";
+//                           updatedRows[index].commodityDescription =
+//                             selectedOption ? selectedOption.label : "";
+//                           setDrumRows(updatedRows);
+//                         }}
+//                         options={commodityOptions}
+//                         placeholder="Select Commodity"
+//                         isClearable
+//                         menuPortalTarget={document.body}
+//                         menuPosition="fixed"
+//                         className="react-select-container"
+//                         classNamePrefix="react-select"
+//                         isDisabled={drumModalMode === "view"}
+//                         styles={{
+//                           control: (provided, state) => ({
+//                             ...provided,
+//                             height: 32,
+//                             minHeight: 32,
+//                             border: state.isFocused
+//                               ? "1px solid #ccc"
+//                               : "1px solid #ccc",
+//                           }),
+//                           valueContainer: (provided) => ({
+//                             ...provided,
+//                             alignItems: "left",
+//                             padding: "0 8px",
+//                             height: "100%",
+//                             whiteSpace: "nowrap",
+//                             textOverflow: "ellipsis",
+//                             lineHeight: "28px",
+//                             maxWidth: "calc(100% - 20px)",
+//                             position: "relative",
+//                             overflow: "visible",
+//                           }),
+//                           input: (provided) => ({
+//                             ...provided,
+//                             width: "100%",
+//                             overflow: "hidden",
+//                             textOverflow: "ellipsis",
+//                             whiteSpace: "nowrap",
+//                             outline: "none",
+//                           }),
+//                           singleValue: (provided) => ({
+//                             ...provided,
+//                             lineHeight: "32px",
+//                             overflow: "hidden",
+//                             whiteSpace: "nowrap",
+//                             textOverflow: "ellipsis",
+//                             marginLeft: 0,
+//                             textAlign: "left",
+//                           }),
+//                           clearIndicator: (provided) => ({
+//                             ...provided,
+//                             padding: 2,
+//                             display: "flex",
+//                             alignItems: "center",
+//                             justifyContent: "center",
+//                             position: "absolute",
+//                             right: 5,
+//                             top: "50%",
+//                             transform: "translateY(-50%)",
+//                           }),
+//                           indicatorSeparator: () => ({
+//                             display: "none",
+//                           }),
+//                           dropdownIndicator: () => ({
+//                             display: "none",
+//                           }),
+//                           placeholder: (provided) => ({
+//                             ...provided,
+//                             lineHeight: "32px",
+//                             color: "gray",
+//                             marginLeft: 0,
+//                             textAlign: "left",
+//                           }),
+//                           menu: (provided) => ({
+//                             ...provided,
+//                             zIndex: 9999,
+//                           }),
+//                           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+//                         }}
+//                       />
+//                     </td>
+//                     <td>
+//                       <Input
+//                         type="text"
+//                         name="netWeight"
+//                         value={row.netWeight}
+//                         disabled={drumModalMode === "view"}
+//                         onChange={(e) => {
+//                           const value = e.target.value;
+//                           // Allow only numbers and decimal point
+//                           if (value === "" || /^\d*\.?\d*$/.test(value)) {
+//                             // Split into integer and decimal parts
+//                             const parts = value.split(".");
+//                             let integerPart = parts[0] || "";
+//                             let decimalPart = parts[1] || "";
+
+//                             if (integerPart.length > 13) {
+//                               return;
+//                             }
+
+//                             if (decimalPart.length > 3) {
+//                               return;
+//                             }
+
+//                             if (
+//                               decimalPart.length > 0 &&
+//                               integerPart.length === 0
+//                             ) {
+//                               return;
+//                             }
+
+//                             handleDrumInputChange(index, e);
+//                           }
+//                         }}
+//                         onKeyPress={(e) => {
+//                           if (e.key === "." && e.target.value.includes(".")) {
+//                             e.preventDefault();
+//                           }
+
+//                           const currentValue = e.target.value;
+//                           const parts = currentValue.split(".");
+//                           const integerPart = parts[0] || "";
+//                           const decimalPart = parts[1] || "";
+
+//                           if (
+//                             integerPart.length >= 13 &&
+//                             e.key !== "." &&
+//                             !/^\d$/.test(e.key)
+//                           ) {
+//                             e.preventDefault();
+//                           }
+
+//                           if (decimalPart.length >= 3 && /^\d$/.test(e.key)) {
+//                             e.preventDefault();
+//                           }
+//                         }}
+//                         onBlur={(e) => {
+//                           let value = e.target.value;
+//                           if (value && !value.includes(".")) {
+//                             if (value.length > 1 && value.startsWith("0")) {
+//                               value = value.replace(/^0+/, "") || "0";
+//                               const modifiedEvent = {
+//                                 target: {
+//                                   name: e.target.name,
+//                                   value: value,
+//                                 },
+//                               };
+//                               handleDrumInputChange(index, modifiedEvent);
+//                             }
+//                           }
+//                         }}
+//                         placeholder="Enter Weight"
+//                         className="form-control"
+//                       />
+//                     </td>
+//                     <td className="text-center">
+//                       <Button
+//                         type="button"
+//                         className="newButton"
+//                         color="danger"
+//                         outline
+//                         onClick={() => deleteDrumRow(index)}
+//                         disabled={drumRows.length === 1 || drumModalMode === "view"}
+//                         title={
+//                           drumRows.length === 1
+//                             ? "Cannot delete last row"
+//                             : "Delete row"
+//                         }
+//                       >
+//                         <FontAwesomeIcon icon={faTrash} />
+//                       </Button>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+
+//           {/* Action Buttons */}
+//           {drumModalMode === "add" && (
+//             <Row className="text-center mt-3">
+//               <Col>
+//                 <button
+//                   className="btn btn-outline-primary btn-margin newButton"
+//                   style={{ marginRight: 10 }}
+//                   onClick={addDrumRow}
+//                 >
+//                   <FontAwesomeIcon
+//                     icon={faAdd}
+//                     style={{ marginRight: "5px" }}
+//                   />
+//                   Add Row
+//                 </button>
+//                 <button
+//                   className="btn btn-outline-success btn-margin newButton"
+//                   style={{ marginRight: 10 }}
+//                   onClick={handleSaveDrumDetails}
+//                 >
+//                   <FontAwesomeIcon
+//                     icon={faSave}
+//                     style={{ marginRight: "5px" }}
+//                   />
+//                   Save
+//                 </button>
+//                 <button
+//                   className="btn btn-outline-danger btn-margin newButton"
+//                   onClick={handleCloseDrumUpload}
+//                 >
+//                   <FontAwesomeIcon
+//                     icon={faXmark}
+//                     style={{ marginRight: "5px" }}
+//                   />
+//                   Cancel
+//                 </button>
+//               </Col>
+//             </Row>
+//           )}
+//           {drumModalMode === "view" && (
+//             <Row className="text-center mt-3">
+//               <Col>
+//                 <button
+//                   className="btn btn-outline-danger btn-margin newButton"
+//                   onClick={handleCloseDrumUpload}
+//                 >
+//                   <FontAwesomeIcon
+//                     icon={faXmark}
+//                     style={{ marginRight: "5px" }}
+//                   />
+//                   Close
+//                 </button>
+//               </Col>
+//             </Row>
+//           )}
+//         </ModalBody>
+//       </Modal>
 //     </>
 //   );
 // }
 
 // export default ReceingGeneralCargo;
+
+//------------------------------------------------------------------------------------------------------------------------------
 
 import AuthContext from "../Components/AuthProvider";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -4142,6 +5747,7 @@ function ReceingGeneralCargo({
     jobTransDate: "",
     cargoDuty: "",
     cargoValue: "",
+    totalNetWeight: "",
   };
 
   const initialNocDtl = {
@@ -4174,6 +5780,7 @@ function ReceingGeneralCargo({
     editedDate: null, // Date (use null or a Date object if you prefer)
     approvedBy: "", // String
     approvedDate: null, // Date (use null or a Date object if you prefer)
+    cargoValueByComm: "0",
   };
 
   const [nocTansIdSearchId, setNocTransIdSearchId] = useState("");
@@ -4304,14 +5911,14 @@ function ReceingGeneralCargo({
         handleGridData(response.data.receivingId);
         fetchDataAfterSave(companyid, branchId, response.data.receivingId);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const [importerSearchId, setImporterSearchId] = useState("");
   const [importerSearchedData, setImporterSearchedData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(100);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -4805,6 +6412,7 @@ function ReceingGeneralCargo({
 
           oldReceivedPackages: mnr.receivingPackages || 0,
           oldReceivedWeight: mnr.receivingWeight || 0,
+          cargoValueByComm: mnr.cargoValueByComm || "0",
         })),
       );
 
@@ -4863,7 +6471,7 @@ function ReceingGeneralCargo({
             mnr.gateInPackages - (mnr.oldReceivingPackages || 0),
 
           balanceReceivedWeight:
-            (mnr.gateInWeight || 0) - (mnr.oldReceivingPackages || 0),
+            (mnr.gateInWeight || 0) - (mnr.oldReceivingWeight || 0),
 
           receivingWeight: mnr.receivingWeight || 0,
 
@@ -4881,6 +6489,7 @@ function ReceingGeneralCargo({
           jobNop: mnr.jobNop,
           deliveredPackages: mnr.deliveredPackages || 0,
           editedBy: "",
+          cargoValueByComm: mnr.cargoValueByComm || "0",
         })),
       );
 
@@ -4914,6 +6523,7 @@ function ReceingGeneralCargo({
     } else {
       setSelectedRows([]); // Deselect all rows
     }
+    setTimeout(() => calculateTotals(), 0);
   };
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -4947,10 +6557,12 @@ function ReceingGeneralCargo({
     const { value } = event.target;
     let newValue = value;
 
-    if (["receivingPackages", "receivingWeight"].includes(fieldName)) {
+    // if (["receivingPackages", "receivingWeight"].includes(fieldName)) {
+    //   newValue = handleInputChangeNew(value, val, val1);
+    // }
+    if (["receivingPackages", "receivingWeight", "cargoValueByComm"].includes(fieldName)) {
       newValue = handleInputChangeNew(value, val, val1);
     }
-
     setInputValues((prevInputValues) => {
       const updatedValues = [...prevInputValues];
       // const dtl = currentItems[index];
@@ -5001,6 +6613,7 @@ function ReceingGeneralCargo({
 
       return updatedValues;
     });
+    setTimeout(() => calculateTotals(), 0);
   };
 
   const handleCheckboxChangeForDtl = (event, row) => {
@@ -5029,6 +6642,7 @@ function ReceingGeneralCargo({
       );
       setSelectedRows(updatedRows);
     }
+    setTimeout(() => calculateTotals(), 0);
   };
 
   // State to hold totals for the selected rows
@@ -5045,22 +6659,22 @@ function ReceingGeneralCargo({
     let totalDamagedQty = 0;
     let totalBreakage = 0;
     let totalAreaOccupied = 0;
-
+    let totalCargoValueByComm = 0;
     selectedRows.forEach((row) => {
       const isInBondingIdValid =
         inBond?.receivingId != null && inBond?.receivingId !== "";
       const index = currentItems.findIndex((item) =>
         inBond?.receivingId
           ? // If srNo exists, use commodityId
-            item.jobTransId === row.jobTransId &&
-            item.jobNo === row.jobNo &&
-            item.commodityId === row.commodityId &&
-            item.srNo === row.srNo
+          item.jobTransId === row.jobTransId &&
+          item.jobNo === row.jobNo &&
+          item.commodityId === row.commodityId &&
+          item.srNo === row.srNo
           : // Otherwise, use cfBondDtlId
-            item.jobTransId === row.jobTransId &&
-            item.jobNo === row.jobNo &&
-            item.commodityId === row.commodityId &&
-            item.srNo === row.srNo,
+          item.jobTransId === row.jobTransId &&
+          item.jobNo === row.jobNo &&
+          item.commodityId === row.commodityId &&
+          item.srNo === row.srNo,
       );
       if (index !== -1) {
         const source = isInBondingIdValid ? row : inputValues[index];
@@ -5070,6 +6684,7 @@ function ReceingGeneralCargo({
         // totalAreaOccupied += parseFloat(source?.areaOccupied || 0);
         totalDamagedQty += parseFloat(source?.damagedQty || 0);
         totalBreakage += parseFloat(source?.breakage || 0);
+        totalCargoValueByComm += parseFloat(source?.cargoValueByComm || 0);
       }
     });
 
@@ -5077,6 +6692,7 @@ function ReceingGeneralCargo({
       totalInBondedPackages,
       totalShortagePackages,
       totalAreaOccupied,
+      totalCargoValueByComm, // Add this
     });
 
     setInBond((pre) => ({
@@ -5084,6 +6700,8 @@ function ReceingGeneralCargo({
       receivedPackages: handleInputChangeNew(totalInBondedPackages, 13, 3),
       receivedWeight: handleInputChangeNew(totalShortagePackages, 13, 3),
       // areaOccupied:handleInputChangeNew(totalAreaOccupied,13,3)
+
+      cargoValue: handleInputChangeNew(totalCargoValueByComm, 13, 3), // Add this line - update cargoValue
     }));
   };
 
@@ -5096,14 +6714,13 @@ function ReceingGeneralCargo({
 
   const handleYardLocationData = (type) => {
     fetch(
-      `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${
-        type === "OPEN"
-          ? "O"
-          : type === "COVERED"
-            ? "C"
-            : type === "COVEREDGD"
-              ? "G"
-              : ""
+      `${ipaddress}api/yardblockcells/getLocationsAllYardCellByType?companyId=${companyid}&branchId=${branchId}&type=${type === "OPEN"
+        ? "O"
+        : type === "COVERED"
+          ? "C"
+          : type === "COVEREDGD"
+            ? "G"
+            : ""
       }`,
     )
       .then((response) => response.json())
@@ -5224,6 +6841,7 @@ function ReceingGeneralCargo({
         gateInWeight: selectedOption?.gateInWeight,
         areaAllocated: selectedOption?.area,
         transporterName: selectedOption?.transporterName,
+        cargoValue: selectedOption?.cargoValue || "0",
       }));
 
       setChaName(selectedOption?.editedBy);
@@ -5293,6 +6911,7 @@ function ReceingGeneralCargo({
           importerId: port.importerId,
           importerName: port.importerName,
           area: port.area,
+          cargoValue: port.cargoValue || "0",
         }));
         if (listOfData.boeNo) {
           handleBoeChange(portOptions[0], { action: "select" });
@@ -5300,7 +6919,7 @@ function ReceingGeneralCargo({
         // Set BOE Data
         setBOEData(portOptions);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const [totalPackages, setTotalPackages] = useState(0);
@@ -5333,6 +6952,7 @@ function ReceingGeneralCargo({
       jobNo: "",
       palletWiseWt: 0.0,
       perPalletReciving: 0.0,
+
     },
   ]);
   const handleInputChange = (index, e) => {
@@ -5560,14 +7180,14 @@ function ReceingGeneralCargo({
       const updatedRows = rows.map((row, i) =>
         i === index
           ? {
-              yardLocation: "",
-              yardBlock: "",
-              blockCellNo: "",
-              cellArea: "",
-              cellAreaUsed: "",
-              inBondPackages: "",
-              cellAreaAllocated: "",
-            }
+            yardLocation: "",
+            yardBlock: "",
+            blockCellNo: "",
+            cellArea: "",
+            cellAreaUsed: "",
+            inBondPackages: "",
+            cellAreaAllocated: "",
+          }
           : row,
       );
       setRows(updatedRows);
@@ -5579,15 +7199,15 @@ function ReceingGeneralCargo({
       const updatedRows = rows.map((row, i) =>
         i === index
           ? {
-              ...row,
-              yardLocation: selectedOption.yard,
-              yardBlock: selectedOption.yardBlock,
-              blockCellNo: selectedOption.yardBCell,
-              cellArea: selectedOption.area,
-              cellAreaUsed: selectedOption.areaUsed,
-              receivedPackages: selectedOption.receivedPackages,
-              cellAreaAllocated: selectedOption.cellAreaAllocated,
-            }
+            ...row,
+            yardLocation: selectedOption.yard,
+            yardBlock: selectedOption.yardBlock,
+            blockCellNo: selectedOption.yardBCell,
+            cellArea: selectedOption.area,
+            cellAreaUsed: selectedOption.areaUsed,
+            receivedPackages: selectedOption.receivedPackages,
+            cellAreaAllocated: selectedOption.cellAreaAllocated,
+          }
           : row,
       );
       setRows(updatedRows);
@@ -5596,14 +7216,14 @@ function ReceingGeneralCargo({
       const updatedRows = rows.map((row, i) =>
         i === index
           ? {
-              yardLocation: "",
-              yardBlock: "",
-              blockCellNo: "",
-              cellArea: "",
-              cellAreaUsed: "",
-              receivedPackages: "",
-              cellAreaAllocated: "",
-            }
+            yardLocation: "",
+            yardBlock: "",
+            blockCellNo: "",
+            cellArea: "",
+            cellAreaUsed: "",
+            receivedPackages: "",
+            cellAreaAllocated: "",
+          }
           : row,
       );
 
@@ -5796,16 +7416,16 @@ function ReceingGeneralCargo({
         response.data?.length > 0
           ? response.data
           : [
-              {
-                ...initialDocumentUpload,
-                sbNo: sbNoEntry.receivingId,
-                commodityDescription: sbNoEntry.commodityDescription,
-                sbTransId: sbNoEntry.containerNo,
-                hSbTransId: sbNoEntry.gateInId,
-                sbLineNo: sbNoEntry.srNo,
-                isSaved: "N",
-              },
-            ],
+            {
+              ...initialDocumentUpload,
+              sbNo: sbNoEntry.receivingId,
+              commodityDescription: sbNoEntry.commodityDescription,
+              sbTransId: sbNoEntry.containerNo,
+              hSbTransId: sbNoEntry.gateInId,
+              sbLineNo: sbNoEntry.srNo,
+              isSaved: "N",
+            },
+          ],
       );
 
       setIsModalOpenForDocumentUpload(true);
@@ -6016,7 +7636,7 @@ function ReceingGeneralCargo({
     } else if (
       viewFile.fileType === "application/vnd.ms-excel" ||
       viewFile.fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
       const handleDownload = () => {
         const link = document.createElement("a");
@@ -6324,7 +7944,7 @@ function ReceingGeneralCargo({
     setIsModalOpenForDrumUpload(true);
 
     if (mode === "view") {
-            fetchCommodityOptions(row.receivingId);
+      fetchCommodityOptions(row.receivingId);
 
       fetchDrumDetails(row);
     } else {
@@ -6367,7 +7987,7 @@ function ReceingGeneralCargo({
     }
 
     const updatedRows = drumRows.filter((_, i) => i !== index);
-   
+
     setDrumRows(updatedRows);
     setCommodityErrors((prev) => {
       const newErrors = {};
@@ -6483,8 +8103,8 @@ function ReceingGeneralCargo({
         setLoading(false);
         toast.error(
           error.response?.data?.message ||
-            error.response?.data ||
-            "Error saving drum details.",
+          error.response?.data ||
+          "Error saving drum details.",
           {
             autoClose: 3000,
           },
@@ -6857,9 +8477,9 @@ function ReceingGeneralCargo({
                           <td>
                             {item.receivingDate
                               ? format(
-                                  new Date(item.receivingDate),
-                                  "dd/MM/yyyy HH:mm",
-                                )
+                                new Date(item.receivingDate),
+                                "dd/MM/yyyy HH:mm",
+                              )
                               : null}
                           </td>
                           <td>{item.jobTransId}</td>
@@ -6868,9 +8488,9 @@ function ReceingGeneralCargo({
                           <td>
                             {item.boeDate
                               ? format(
-                                  new Date(item.boeDate),
-                                  "dd/MM/yyyy HH:mm",
-                                )
+                                new Date(item.boeDate),
+                                "dd/MM/yyyy HH:mm",
+                              )
                               : null}
                           </td>
                           <td>{item.importerName}</td>
@@ -7777,6 +9397,29 @@ function ReceingGeneralCargo({
                 />
               </FormGroup>
             </Col>
+            <Col md={2}>
+              <FormGroup>
+                <label className="forlabel bold-label" htmlFor="cargoValue">
+                  Total Net Weight
+                </label>
+                <input
+                  className="form-control"
+                  type="text"
+                  id="totalNetWeight"
+                  maxLength={16} // 13 digits + 1 decimal + 2 decimals
+                  name="totalNetWeight"
+                  value={inBond.totalNetWeight != null ? inBond.totalNetWeight : " "}
+                  pattern="^\d{0,13}(\.\d{0,2})?$"
+                  step="0.01"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d{0,13}(\.\d{0,2})?$/.test(value) || value === "") {
+                      handleNocChange(e);
+                    }
+                  }}
+                />
+              </FormGroup>
+            </Col>
           </Row>
         </div>
         <hr />
@@ -8119,7 +9762,7 @@ function ReceingGeneralCargo({
 
                   {!row.inBondingId &&
                     row.status === "A" &&
-                     (
+                    (
                       <div className="">
                         <button
                           type="button"
@@ -8172,7 +9815,7 @@ function ReceingGeneralCargo({
                               <li>
                                 <button
                                   className="dropdown-item"
-                                onClick={() => handleOpenDrumUpload(row, 'view')}
+                                  onClick={() => handleOpenDrumUpload(row, 'view')}
                                 >
                                   <FontAwesomeIcon
                                     icon={faEye}
@@ -8394,7 +10037,9 @@ function ReceingGeneralCargo({
                 >
                   Receiving Weight <span className="error-message">*</span>
                 </th>
-
+                <th scope="col" className="text-center" style={{ color: "black" }}>
+                  Cargo Value By Comm
+                </th>
                 <th
                   scope="col"
                   className="text-center"
@@ -8511,7 +10156,27 @@ function ReceingGeneralCargo({
                       }
                     />
                   </td>
-
+                  <td style={{ textAlign: "center" }}>
+                    <input
+                      className="form-control"
+                      style={{ width: "126px" }}
+                      type="text"
+                      value={inputValues[index]?.cargoValueByComm || "0"}
+                      placeholder="Cargo Value"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d{0,13}(\.\d{0,3})?$/.test(value) || value === "") {
+                          handleInputChangeFotDtl(
+                            e,
+                            "cargoValueByComm",
+                            index,
+                            13,
+                            3
+                          );
+                        }
+                      }}
+                    />
+                  </td>
                   <td className="text-center">
                     {/* {((role === 'ROLE_ADMIN' || allowEdit) && dtl.receivingId) && (
                       <FontAwesomeIcon
@@ -8788,9 +10453,9 @@ function ReceingGeneralCargo({
                                     className="file-thumbnail"
                                   />
                                 ) : file.fileType ===
-                                    "application/vnd.ms-excel" ||
+                                  "application/vnd.ms-excel" ||
                                   file.fileType ===
-                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
                                   file.fileType === "text/csv" ? (
                                   <img
                                     src={xlsLogo}
@@ -9216,12 +10881,12 @@ function ReceingGeneralCargo({
                         value={
                           row.commodity
                             ? {
-                                value: row.commodity,
-                                label:
-                                  commodityOptions.find(
-                                    (opt) => opt.value === row.commodity,
-                                  )?.label || "",
-                              }
+                              value: row.commodity,
+                              label:
+                                commodityOptions.find(
+                                  (opt) => opt.value === row.commodity,
+                                )?.label || "",
+                            }
                             : null
                         }
                         onChange={(selectedOption) => {

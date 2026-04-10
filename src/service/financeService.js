@@ -8,6 +8,7 @@ const assesment_url = `${ipaddress}assessment/`;
 const creditNote_url = `${ipaddress}creditNote/`;
 const quatation_url = `${ipaddress}quotation/`;
 const auction_url = `${ipaddress}auctionInvoice/`;
+const assesment_url_General = `${ipaddress}assessmentgeneral/`;
 
 class financeService {
 
@@ -1275,6 +1276,69 @@ class financeService {
             }
         });
     }
+
+    //general invoice
+ addServiceForGeneral(companyId, branchId, userId, assesmentSheet, cfInvsrvanxData, jwtToken, type) {
+        const requestData = {
+            assesmentSheet: assesmentSheet,
+            Cfinvsrvanx: cfInvsrvanxData
+        };
+        return axios.post(`${assesment_url_General}saveGeneralAddServiceContainerWise`, requestData, {
+            params: {
+                companyId: companyId,
+                branchId: branchId,
+                userId: userId,
+                type: type
+            },
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            }
+        });
+    }
+ getAllContainerListOfAssessMentSheetGeneral(companyId, branchId, assesmentId, profiCentreId, jwtToken) {
+        return axios.get(`${assesment_url_General}getAllContainerListOfAssessMentSheetForGeneralCon`, {
+            params: {
+                companyId: companyId,
+                branchId: branchId,
+                assesmentId: assesmentId,
+                profiCentreId: profiCentreId
+            },
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            }
+        });
+    }
+
+     getAllCfInvSrvAnxListForGeneral(companyId, branchId, assesmentId, assesmentLineNo, containerNo, profiCentreId, jwtToken) {
+        return axios.get(`${exportInvoice_url}getAllCfInvSrvAnxListByAssesmentIdforGeneral`, {
+            params: {
+                companyId: companyId,
+                branchId: branchId,
+                assesmentId: assesmentId,
+                assesmentLineNo: assesmentLineNo,
+                containerNo: containerNo,
+                profiCentreId: profiCentreId
+            },
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            }
+        });
+    }
+     searchServicesForAddServiceForGeneral(companyId, branchId, searchvalue, commodity, containerSize, cargoType, assessmentSheet, jwtToken) {
+        return axios.post(`${exportInvoice_url}searchServicesForAddServiceForGeneral`, assessmentSheet, {
+            params: {
+                companyId: companyId,
+                branchId: branchId,
+                searchValue: searchvalue,
+                commodity: commodity,
+                containerSize: containerSize,
+                cargoType: cargoType
+            },
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            }
+        })
+    };
 
 
 }

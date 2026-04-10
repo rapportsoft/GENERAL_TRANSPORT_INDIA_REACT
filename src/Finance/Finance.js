@@ -41,6 +41,7 @@ import AuctionInvoice from './AuctionInvoice';
 import GeneralInvoice from './GeneralInvoice';
 import GeneralContainerInvoice from './GeneralContainerInvoice';
 import GeneralPeriodicInvoice from './GeneralPeriodicInvoice';
+import General from './General';
 
 export default function Finance() {
     const navigate = useNavigate();
@@ -424,6 +425,10 @@ export default function Finance() {
                             <div className={`tab-pane fade ${activeTab === 'P01114' ? 'show active' : ''}`} id="bordered-justified-home-1" role="tabpanel" aria-labelledby="1">
 
                                 <GeneralPeriodicInvoice activeTab={activeTab} />
+                            </div>
+                            <div className={`tab-pane fade ${activeTab === 'P01115' ? 'show active' : ''}`} id="bordered-justified-home-1" role="tabpanel" aria-labelledby="1">
+
+                                <General activeTab={activeTab} />
                             </div>
                         </div>
                     </CardBody>
