@@ -25,10 +25,11 @@ import {
     Label,
     Input,
     Table,
+    Alert,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faEye, faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import '../assets/css/style.css';
 import '../Components/Style.css';
 import { Button } from "react-bootstrap";
@@ -2847,6 +2848,288 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
 
     }
 
+
+    const [isModalOpenForAddDocuments, setIsModalOpenForAddDocuments] = useState(false);
+    const [savedFiles, setSavedFiles] = useState([]);
+    const [docId, setDocId] = useState('');
+
+    const openAddDocumentModal = (id) => {
+        setIsModalOpenForAddDocuments(true);
+
+        setDocId(id);
+        getSavedDoc(id);
+    }
+
+    const closeAddDocumentModal = () => {
+        setIsModalOpenForAddDocuments(false);
+        setFiles([]);
+        setSavedFiles([]);
+        setDocId('');
+    }
+
+    const [files, setFiles] = useState([]);
+
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        const validFiles = [];
+
+        selectedFiles.forEach((file) => {
+            if (file.size <= 10 * 1024 * 1024) {
+                validFiles.push(file);
+            } else {
+                toast.error(`${file.name} exceeds 10MB limit`, {
+                    autoClose: 800
+                });
+            }
+        });
+
+        setFiles(prev => [...prev, ...validFiles]);
+    };
+
+
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleRemove2 = (indexToRemove) => {
+        setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+    };
+
+    const handleRemove1 = (sr) => {
+        try {
+            setLoading(true);
+
+            axios.post(`${ipaddress}financeDocUploadController/deleteDoc`, null, {
+                params: {
+                    cid: companyid,
+                    bid: branchId,
+                    assesmentId: assessmentData.assesmentId,
+                    sr: sr,
+                    invoiceNo: assessmentData.invoiceNo,
+                    user: userId
+                },
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                }
+            })
+                .then((response) => {
+                    setLoading(false);
+
+                    const data = response.data;
+
+
+                    setSavedFiles(data.map((item) => ({
+                        companyId: item.companyId || '',
+                        branchId: item.branchId || '',
+                        assesmentDate: item.assesmentId || '',
+                        invoiceNo: item.invoiceNo || '',
+                        docPath: `data:application/octet-stream;base64,${item.file}` || '',
+                        srNo: item.srNo || '',
+                        fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+                    })));
+
+                    toast.error("File Deleted Successfully!!", {
+                        autoClose: 800
+                    })
+
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    toast.error(error.response.data, {
+                        autoClose: 800
+                    })
+                })
+
+        } catch (error) {
+            setLoading(false);
+        }
+    };
+
+    const handleDownload = (file) => {
+        const url = URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleDownload1 = (fileUrl, fileName, type) => {
+        try {
+            const base64Data = fileUrl.split(',')[1];
+            const byteString = atob(base64Data);
+
+            // Determine mime type from fileName extension
+            const extension = fileName.split('.').pop().toLowerCase();
+            let mimeType = 'application/octet-stream'; // default
+
+            if (extension === 'pdf') mimeType = 'application/pdf';
+            else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension))
+                mimeType = `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+
+            const blob = new Blob([ab], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+
+            if (type === 'view') {
+                if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+                    window.open(url, '_blank');
+                } else {
+                    toast.error('Preview is only supported for images and PDF files.', {
+                        autoClose: 800
+                    });
+                    URL.revokeObjectURL(url);
+                }
+            } else if (type === 'download') {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error('Error handling file:', error);
+        }
+    };
+
+
+
+
+
+    const handleDocumentUpload = () => {
+        try {
+
+            if (files.length === 0) {
+                toast.error("Please select the file", {
+                    autoClose: 800
+                })
+
+                return;
+            }
+
+            setLoading(true);
+            const formData = new FormData();
+            files.forEach(file => {
+                formData.append("files", file);
+            });
+
+            formData.append("cid", companyid);
+            formData.append("bid", branchId);
+            formData.append("assesmentId", assessmentData.assesmentId);
+            formData.append("invoiceNo", assessmentData.invoiceNo);
+            formData.append("user", userId);
+
+            axios.post(`${ipaddress}financeDocUploadController/uploadJobDoc`, formData, {
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+                .then((response) => {
+
+                    setLoading(false);
+
+                    const data = response.data;
+
+                    setFiles([]);
+
+
+                    setSavedFiles(data.map((item) => ({
+                        companyId: item.companyId || '',
+                        branchId: item.branchId || '',
+                        assesmentDate: item.assesmentId || '',
+                        invoiceNo: item.invoiceNo || '',
+                        docPath: `data:application/octet-stream;base64,${item.file}` || '',
+                        srNo: item.srNo || '',
+                        fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+                    })));
+
+                    toast.success("Files Uploaded Successfully!!", {
+                        autoClose: 800
+                    })
+                })
+                .catch((error) => {
+                    toast.error(error.response.data, {
+                        autoClose: 800
+                    })
+
+                    setLoading(false);
+                })
+        } catch (error) {
+            setLoading(false);
+        }
+    }
+
+    const getSavedDoc = (id) => {
+        try {
+            axios.get(`${ipaddress}financeDocUploadController/getSavedDoc`, {
+                params: {
+                    cid: companyid,
+                    bid: branchId,
+                    assesmentId: assessmentData.assesmentId || '',
+                    invoiceNo: assessmentData.invoiceNo || '',
+                },
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                }
+            })
+                .then((response) => {
+                    const data = response.data;
+
+                    if (data.length > 0) {
+                        setSavedFiles(data.map((item) => ({
+                            companyId: item.companyId || '',
+                            branchId: item.branchId || '',
+                            assesmentDate: item.assesmentId || '',
+                            invoiceNo: item.invoiceNo || '',
+                            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+                            srNo: item.srNo || '',
+                            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+                        })));
+                    }
+                    else {
+                        setSavedFiles([]);
+                    }
+                })
+                .catch((error) => {
+
+                })
+
+        } catch (error) {
+
+        }
+    }
+    const handlePreview = (file) => {
+        const fileType = file.type || getMimeType(file.name); // fallback if file.type is undefined
+
+        if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL, '_blank');
+        } else {
+            toast.error('Preview is only available for images and PDF files.', {
+                autoClose: 800
+            });
+        }
+    };
+    const getMimeType = (fileName) => {
+        const extension = fileName.split('.').pop().toLowerCase();
+        switch (extension) {
+            case 'pdf': return 'application/pdf';
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'bmp':
+                return 'image/' + extension;
+            default: return '';
+        }
+    };
+
     return (
         <div>
             {loading && (
@@ -2981,7 +3264,183 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
                     </div>
                 </div>
             )}
+            <Modal Modal isOpen={isModalOpenForAddDocuments} onClose={closeAddDocumentModal} toggle={closeAddDocumentModal} style={{ maxWidth: '900px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
 
+                <ModalHeader toggle={closeAddDocumentModal} style={{
+                    backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+                    boxShadow: '0px 5px 10px rgba(23, 28, 27, 0.3)',
+                    border: '1px solid rgba(0, 0, 0, 0.3)',
+                    borderRadius: '0',
+                    backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                }} >
+
+
+                    <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+                        icon={faFileAlt}
+                        style={{
+                            marginRight: '8px',
+                            color: 'white',
+                        }}
+                    />Upload Documents</h5>
+
+                </ModalHeader>
+                <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+                    <Row>
+                        <Col
+                            md="4"
+                            className="text-center d-flex flex-column align-items-center justify-content-center"
+                            style={{
+                                border: '2px dashed #ccc',
+                                borderRadius: 10,
+                                padding: 20,
+                                backgroundColor: isDragging ? '#f8f9fa' : 'transparent',
+                                transition: 'background-color 0.2s ease',
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                setIsDragging(true);
+                            }}
+                            onDragLeave={() => setIsDragging(false)}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                setIsDragging(false);
+                                const droppedFiles = Array.from(e.dataTransfer.files);
+                                const validFiles = [];
+
+                                droppedFiles.forEach((file) => {
+                                    if (file.size <= 10 * 1024 * 1024) {
+                                        validFiles.push(file);
+                                    } else {
+                                        toast.error(`${file.name} exceeds 10MB limit`, {
+                                            autoClose: 800
+                                        });
+                                    }
+                                });
+
+                                setFiles(prev => [...prev, ...validFiles]);
+                            }}
+
+                        >
+                            <div className="my-3">
+                                <i className="fas fa-upload fa-2x mb-2"></i>
+                                <p>Drag and drop file here</p>
+                                <p>- OR -</p>
+                                <Input type="file" onChange={handleFileChange} multiple />
+                            </div>
+                        </Col>
+
+                        <Col md="7">
+                            <h5>Uploaded Files</h5>
+                            {files.length === 0 ? (
+                                <></>
+                            ) : (
+                                <div
+                                    style={{
+                                        maxHeight: '300px', // adjust height as needed
+                                        overflowY: 'auto',
+                                        border: '1px solid #dee2e6',
+                                        borderRadius: '5px',
+                                        padding: '10px',
+                                    }}
+                                >
+                                    {files.map((file, index) => (
+                                        <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                                            <Col xs="8" className="text-truncate">{file.name}</Col>
+                                            <Col xs="1" style={{ marginRight: 10 }}>
+                                                <button
+                                                    className="btn btn-outline-primary btn-margin newButton"
+                                                    onClick={() => handlePreview(file)}
+                                                >
+                                                    <FontAwesomeIcon icon={faEye} />
+                                                </button>
+                                            </Col>
+                                            <Col xs="1" style={{ marginRight: 10 }}>
+                                                <button
+                                                    className="btn btn-outline-primary btn-margin newButton"
+                                                    onClick={() => handleDownload(file)}
+                                                >
+                                                    <FontAwesomeIcon icon={faDownload} />
+                                                </button>
+                                            </Col>
+                                            <Col xs="1">
+                                                <button
+                                                    className="btn btn-outline-danger btn-margin newButton"
+                                                    onClick={() => handleRemove2(index)}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
+                                            </Col>
+                                        </Row>
+                                    ))}
+                                </div>
+                            )}
+
+                            {savedFiles.length > 0 && (
+                                <div
+                                    style={{
+                                        maxHeight: '300px', // adjust height as needed
+                                        overflowY: 'auto',
+                                        border: '1px solid #dee2e6',
+                                        borderRadius: '5px',
+                                        padding: '10px',
+                                    }}
+                                >
+                                    {savedFiles.map((file, index) => (
+                                        <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                                            <Col xs="8" className="text-truncate">{file.fileName}</Col>
+                                            <Col xs="1" style={{ marginRight: 10 }}>
+                                                <button
+                                                    className="btn btn-outline-primary btn-margin newButton"
+                                                    onClick={() => handleDownload1(file.docPath, file.fileName, 'view')}
+
+                                                >
+                                                    <FontAwesomeIcon icon={faEye} />
+                                                </button>
+                                            </Col>
+                                            <Col xs="1" style={{ marginRight: 10 }}>
+                                                <button
+                                                    className="btn btn-outline-primary btn-margin newButton"
+                                                    onClick={() => handleDownload1(file.docPath, file.fileName, 'download')}
+                                                >
+                                                    <FontAwesomeIcon icon={faDownload} />
+                                                </button>
+                                            </Col>
+                                            <Col xs="1">
+                                                <button
+                                                    className="btn btn-outline-danger btn-margin newButton"
+                                                    onClick={() => handleRemove1(file.srNo)}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
+                                            </Col>
+                                        </Row>
+                                    ))}
+                                </div>
+                            )}
+                        </Col>
+
+                    </Row>
+                    <Row>
+                        <Col className="text-center">
+                            <button
+                                className="btn btn-outline-primary btn-margin newButton"
+                                style={{ marginRight: 10 }}
+                                id="submitbtn2"
+                                onClick={handleDocumentUpload}
+                            >
+                                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                                Upload
+                            </button>
+                        </Col>
+                    </Row>
+                    <Alert color="warning" className="mt-3">
+                        <strong>Note:</strong> The file size should be less than or equal to 10MB.
+                    </Alert>
+                </ModalBody>
+            </Modal>
             <Modal Modal isOpen={isModalOpenForAddServiceServiceWise} onClose={handleClosAddServiceServiceWise} toggle={handleClosAddServiceServiceWise} style={{ maxWidth: '1200px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
                 <ModalHeader toggle={handleClosAddServiceServiceWise} style={{
                     backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
@@ -4393,7 +4852,15 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
                         Print
                     </button>
 
-
+                    <button
+                        className="btn btn-outline-primary btn-margin newButton"
+                        id="submitbtn2"
+                        onClick={openAddDocumentModal}
+                        disabled={!assessmentData.invoiceNo}
+                    >
+                        <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                        Upload Documents
+                    </button>
 
 
                 </Col>

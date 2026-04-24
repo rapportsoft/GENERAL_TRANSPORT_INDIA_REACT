@@ -1296,7 +1296,8 @@ export default function ServiceMapping() {
         containerSize: '',
         gateOutType: '',
         typeOfConatiner: '',
-        profitCenterDesc: ''
+        profitCenterDesc: '',
+        customerPartyId :"",
     })
 
     const [addNewService, setAddNewService] = useState({
@@ -1318,7 +1319,8 @@ export default function ServiceMapping() {
         status: "A",
         examination: "",
         blApplicableFlag: "",
-        secondaryItem: ""
+        secondaryItem: "",
+         customerPartyId: "" 
 
     });
 
@@ -1326,10 +1328,10 @@ export default function ServiceMapping() {
     const [formErrors, setFormErrors] = useState({
         profitCenterDesc: "",
         invoiceType: "",
-        gateOutType: ""
+        gateOutType: "",
+        customerName:"",
 
     });
-
 
     const handlemappingChange = (event) => {
 
@@ -1358,6 +1360,60 @@ export default function ServiceMapping() {
 
     };
 
+
+const [customerData, setCustomerData] = useState([]);  // Changed from impData
+const [customerId, setCustomerId] = useState('');
+const [customerName, setCustomerName] = useState('');
+const getCustomerPartyData = (val) => {
+    if (!val) {
+        setCustomerData([]);  // Changed from setImpData
+        return;
+    }
+
+    axios
+        .get(
+            `${ipaddress}party/getCustomer?cid=${companyid}&bid=${branchId}&val=${val}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                },
+            }
+        )
+        .then((response) => {
+            const data = response.data;
+            const partyOptions = data.map((port) => ({
+                value: port[0],
+                label: port[1],
+                customerparty: port[1],
+            }));
+            setCustomerData(partyOptions);  // Changed from setImpData
+        })
+        .catch((error) => {
+            setCustomerData([]);  // Changed from setImpData
+        });
+};
+
+const handleCustomerChange = async (selectedOption, { action }) => {
+    setCustomerName(selectedOption ? selectedOption.label : '');
+    setCustomerId(selectedOption ? selectedOption.value : '');
+      if (selectedOption) {
+        setFormErrors((preError) => ({
+            ...preError,
+            customerName: ""
+        }))
+           setMappingDetails((prev) => ({
+            ...prev,
+            customerPartyId: selectedOption.value
+        }));
+    } else {
+        setMappingDetails((prev) => ({
+            ...prev,
+            customerPartyId: ''
+        }));
+    
+    }
+};
+
     const handleClear = () => {
 
         setMappingDetails({
@@ -1365,7 +1421,8 @@ export default function ServiceMapping() {
             containerSize: '',
             gateOutType: '',
             typeOfConatiner: '',
-            profitCenterDesc: ''
+            profitCenterDesc: '',
+            customerPartyId:'',
         }
 
         )
@@ -1373,13 +1430,16 @@ export default function ServiceMapping() {
         setFormErrors({
             profitCenterDesc: "",
             invoiceType: "",
-            gateOutType: ""
+            gateOutType: "",
+               customerName: ""
 
         })
 
         setResponseData([]);
         setIsSearchExecuted(false);
-
+setCustomerId(null);
+setCustomerName(null);
+    setCustomerData([]);
 
     }
 
@@ -1419,7 +1479,9 @@ export default function ServiceMapping() {
             errors.invoiceType = "Invoice Type is required"
 
         }
-
+if (!customerId) {
+        errors.customerName = "Customer Name is required"
+    }
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             setResponseData([]);
@@ -1427,7 +1489,7 @@ export default function ServiceMapping() {
         }
 
         console.log("final mapping details after the search ", mappingDetails);
-
+ console.log("customerId being used:", customerId);
 
         const profitcenterId = getprofitCenterId(mappingDetails.profitCenterDesc)
         console.log("profit center id ", profitcenterId);
@@ -1442,7 +1504,9 @@ export default function ServiceMapping() {
                     invoiceType: mappingDetails.invoiceType,
                     containerSize: mappingDetails.containerSize,
                     gateOutType: mappingDetails.gateOutType,
-                    typeOfConatiner: mappingDetails.typeOfConatiner
+                    typeOfConatiner: mappingDetails.typeOfConatiner,
+                    customerpartyId: customerId,
+
 
                 },
                 headers: {
@@ -1534,6 +1598,7 @@ export default function ServiceMapping() {
     const [isModalOpenForAddress, setIsModalOpenForAddress] = useState(false);
 
     const closeModalOpenForAddress = () => {
+
         setIsModalOpenForAddress(false);
         setAddNewService({
 
@@ -1560,10 +1625,14 @@ export default function ServiceMapping() {
             status: "",
             examination: "",
             blApplicableFlag: "",
-            secondaryItem: ""
+            secondaryItem: "",
+             customerPartyId: ""  
         });
         setServiceId("");
-        setServiceShortDesc("");
+        setServiceShortDesc(""); 
+        // setCustomerId("");  // Reset customer ID
+    // setCustomerName("");
+     setCustomerData([]); 
 
 
     };
@@ -1596,6 +1665,7 @@ export default function ServiceMapping() {
 
     const handlAddNewServiceClear = () => {
         console.log('inside the clear')
+
         setAddNewService({
 
             // serviceId: "",
@@ -1621,16 +1691,19 @@ export default function ServiceMapping() {
             status: "",
             examination: "",
             blApplicableFlag: "",
-            secondaryItem: ""
+            secondaryItem: "",
+            customerPartyId: "" 
         });
 
         setServiceId("");
         setServiceShortDesc("");
-
+            setCustomerId("");  // Reset customer ID
+    setCustomerName(""); 
+    setCustomerData([]); // Also clear the customer data options
 
 
     }
-
+   
     const [serviceData, setServiceData] = useState([]);
     const [serviceId, setServiceId] = useState('');
     const [serviceShortDesc, setServiceShortDesc] = useState('');
@@ -1683,12 +1756,25 @@ export default function ServiceMapping() {
         addNewService.containerSize = mappingDetails.containerSize;
         addNewService.typeOfContainer = mappingDetails.typeOfConatiner;
         addNewService.status = "A";
+          addNewService.customerpartyId = customerId; 
+        //   addNewService.customerName = customerName;
 
         const profitcenterId1 = getprofitCenterId(mappingDetails.profitCenterDesc);
         addNewService.profitcentreId = profitcenterId1;
 
 
+  const isDuplicate = responseData.some(item => 
+        item.profitcentreId === profitcenterId1 && 
+        item.invoiceType === mappingDetails.invoiceType && 
+        item.customerPartyId === customerId
+    );
 
+    if (isDuplicate) {
+        toast.error("A service mapping already exists for this Profit Center, Invoice Type, and Customer combination!", {
+            autoClose: 3000
+        });
+        return;
+    }
 
         console.log('At time of saving final data is :', addNewService)
 
@@ -1910,6 +1996,7 @@ export default function ServiceMapping() {
                                         <option value="GENCONREC">General Containerwise Receiving</option>
                                         <option value="GENCONDEL">General Containerwise Delivey</option>
                                         <option value="GENCONRECPER">General Containerwise Receiving Periodic</option>
+                                          <option value="CRORECPER">Cargo Receiving Periodic</option>
 
                                     </Input>
 
@@ -2002,6 +2089,77 @@ export default function ServiceMapping() {
                                     </Input>
                                 </FormGroup>
                             </Col>
+            <Col md={4}>
+    <FormGroup>
+        <Label className="partyFontSize">Customer Name <span style={{ color: 'red' }}>*</span></Label>
+        <Select
+            // value={customerId ? { value: customerId, label: customerName } : null}
+            value={
+  customerId && customerName
+    ? { value: customerId, label: customerName }
+    : null
+}
+            onChange={handleCustomerChange}
+            onInputChange={getCustomerPartyData}
+            options={customerData}
+            placeholder="Select Customer"
+             isDisabled={isSearchExecuted}
+            isClearable
+            id="customerId"
+            name="customerId"
+            className='autocompleteHeight'
+            styles={{
+                control: (provided, state) => ({
+                    ...provided,
+                    height: 32,
+                    minHeight: 32,
+                    border: formErrors.customerName ? "1px solid red" : (state.isFocused ? "1px solid #ccc" : "1px solid #ccc"),
+                    boxShadow: "none",
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: 0,
+                    "&:hover": {
+                        border: "1px solid #ccc",
+                    },
+                    borderRadius: '6px',
+                }),
+                valueContainer: (provided) => ({
+                    ...provided,
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0 0.75rem',
+                }),
+                singleValue: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px',
+                }),
+                indicatorSeparator: () => ({
+                    display: "none",
+                }),
+                dropdownIndicator: () => ({
+                    display: "none",
+                }),
+                placeholder: (provided) => ({
+                    ...provided,
+                    lineHeight: '32px',
+                    color: "gray",
+                }),
+                clearIndicator: (provided) => ({
+                    ...provided,
+                    padding: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                }),
+            }}
+        />
+        {formErrors.customerName && (
+            <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                {formErrors.customerName}
+            </div>
+        )}
+    </FormGroup>
+</Col>
                         </Row>
 
 
@@ -2052,6 +2210,7 @@ export default function ServiceMapping() {
                                         <th scope="col" className="text-center" style={{ color: 'black', height: '30px' }}>Sr No</th>
                                         <th scope="col" className="text-center" style={{ color: 'black' }}>Service Id</th>
                                         <th scope="col" className="text-center" style={{ color: 'black' }}>Service Short Desc</th>
+                                        <th scope="col" className="text-center" style={{ color: 'black' }}>Customer Name</th> 
                                         <th scope="col" className="text-center" style={{ color: 'black' }}>ODC/LOW BED</th>
                                         <th scope="col" className="text-center" style={{ color: 'black' }}>Exam Type</th>
                                         <th scope="col" className="text-center" style={{ color: 'black' }}>Scanner Type</th>
@@ -2083,6 +2242,8 @@ export default function ServiceMapping() {
                                             <td className="text-center">{((currentPage - 1) * itemsPerPage) + index + 1}</td>
                                             <td className="text-center">{item.serviceId}</td>
                                             <td className="text-center">{item.serviceShortDesc}</td>
+                                             {/* <td className="text-center">{item.customerpartyId || item.customerPartyId || "-"}</td> */}
+                                          <td className="text-center">{item.customerName || item.customerpartyId || "-"}</td>
                                             <td className="text-center">
                                                 <Input
                                                     type="select"

@@ -23,6 +23,7 @@ import {
   Label,
   Input,
   Table,
+  Alert,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,6 +55,8 @@ import {
   faProcedures,
   faSpinner,
   faPrint,
+  faEye,
+  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/style.css";
 import "../Components/Style.css";
@@ -135,7 +138,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
       .then((response) => {
         setCommodityData(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   useEffect(() => {
@@ -1068,7 +1071,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
         if (item.invoiceDate === null) {
           toast.error(
             "Please select invoice validity date for container no " +
-              item.containerNo,
+            item.containerNo,
             {
               autoClose: 800,
             }
@@ -1100,7 +1103,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
 
         const data = response.data.result;
 
-        console.log('final data ',data)
+        console.log('final data ', data)
 
         setBeforeTax(response.data.finaltotalRateWithoutTax);
         setReceiptAmt(response.data.finaltotalRateWithTax);
@@ -1300,8 +1303,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
         }
 
         if (!assessmentData.chaGst) {
-            console.log("cha");
-            
+          console.log("cha");
+
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "29vw" },
@@ -1341,7 +1344,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
         }
 
         if (!assessmentData.fwdGst) {
-            console.log("fwr");
+          console.log("fwr");
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "33vw" },
@@ -1360,7 +1363,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
         }
 
         if (!assessmentData.accHolderGst) {
-            console.log("oth");
+          console.log("oth");
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "33vw" },
@@ -2612,7 +2615,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
         });
         closeGateInModal();
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleSearchClear = () => {
@@ -2722,47 +2725,54 @@ export default function GeneralContainerInvoice({ activeTab }) {
   };
 
   const handlePrint1 = async (type) => {
-    const invoiceNo = assessmentData.invoiceNo;
-    const assesmentId = assessmentData.assesmentId;
-    const igmTransId = assessmentData.igmTransId;
+    try {
+      const invoiceNo = assessmentData.invoiceNo;
+      const assesmentId = assessmentData.assesmentId;
+      const igmTransId = assessmentData.igmTransId;
+      setLoading(true);
+      await axios
+        .post(
+          `${ipaddress}importinvoiceprint/printContainerWiseGeneralInvoicepdf`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+            params: {
+              cid: companyid,
+              bid: branchId,
+              invoiceNo: invoiceNo,
+              assesmentId: assesmentId,
+              igmTransId: igmTransId,
+              selectedInvoice: selectedInvoice,
+            },
+          }
+        )
+        .then((response) => {
+          // console.log('Response:', response.data); // Handle success
+          const pdfBase64 = response.data;
+          const pdfBlob = new Blob(
+            [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
+            { type: "application/pdf" }
+          );
+          const blobUrl = URL.createObjectURL(pdfBlob);
+          window.open(blobUrl, "_blank");
+        })
+        .catch((error) => {
+          console.error("Error in handlePrint:", error.message);
+          //   Handle the error as needed, e.g., show an error toast or message
+          // toast.error(`Error: ${error.message}`, {
+          //       //     position: toast.POSITION.TOP_CENTER,
+          //       //     autoClose: 2000,
+          //       // });
+          //     }
+        });
+    } catch (error) {
 
-    axios
-      .post(
-        `${ipaddress}importinvoiceprint/printContainerWiseGeneralInvoicepdf`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          params: {
-            cid: companyid,
-            bid: branchId,
-            invoiceNo: invoiceNo,
-            assesmentId: assesmentId,
-            igmTransId: igmTransId,
-            selectedInvoice: selectedInvoice,
-          },
-        }
-      )
-      .then((response) => {
-        // console.log('Response:', response.data); // Handle success
-        const pdfBase64 = response.data;
-        const pdfBlob = new Blob(
-          [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
-          { type: "application/pdf" }
-        );
-        const blobUrl = URL.createObjectURL(pdfBlob);
-        window.open(blobUrl, "_blank");
-      })
-      .catch((error) => {
-        console.error("Error in handlePrint:", error.message);
-        //   Handle the error as needed, e.g., show an error toast or message
-        // toast.error(`Error: ${error.message}`, {
-        //       //     position: toast.POSITION.TOP_CENTER,
-        //       //     autoClose: 2000,
-        //       // });
-        //     }
-      });
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   const getSelectedBeforeSearchDataForExBond = (val) => {
@@ -2870,8 +2880,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
               item[23] === null
                 ? null
                 : new Date(
-                    new Date(item[23]).setDate(new Date(item[23]).getDate() + 1)
-                  ),
+                  new Date(item[23]).setDate(new Date(item[23]).getDate() + 1)
+                ),
             upTariffNo: "",
             profitcentreId: item[1] || "",
             grossWt: item[22] ? (item[22] / 1000).toFixed(3) : "",
@@ -2910,10 +2920,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
         invoiceDate:
           updatedData[index].gateInDate && value && value > 0
             ? new Date(
-                new Date(updatedData[index].gateInDate).setDate(
-                  new Date(updatedData[index].gateInDate).getDate() + value * 7
-                )
+              new Date(updatedData[index].gateInDate).setDate(
+                new Date(updatedData[index].gateInDate).getDate() + value * 7
               )
+            )
             : null, // Handle null or invalid gateInDate
       };
       return updatedData;
@@ -3232,31 +3242,31 @@ export default function GeneralContainerInvoice({ activeTab }) {
       prevData.map((entry) =>
         entry.srlNo === srlNo
           ? {
-              ...entry,
-              serviceId: selectedOption ? selectedOption.value : "",
-              serviceName: selectedOption ? selectedOption.label : "",
-              executionUnit: selectedOption ? selectedOption.executionUnit : "",
-              executionUnit1: selectedOption
-                ? selectedOption.executionUnit1
-                : "",
-              actualNoOfPackages: selectedOption
-                ? selectedOption.actualNoOfPackages
-                : "",
-              serviceUnit: selectedOption ? selectedOption.serviceUnit : "",
-              serviceUnit1: selectedOption ? selectedOption.serviceUnit1 : "",
-              rate: selectedOption ? selectedOption.rate : 0,
-              currencyId: selectedOption ? selectedOption.currencyId : "",
-              woNo: selectedOption ? selectedOption.woNo : "",
-              woAmndNo: selectedOption ? selectedOption.woAmndNo : "",
-              lineNo: selectedOption ? selectedOption.lineNo : "0",
-              rangeType: selectedOption ? selectedOption.rangeType : "",
-              taxId: selectedOption ? selectedOption.taxId : "",
-              taxPerc: selectedOption ? selectedOption.taxPerc : 0,
-              acCode: selectedOption ? selectedOption.acCode : "",
-              executionUnit: 0,
-              executionUnit1: 0,
-              actualNoOfPackages: 0,
-            }
+            ...entry,
+            serviceId: selectedOption ? selectedOption.value : "",
+            serviceName: selectedOption ? selectedOption.label : "",
+            executionUnit: selectedOption ? selectedOption.executionUnit : "",
+            executionUnit1: selectedOption
+              ? selectedOption.executionUnit1
+              : "",
+            actualNoOfPackages: selectedOption
+              ? selectedOption.actualNoOfPackages
+              : "",
+            serviceUnit: selectedOption ? selectedOption.serviceUnit : "",
+            serviceUnit1: selectedOption ? selectedOption.serviceUnit1 : "",
+            rate: selectedOption ? selectedOption.rate : 0,
+            currencyId: selectedOption ? selectedOption.currencyId : "",
+            woNo: selectedOption ? selectedOption.woNo : "",
+            woAmndNo: selectedOption ? selectedOption.woAmndNo : "",
+            lineNo: selectedOption ? selectedOption.lineNo : "0",
+            rangeType: selectedOption ? selectedOption.rangeType : "",
+            taxId: selectedOption ? selectedOption.taxId : "",
+            taxPerc: selectedOption ? selectedOption.taxPerc : 0,
+            acCode: selectedOption ? selectedOption.acCode : "",
+            executionUnit: 0,
+            executionUnit1: 0,
+            actualNoOfPackages: 0,
+          }
           : entry
       )
     );
@@ -3705,7 +3715,7 @@ export default function GeneralContainerInvoice({ activeTab }) {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     } catch {
       console.log("error in getAllContainerDetailsOfAssesmentId...");
     }
@@ -4083,6 +4093,287 @@ export default function GeneralContainerInvoice({ activeTab }) {
     }
   };
 
+  const [isModalOpenForAddDocuments, setIsModalOpenForAddDocuments] = useState(false);
+  const [savedFiles, setSavedFiles] = useState([]);
+  const [docId, setDocId] = useState('');
+
+  const openAddDocumentModal = (id) => {
+    setIsModalOpenForAddDocuments(true);
+
+    setDocId(id);
+    getSavedDoc(id);
+  }
+
+  const closeAddDocumentModal = () => {
+    setIsModalOpenForAddDocuments(false);
+    setFiles([]);
+    setSavedFiles([]);
+    setDocId('');
+  }
+
+  const [files, setFiles] = useState([]);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const validFiles = [];
+
+    selectedFiles.forEach((file) => {
+      if (file.size <= 10 * 1024 * 1024) {
+        validFiles.push(file);
+      } else {
+        toast.error(`${file.name} exceeds 10MB limit`, {
+          autoClose: 800
+        });
+      }
+    });
+
+    setFiles(prev => [...prev, ...validFiles]);
+  };
+
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleRemove2 = (indexToRemove) => {
+    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleRemove1 = (sr) => {
+    try {
+      setLoading(true);
+
+      axios.post(`${ipaddress}financeDocUploadController/deleteDoc`, null, {
+        params: {
+          cid: companyid,
+          bid: branchId,
+          assesmentId: assessmentData.assesmentId,
+          sr: sr,
+          invoiceNo: assessmentData.invoiceNo,
+          user: userId
+        },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
+        .then((response) => {
+          setLoading(false);
+
+          const data = response.data;
+
+
+          setSavedFiles(data.map((item) => ({
+            companyId: item.companyId || '',
+            branchId: item.branchId || '',
+            assesmentDate: item.assesmentId || '',
+            invoiceNo: item.invoiceNo || '',
+            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+            srNo: item.srNo || '',
+            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+          })));
+
+          toast.error("File Deleted Successfully!!", {
+            autoClose: 800
+          })
+
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error(error.response.data, {
+            autoClose: 800
+          })
+        })
+
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = (file) => {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownload1 = (fileUrl, fileName, type) => {
+    try {
+      const base64Data = fileUrl.split(',')[1];
+      const byteString = atob(base64Data);
+
+      // Determine mime type from fileName extension
+      const extension = fileName.split('.').pop().toLowerCase();
+      let mimeType = 'application/octet-stream'; // default
+
+      if (extension === 'pdf') mimeType = 'application/pdf';
+      else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension))
+        mimeType = `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([ab], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+
+      if (type === 'view') {
+        if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+          window.open(url, '_blank');
+        } else {
+          toast.error('Preview is only supported for images and PDF files.', {
+            autoClose: 800
+          });
+          URL.revokeObjectURL(url);
+        }
+      } else if (type === 'download') {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error handling file:', error);
+    }
+  };
+
+
+
+
+
+  const handleDocumentUpload = () => {
+    try {
+
+      if (files.length === 0) {
+        toast.error("Please select the file", {
+          autoClose: 800
+        })
+
+        return;
+      }
+
+      setLoading(true);
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append("files", file);
+      });
+
+      formData.append("cid", companyid);
+      formData.append("bid", branchId);
+      formData.append("assesmentId", assessmentData.assesmentId);
+      formData.append("invoiceNo", assessmentData.invoiceNo);
+      formData.append("user", userId);
+
+      axios.post(`${ipaddress}financeDocUploadController/uploadJobDoc`, formData, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "multipart/form-data"
+        }
+      })
+        .then((response) => {
+
+          setLoading(false);
+
+          const data = response.data;
+
+          setFiles([]);
+
+
+          setSavedFiles(data.map((item) => ({
+            companyId: item.companyId || '',
+            branchId: item.branchId || '',
+            assesmentDate: item.assesmentId || '',
+            invoiceNo: item.invoiceNo || '',
+            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+            srNo: item.srNo || '',
+            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+          })));
+
+          toast.success("Files Uploaded Successfully!!", {
+            autoClose: 800
+          })
+        })
+        .catch((error) => {
+          toast.error(error.response.data, {
+            autoClose: 800
+          })
+
+          setLoading(false);
+        })
+    } catch (error) {
+      setLoading(false);
+    }
+  }
+
+  const getSavedDoc = (id) => {
+    try {
+      axios.get(`${ipaddress}financeDocUploadController/getSavedDoc`, {
+        params: {
+          cid: companyid,
+          bid: branchId,
+          assesmentId: assessmentData.assesmentId || '',
+          invoiceNo: assessmentData.invoiceNo || '',
+        },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
+        .then((response) => {
+          const data = response.data;
+
+          if (data.length > 0) {
+            setSavedFiles(data.map((item) => ({
+              companyId: item.companyId || '',
+              branchId: item.branchId || '',
+              assesmentDate: item.assesmentId || '',
+              invoiceNo: item.invoiceNo || '',
+              docPath: `data:application/octet-stream;base64,${item.file}` || '',
+              srNo: item.srNo || '',
+              fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+            })));
+          }
+          else {
+            setSavedFiles([]);
+          }
+        })
+        .catch((error) => {
+
+        })
+
+    } catch (error) {
+
+    }
+  }
+  const handlePreview = (file) => {
+    const fileType = file.type || getMimeType(file.name); // fallback if file.type is undefined
+
+    if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    } else {
+      toast.error('Preview is only available for images and PDF files.', {
+        autoClose: 800
+      });
+    }
+  };
+  const getMimeType = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'pdf': return 'application/pdf';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+        return 'image/' + extension;
+      default: return '';
+    }
+  };
+
   return (
     <div>
       {loading && (
@@ -4217,7 +4508,183 @@ export default function GeneralContainerInvoice({ activeTab }) {
           </div>
         </div>
       )}
+      <Modal Modal isOpen={isModalOpenForAddDocuments} onClose={closeAddDocumentModal} toggle={closeAddDocumentModal} style={{ maxWidth: '900px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
 
+        <ModalHeader toggle={closeAddDocumentModal} style={{
+          backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+          boxShadow: '0px 5px 10px rgba(23, 28, 27, 0.3)',
+          border: '1px solid rgba(0, 0, 0, 0.3)',
+          borderRadius: '0',
+          backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }} >
+
+
+          <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+            icon={faFileAlt}
+            style={{
+              marginRight: '8px',
+              color: 'white',
+            }}
+          />Upload Documents</h5>
+
+        </ModalHeader>
+        <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+          <Row>
+            <Col
+              md="4"
+              className="text-center d-flex flex-column align-items-center justify-content-center"
+              style={{
+                border: '2px dashed #ccc',
+                borderRadius: 10,
+                padding: 20,
+                backgroundColor: isDragging ? '#f8f9fa' : 'transparent',
+                transition: 'background-color 0.2s ease',
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const droppedFiles = Array.from(e.dataTransfer.files);
+                const validFiles = [];
+
+                droppedFiles.forEach((file) => {
+                  if (file.size <= 10 * 1024 * 1024) {
+                    validFiles.push(file);
+                  } else {
+                    toast.error(`${file.name} exceeds 10MB limit`, {
+                      autoClose: 800
+                    });
+                  }
+                });
+
+                setFiles(prev => [...prev, ...validFiles]);
+              }}
+
+            >
+              <div className="my-3">
+                <i className="fas fa-upload fa-2x mb-2"></i>
+                <p>Drag and drop file here</p>
+                <p>- OR -</p>
+                <Input type="file" onChange={handleFileChange} multiple />
+              </div>
+            </Col>
+
+            <Col md="7">
+              <h5>Uploaded Files</h5>
+              {files.length === 0 ? (
+                <></>
+              ) : (
+                <div
+                  style={{
+                    maxHeight: '300px', // adjust height as needed
+                    overflowY: 'auto',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '5px',
+                    padding: '10px',
+                  }}
+                >
+                  {files.map((file, index) => (
+                    <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                      <Col xs="8" className="text-truncate">{file.name}</Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handlePreview(file)}
+                        >
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                      </Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload(file)}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                        </button>
+                      </Col>
+                      <Col xs="1">
+                        <button
+                          className="btn btn-outline-danger btn-margin newButton"
+                          onClick={() => handleRemove2(index)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </Col>
+                    </Row>
+                  ))}
+                </div>
+              )}
+
+              {savedFiles.length > 0 && (
+                <div
+                  style={{
+                    maxHeight: '300px', // adjust height as needed
+                    overflowY: 'auto',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '5px',
+                    padding: '10px',
+                  }}
+                >
+                  {savedFiles.map((file, index) => (
+                    <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                      <Col xs="8" className="text-truncate">{file.fileName}</Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload1(file.docPath, file.fileName, 'view')}
+
+                        >
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                      </Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload1(file.docPath, file.fileName, 'download')}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                        </button>
+                      </Col>
+                      <Col xs="1">
+                        <button
+                          className="btn btn-outline-danger btn-margin newButton"
+                          onClick={() => handleRemove1(file.srNo)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </Col>
+                    </Row>
+                  ))}
+                </div>
+              )}
+            </Col>
+
+          </Row>
+          <Row>
+            <Col className="text-center">
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                style={{ marginRight: 10 }}
+                id="submitbtn2"
+                onClick={handleDocumentUpload}
+              >
+                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                Upload
+              </button>
+            </Col>
+          </Row>
+          <Alert color="warning" className="mt-3">
+            <strong>Note:</strong> The file size should be less than or equal to 10MB.
+          </Alert>
+        </ModalBody>
+      </Modal>
       <Modal
         Modal
         isOpen={isModalOpenForAddService}
@@ -4375,11 +4842,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
                                 }
                               }}
                               components={{ Option: CustomOptionService }}
-                              className={`inputwidthTukaMax ${
-                                validationErrors[item.srlNo]?.serviceId
-                                  ? "error-border"
-                                  : ""
-                              }`}
+                              className={`inputwidthTukaMax ${validationErrors[item.srlNo]?.serviceId
+                                ? "error-border"
+                                : ""
+                                }`}
                               placeholder="Select Service"
                               isDisabled={
                                 assessmentData.invoiceNo ||
@@ -4388,8 +4854,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                               }
                               id={
                                 assessmentData.invoiceNo ||
-                                (!assessmentData.invoiceNo &&
-                                  item.addServices !== "Y")
+                                  (!assessmentData.invoiceNo &&
+                                    item.addServices !== "Y")
                                   ? "service"
                                   : ""
                               }
@@ -4488,11 +4954,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTukaMin ${
-                              validationErrors[item.srlNo]?.executionUnit
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={4}
                             value={item.executionUnit}
@@ -4503,8 +4968,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
-                              (!assessmentData.invoiceNo &&
-                                item.addServices !== "Y")
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4534,11 +4999,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTukaMin ${
-                              validationErrors[item.srlNo]?.executionUnit
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={4}
                             value={item.executionUnit1}
@@ -4560,8 +5024,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
-                              (!assessmentData.invoiceNo &&
-                                item.addServices !== "Y")
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4597,11 +5061,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTuka ${
-                              validationErrors[item.srlNo]?.rate
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTuka ${validationErrors[item.srlNo]?.rate
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={10}
                             value={item.rate}
@@ -4620,8 +5083,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
-                              (!assessmentData.invoiceNo &&
-                                item.addServices !== "Y")
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4757,9 +5220,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                     }
                   }}
                   components={{ Option: CustomOptionService }}
-                  className={`${
-                    validationContainer?.serviceId ? "error-border" : ""
-                  }`}
+                  className={`${validationContainer?.serviceId ? "error-border" : ""
+                    }`}
                   placeholder="Select Service"
                   isClearable
                   styles={{
@@ -4861,9 +5323,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       Execution Unit
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.executionUnit ? "error-border" : ""
-                      }`}
+                      className={`form-control ${validationContainer?.executionUnit ? "error-border" : ""
+                        }`}
                       type="text"
                       name="executionUnit"
                       maxLength={4}
@@ -4903,11 +5364,10 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       Execution Unit1
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.executionUnit1
-                          ? "error-border"
-                          : ""
-                      }`}
+                      className={`form-control ${validationContainer?.executionUnit1
+                        ? "error-border"
+                        : ""
+                        }`}
                       disabled
                       type="text"
                       maxLength={4}
@@ -4933,9 +5393,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                       Rate
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.rate ? "error-border" : ""
-                      }`}
+                      className={`form-control ${validationContainer?.rate ? "error-border" : ""
+                        }`}
                       type="text"
                       name="rate"
                       value={Cfinvsrvanx.rate}
@@ -6536,8 +6995,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                   selectedInvoice === "noc"
                     ? handleSave
                     : selectedInvoice === "exbond"
-                    ? handleSave1
-                    : ""
+                      ? handleSave1
+                      : ""
                 }
                 disabled={assessmentData.invoiceNo !== ""}
               >
@@ -6552,8 +7011,8 @@ export default function GeneralContainerInvoice({ activeTab }) {
                   selectedInvoice === "noc"
                     ? saveProcess
                     : selectedInvoice === "exbond"
-                    ? saveProcess1
-                    : ""
+                      ? saveProcess1
+                      : ""
                 }
                 disabled={
                   assessmentData.invoiceNo !== "" ||
@@ -6604,6 +7063,15 @@ export default function GeneralContainerInvoice({ activeTab }) {
                   style={{ marginRight: "5px" }}
                 />
                 Print
+              </button>
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                id="submitbtn2"
+                onClick={openAddDocumentModal}
+                disabled={!assessmentData.invoiceNo}
+              >
+                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                Upload Documents
               </button>
             </Col>
           </Row>

@@ -24,6 +24,7 @@ import {
   Label,
   Input,
   Table,
+  Alert,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -55,6 +56,8 @@ import {
   faProcedures,
   faSpinner,
   faPrint,
+  faFileAlt,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/style.css";
 import "../Components/Style.css";
@@ -136,7 +139,7 @@ export default function General({ activeTab }) {
       .then((response) => {
         setCommodityData(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   useEffect(() => {
@@ -1062,7 +1065,7 @@ export default function General({ activeTab }) {
 
     if (data.length === 0) {
       toast.error("Please select Commodity data", {
-      // toast.error("Please select container data", {
+        // toast.error("Please select container data", {
         autoClose: 800,
       });
       return;
@@ -1073,7 +1076,7 @@ export default function General({ activeTab }) {
         if (item.invoiceDate === null) {
           toast.error(
             "Please select invoice validity date for Commodity " +
-              item.commodityDescription,
+            item.commodityDescription,
             {
               autoClose: 800,
             }
@@ -1306,8 +1309,8 @@ export default function General({ activeTab }) {
         }
 
         if (!assessmentData.chaGst) {
-            console.log("cha");
-            
+          console.log("cha");
+
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "29vw" },
@@ -1347,7 +1350,7 @@ export default function General({ activeTab }) {
         }
 
         if (!assessmentData.fwdGst) {
-            console.log("fwr");
+          console.log("fwr");
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "33vw" },
@@ -1366,7 +1369,7 @@ export default function General({ activeTab }) {
         }
 
         if (!assessmentData.accHolderGst) {
-            console.log("oth");
+          console.log("oth");
           toast.error("GstNo not found, please select another address", {
             autoClose: 1000,
             style: { width: "33vw" },
@@ -1381,7 +1384,7 @@ export default function General({ activeTab }) {
 
     if (data.length === 0) {
       toast.error("Please select Commodity data", {
-      // toast.error("Please select container data", {
+        // toast.error("Please select container data", {
         autoClose: 800,
       });
       return;
@@ -2625,7 +2628,7 @@ export default function General({ activeTab }) {
         });
         closeGateInModal();
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleSearchClear = () => {
@@ -2736,47 +2739,55 @@ export default function General({ activeTab }) {
   };
 
   const handlePrint1 = async (type) => {
-    const invoiceNo = assessmentData.invoiceNo;
-    const assesmentId = assessmentData.assesmentId;
-    const igmTransId = assessmentData.igmTransId;
+    try {
+      setLoading(true);
+      const invoiceNo = assessmentData.invoiceNo;
+      const assesmentId = assessmentData.assesmentId;
+      const igmTransId = assessmentData.igmTransId;
 
-    axios
-      .post(
-        `${ipaddress}importinvoiceprint/printContainerWiseGeneralInvoicepdfForGeneral`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          params: {
-            cid: companyid,
-            bid: branchId,
-            invoiceNo: invoiceNo,
-            assesmentId: assesmentId,
-            igmTransId: igmTransId,
-            selectedInvoice: selectedInvoice,
-          },
-        }
-      )
-      .then((response) => {
-        // console.log('Response:', response.data); // Handle success
-        const pdfBase64 = response.data;
-        const pdfBlob = new Blob(
-          [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
-          { type: "application/pdf" }
-        );
-        const blobUrl = URL.createObjectURL(pdfBlob);
-        window.open(blobUrl, "_blank");
-      })
-      .catch((error) => {
-        console.error("Error in handlePrint:", error.message);
-        //   Handle the error as needed, e.g., show an error toast or message
-        // toast.error(`Error: ${error.message}`, {
-        //       //     position: toast.POSITION.TOP_CENTER,
-        //       //     autoClose: 2000,
-        //       // });
-        //     }
-      });
+      await axios
+        .post(
+          `${ipaddress}importinvoiceprint/printContainerWiseGeneralInvoicepdfForGeneral`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+            params: {
+              cid: companyid,
+              bid: branchId,
+              invoiceNo: invoiceNo,
+              assesmentId: assesmentId,
+              igmTransId: igmTransId,
+              selectedInvoice: selectedInvoice,
+            },
+          }
+        )
+        .then((response) => {
+          // console.log('Response:', response.data); // Handle success
+          const pdfBase64 = response.data;
+          const pdfBlob = new Blob(
+            [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
+            { type: "application/pdf" }
+          );
+          const blobUrl = URL.createObjectURL(pdfBlob);
+          window.open(blobUrl, "_blank");
+        })
+        .catch((error) => {
+          console.error("Error in handlePrint:", error.message);
+          //   Handle the error as needed, e.g., show an error toast or message
+          // toast.error(`Error: ${error.message}`, {
+          //       //     position: toast.POSITION.TOP_CENTER,
+          //       //     autoClose: 2000,
+          //       // });
+          //     }
+        });
+    } catch (error) {
+
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   const getSelectedBeforeSearchDataForExBond = (val) => {
@@ -2884,8 +2895,8 @@ export default function General({ activeTab }) {
               item[23] === null
                 ? null
                 : new Date(
-                    new Date(item[23]).setDate(new Date(item[23]).getDate() + 1)
-                  ),
+                  new Date(item[23]).setDate(new Date(item[23]).getDate() + 1)
+                ),
             upTariffNo: "",
             profitcentreId: item[1] || "",
             grossWt: item[22] ? (item[22] / 1000).toFixed(3) : "",
@@ -2924,10 +2935,10 @@ export default function General({ activeTab }) {
         invoiceDate:
           updatedData[index].gateInDate && value && value > 0
             ? new Date(
-                new Date(updatedData[index].gateInDate).setDate(
-                  new Date(updatedData[index].gateInDate).getDate() + value * 7
-                )
+              new Date(updatedData[index].gateInDate).setDate(
+                new Date(updatedData[index].gateInDate).getDate() + value * 7
               )
+            )
             : null, // Handle null or invalid gateInDate
       };
       return updatedData;
@@ -3072,7 +3083,7 @@ export default function General({ activeTab }) {
 
       setCfinvsrvanxData(response.data);
       console.log("comm====== ", response.data);
-      
+
     } catch {
       setCfinvsrvanxData([]);
     }
@@ -3178,7 +3189,7 @@ export default function General({ activeTab }) {
       rangeFrom: "",
       rangeTo: "",
       rangeType: "",
-      commodityDescription: assessmentData.commodityDescription, 
+      commodityDescription: assessmentData.commodityDescription,
     };
 
     // Update the list and ensure the new entry is at the top
@@ -3250,31 +3261,31 @@ export default function General({ activeTab }) {
       prevData.map((entry) =>
         entry.srlNo === srlNo
           ? {
-              ...entry,
-              serviceId: selectedOption ? selectedOption.value : "",
-              serviceName: selectedOption ? selectedOption.label : "",
-              executionUnit: selectedOption ? selectedOption.executionUnit : "",
-              executionUnit1: selectedOption
-                ? selectedOption.executionUnit1
-                : "",
-              actualNoOfPackages: selectedOption
-                ? selectedOption.actualNoOfPackages
-                : "",
-              serviceUnit: selectedOption ? selectedOption.serviceUnit : "",
-              serviceUnit1: selectedOption ? selectedOption.serviceUnit1 : "",
-              rate: selectedOption ? selectedOption.rate : 0,
-              currencyId: selectedOption ? selectedOption.currencyId : "",
-              woNo: selectedOption ? selectedOption.woNo : "",
-              woAmndNo: selectedOption ? selectedOption.woAmndNo : "",
-              lineNo: selectedOption ? selectedOption.lineNo : "0",
-              rangeType: selectedOption ? selectedOption.rangeType : "",
-              taxId: selectedOption ? selectedOption.taxId : "",
-              taxPerc: selectedOption ? selectedOption.taxPerc : 0,
-              acCode: selectedOption ? selectedOption.acCode : "",
-              executionUnit: 0,
-              executionUnit1: 0,
-              actualNoOfPackages: 0,
-            }
+            ...entry,
+            serviceId: selectedOption ? selectedOption.value : "",
+            serviceName: selectedOption ? selectedOption.label : "",
+            executionUnit: selectedOption ? selectedOption.executionUnit : "",
+            executionUnit1: selectedOption
+              ? selectedOption.executionUnit1
+              : "",
+            actualNoOfPackages: selectedOption
+              ? selectedOption.actualNoOfPackages
+              : "",
+            serviceUnit: selectedOption ? selectedOption.serviceUnit : "",
+            serviceUnit1: selectedOption ? selectedOption.serviceUnit1 : "",
+            rate: selectedOption ? selectedOption.rate : 0,
+            currencyId: selectedOption ? selectedOption.currencyId : "",
+            woNo: selectedOption ? selectedOption.woNo : "",
+            woAmndNo: selectedOption ? selectedOption.woAmndNo : "",
+            lineNo: selectedOption ? selectedOption.lineNo : "0",
+            rangeType: selectedOption ? selectedOption.rangeType : "",
+            taxId: selectedOption ? selectedOption.taxId : "",
+            taxPerc: selectedOption ? selectedOption.taxPerc : 0,
+            acCode: selectedOption ? selectedOption.acCode : "",
+            executionUnit: 0,
+            executionUnit1: 0,
+            actualNoOfPackages: 0,
+          }
           : entry
       )
     );
@@ -3434,7 +3445,7 @@ export default function General({ activeTab }) {
     if (filteredData.length === 0) {
       toast.warning("Please add the service first", {
         // position: toast.POSITION.TOP_CENTER,
-         position: "top-center", 
+        position: "top-center",
         autoClose: 1000,
       });
       return;
@@ -3443,7 +3454,7 @@ export default function General({ activeTab }) {
     if (!validateServiceData(filteredData)) {
       toast.warning("Plase check the values entered...", {
         // position: toast.POSITION.TOP_CENTER,
-         position: "top-center", 
+        position: "top-center",
         autoClose: 1000,
       });
       return false;
@@ -3726,7 +3737,7 @@ export default function General({ activeTab }) {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     } catch {
       console.log("error in getAllContainerDetailsOfAssesmentId...");
     }
@@ -3898,7 +3909,7 @@ export default function General({ activeTab }) {
 
       axios
         .post(`${ipaddress}assessmentgeneral/saveAddServiceForgeneralCon`, formData, {
-        // .post(`${ipaddress}assessment/saveAddServiceForgeneralCon`, formData, {
+          // .post(`${ipaddress}assessment/saveAddServiceForgeneralCon`, formData, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
@@ -4105,6 +4116,288 @@ export default function General({ activeTab }) {
     }
   };
 
+  const [isModalOpenForAddDocuments, setIsModalOpenForAddDocuments] = useState(false);
+  const [savedFiles, setSavedFiles] = useState([]);
+  const [docId, setDocId] = useState('');
+
+  const openAddDocumentModal = (id) => {
+    setIsModalOpenForAddDocuments(true);
+
+    setDocId(id);
+    getSavedDoc(id);
+  }
+
+  const closeAddDocumentModal = () => {
+    setIsModalOpenForAddDocuments(false);
+    setFiles([]);
+    setSavedFiles([]);
+    setDocId('');
+  }
+
+  const [files, setFiles] = useState([]);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const validFiles = [];
+
+    selectedFiles.forEach((file) => {
+      if (file.size <= 10 * 1024 * 1024) {
+        validFiles.push(file);
+      } else {
+        toast.error(`${file.name} exceeds 10MB limit`, {
+          autoClose: 800
+        });
+      }
+    });
+
+    setFiles(prev => [...prev, ...validFiles]);
+  };
+
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleRemove2 = (indexToRemove) => {
+    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleRemove1 = (sr) => {
+    try {
+      setLoading(true);
+
+      axios.post(`${ipaddress}financeDocUploadController/deleteDoc`, null, {
+        params: {
+          cid: companyid,
+          bid: branchId,
+          assesmentId: assessmentData.assesmentId,
+          sr: sr,
+          invoiceNo: assessmentData.invoiceNo,
+          user: userId
+        },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
+        .then((response) => {
+          setLoading(false);
+
+          const data = response.data;
+
+
+          setSavedFiles(data.map((item) => ({
+            companyId: item.companyId || '',
+            branchId: item.branchId || '',
+            assesmentDate: item.assesmentId || '',
+            invoiceNo: item.invoiceNo || '',
+            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+            srNo: item.srNo || '',
+            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+          })));
+
+          toast.error("File Deleted Successfully!!", {
+            autoClose: 800
+          })
+
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error(error.response.data, {
+            autoClose: 800
+          })
+        })
+
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = (file) => {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownload1 = (fileUrl, fileName, type) => {
+    try {
+      const base64Data = fileUrl.split(',')[1];
+      const byteString = atob(base64Data);
+
+      // Determine mime type from fileName extension
+      const extension = fileName.split('.').pop().toLowerCase();
+      let mimeType = 'application/octet-stream'; // default
+
+      if (extension === 'pdf') mimeType = 'application/pdf';
+      else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension))
+        mimeType = `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([ab], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+
+      if (type === 'view') {
+        if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+          window.open(url, '_blank');
+        } else {
+          toast.error('Preview is only supported for images and PDF files.', {
+            autoClose: 800
+          });
+          URL.revokeObjectURL(url);
+        }
+      } else if (type === 'download') {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error handling file:', error);
+    }
+  };
+
+
+
+
+
+  const handleDocumentUpload = () => {
+    try {
+
+      if (files.length === 0) {
+        toast.error("Please select the file", {
+          autoClose: 800
+        })
+
+        return;
+      }
+
+      setLoading(true);
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append("files", file);
+      });
+
+      formData.append("cid", companyid);
+      formData.append("bid", branchId);
+      formData.append("assesmentId", assessmentData.assesmentId);
+      formData.append("invoiceNo", assessmentData.invoiceNo);
+      formData.append("user", userId);
+
+      axios.post(`${ipaddress}financeDocUploadController/uploadJobDoc`, formData, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "multipart/form-data"
+        }
+      })
+        .then((response) => {
+
+          setLoading(false);
+
+          const data = response.data;
+
+          setFiles([]);
+
+
+          setSavedFiles(data.map((item) => ({
+            companyId: item.companyId || '',
+            branchId: item.branchId || '',
+            assesmentDate: item.assesmentId || '',
+            invoiceNo: item.invoiceNo || '',
+            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+            srNo: item.srNo || '',
+            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+          })));
+
+          toast.success("Files Uploaded Successfully!!", {
+            autoClose: 800
+          })
+        })
+        .catch((error) => {
+          toast.error(error.response.data, {
+            autoClose: 800
+          })
+
+          setLoading(false);
+        })
+    } catch (error) {
+      setLoading(false);
+    }
+  }
+
+  const getSavedDoc = (id) => {
+    try {
+      axios.get(`${ipaddress}financeDocUploadController/getSavedDoc`, {
+        params: {
+          cid: companyid,
+          bid: branchId,
+          assesmentId: assessmentData.assesmentId || '',
+          invoiceNo: assessmentData.invoiceNo || '',
+        },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
+        .then((response) => {
+          const data = response.data;
+
+          if (data.length > 0) {
+            setSavedFiles(data.map((item) => ({
+              companyId: item.companyId || '',
+              branchId: item.branchId || '',
+              assesmentDate: item.assesmentId || '',
+              invoiceNo: item.invoiceNo || '',
+              docPath: `data:application/octet-stream;base64,${item.file}` || '',
+              srNo: item.srNo || '',
+              fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+            })));
+          }
+          else {
+            setSavedFiles([]);
+          }
+        })
+        .catch((error) => {
+
+        })
+
+    } catch (error) {
+
+    }
+  }
+  const handlePreview = (file) => {
+    const fileType = file.type || getMimeType(file.name); // fallback if file.type is undefined
+
+    if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    } else {
+      toast.error('Preview is only available for images and PDF files.', {
+        autoClose: 800
+      });
+    }
+  };
+  const getMimeType = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'pdf': return 'application/pdf';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+        return 'image/' + extension;
+      default: return '';
+    }
+  };
+
+
   return (
     <div>
       {loading && (
@@ -4239,7 +4532,183 @@ export default function General({ activeTab }) {
           </div>
         </div>
       )}
+      <Modal Modal isOpen={isModalOpenForAddDocuments} onClose={closeAddDocumentModal} toggle={closeAddDocumentModal} style={{ maxWidth: '900px', fontSize: 14, wioverflow: '-moz-hidden-unscrollable' }}>
 
+        <ModalHeader toggle={closeAddDocumentModal} style={{
+          backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+          boxShadow: '0px 5px 10px rgba(23, 28, 27, 0.3)',
+          border: '1px solid rgba(0, 0, 0, 0.3)',
+          borderRadius: '0',
+          backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }} >
+
+
+          <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+            icon={faFileAlt}
+            style={{
+              marginRight: '8px',
+              color: 'white',
+            }}
+          />Upload Documents</h5>
+
+        </ModalHeader>
+        <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
+          <Row>
+            <Col
+              md="4"
+              className="text-center d-flex flex-column align-items-center justify-content-center"
+              style={{
+                border: '2px dashed #ccc',
+                borderRadius: 10,
+                padding: 20,
+                backgroundColor: isDragging ? '#f8f9fa' : 'transparent',
+                transition: 'background-color 0.2s ease',
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const droppedFiles = Array.from(e.dataTransfer.files);
+                const validFiles = [];
+
+                droppedFiles.forEach((file) => {
+                  if (file.size <= 10 * 1024 * 1024) {
+                    validFiles.push(file);
+                  } else {
+                    toast.error(`${file.name} exceeds 10MB limit`, {
+                      autoClose: 800
+                    });
+                  }
+                });
+
+                setFiles(prev => [...prev, ...validFiles]);
+              }}
+
+            >
+              <div className="my-3">
+                <i className="fas fa-upload fa-2x mb-2"></i>
+                <p>Drag and drop file here</p>
+                <p>- OR -</p>
+                <Input type="file" onChange={handleFileChange} multiple />
+              </div>
+            </Col>
+
+            <Col md="7">
+              <h5>Uploaded Files</h5>
+              {files.length === 0 ? (
+                <></>
+              ) : (
+                <div
+                  style={{
+                    maxHeight: '300px', // adjust height as needed
+                    overflowY: 'auto',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '5px',
+                    padding: '10px',
+                  }}
+                >
+                  {files.map((file, index) => (
+                    <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                      <Col xs="8" className="text-truncate">{file.name}</Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handlePreview(file)}
+                        >
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                      </Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload(file)}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                        </button>
+                      </Col>
+                      <Col xs="1">
+                        <button
+                          className="btn btn-outline-danger btn-margin newButton"
+                          onClick={() => handleRemove2(index)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </Col>
+                    </Row>
+                  ))}
+                </div>
+              )}
+
+              {savedFiles.length > 0 && (
+                <div
+                  style={{
+                    maxHeight: '300px', // adjust height as needed
+                    overflowY: 'auto',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '5px',
+                    padding: '10px',
+                  }}
+                >
+                  {savedFiles.map((file, index) => (
+                    <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                      <Col xs="8" className="text-truncate">{file.fileName}</Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload1(file.docPath, file.fileName, 'view')}
+
+                        >
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                      </Col>
+                      <Col xs="1" style={{ marginRight: 10 }}>
+                        <button
+                          className="btn btn-outline-primary btn-margin newButton"
+                          onClick={() => handleDownload1(file.docPath, file.fileName, 'download')}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                        </button>
+                      </Col>
+                      <Col xs="1">
+                        <button
+                          className="btn btn-outline-danger btn-margin newButton"
+                          onClick={() => handleRemove1(file.srNo)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </Col>
+                    </Row>
+                  ))}
+                </div>
+              )}
+            </Col>
+
+          </Row>
+          <Row>
+            <Col className="text-center">
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                style={{ marginRight: 10 }}
+                id="submitbtn2"
+                onClick={handleDocumentUpload}
+              >
+                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                Upload
+              </button>
+            </Col>
+          </Row>
+          <Alert color="warning" className="mt-3">
+            <strong>Note:</strong> The file size should be less than or equal to 10MB.
+          </Alert>
+        </ModalBody>
+      </Modal>
       <Modal
         Modal
         isOpen={isModalOpenForAddService}
@@ -4310,7 +4779,7 @@ export default function General({ activeTab }) {
             <Col md={3}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                  Commodity 
+                  Commodity
                 </label>
                 <input
                   className="form-control"
@@ -4319,7 +4788,7 @@ export default function General({ activeTab }) {
                   disabled
                   name="commodityDescription"
                   value={Cfinvsrvanx.commodityDescription}
-                  // value={Cfinvsrvanx.containerNo}
+                // value={Cfinvsrvanx.containerNo}
                 />
               </FormGroup>
             </Col>
@@ -4398,11 +4867,10 @@ export default function General({ activeTab }) {
                                 }
                               }}
                               components={{ Option: CustomOptionService }}
-                              className={`inputwidthTukaMax ${
-                                validationErrors[item.srlNo]?.serviceId
-                                  ? "error-border"
-                                  : ""
-                              }`}
+                              className={`inputwidthTukaMax ${validationErrors[item.srlNo]?.serviceId
+                                ? "error-border"
+                                : ""
+                                }`}
                               placeholder="Select Service"
                               isDisabled={
                                 assessmentData.invoiceNo ||
@@ -4411,8 +4879,8 @@ export default function General({ activeTab }) {
                               }
                               id={
                                 assessmentData.invoiceNo ||
-                                (!assessmentData.invoiceNo &&
-                                  item.addServices !== "Y")
+                                  (!assessmentData.invoiceNo &&
+                                    item.addServices !== "Y")
                                   ? "service"
                                   : ""
                               }
@@ -4511,11 +4979,10 @@ export default function General({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTukaMin ${
-                              validationErrors[item.srlNo]?.executionUnit
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={4}
                             value={item.executionUnit}
@@ -4526,8 +4993,8 @@ export default function General({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
-                              (!assessmentData.invoiceNo &&
-                                item.addServices !== "Y")
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4557,11 +5024,10 @@ export default function General({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTukaMin ${
-                              validationErrors[item.srlNo]?.executionUnit
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={4}
                             value={item.executionUnit1}
@@ -4583,8 +5049,8 @@ export default function General({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
-                              (!assessmentData.invoiceNo &&
-                                item.addServices !== "Y")
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4620,11 +5086,10 @@ export default function General({ activeTab }) {
                       <td>
                         <FormGroup>
                           <input
-                            className={`form-control inputwidthTuka ${
-                              validationErrors[item.srlNo]?.rate
-                                ? "error-border"
-                                : ""
-                            }`}
+                            className={`form-control inputwidthTuka ${validationErrors[item.srlNo]?.rate
+                              ? "error-border"
+                              : ""
+                              }`}
                             type="text"
                             maxLength={10}
                             value={item.rate}
@@ -4643,8 +5108,473 @@ export default function General({ activeTab }) {
                             }
                             id={
                               assessmentData.invoiceNo ||
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
+                                ? "service"
+                                : ""
+                            }
+                          />
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTuka`}
+                            type="text"
+                            maxLength={10}
+                            value={item.actualNoOfPackages}
+                            disabled
+                            id="service"
+                          />
+                        </FormGroup>
+                      </td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </Table>
+
+            <Pagination
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                color: "gray",
+              }}
+            >
+              <Pagination.First onClick={() => handlePageChangeAddService(1)} />
+              <Pagination.Prev
+                onClick={() =>
+                  handlePageChangeAddService(currentPagAddService - 1)
+                }
+                disabled={currentPagAddService === 1}
+              />
+              <Pagination.Ellipsis />
+
+              {displayPagesAddService().map((pageNumber) => (
+                <Pagination.Item
+                  key={pageNumber}
+                  active={pageNumber === currentPagAddService}
+                  onClick={() => handlePageChangeAddService(pageNumber)}
+                >
+                  {pageNumber}
+                </Pagination.Item>
+              ))}
+
+              <Pagination.Ellipsis />
+              <Pagination.Next
+                onClick={() =>
+                  handlePageChangeAddService(currentPagAddService + 1)
+                }
+                disabled={currentPagAddService === totalPagesAddService}
+              />
+              <Pagination.Last
+                onClick={() => handlePageChangeAddService(totalPagesAddService)}
+              />
+            </Pagination>
+          </div>
+        </ModalBody>
+      </Modal>
+      <Modal
+        Modal
+        isOpen={isModalOpenForAddService}
+        onClose={handleClosAddService}
+        toggle={handleClosAddService}
+        style={{
+          maxWidth: "1200px",
+          fontSize: 14,
+          wioverflow: "-moz-hidden-unscrollable",
+        }}
+      >
+        <ModalHeader
+          toggle={handleClosAddService}
+          style={{
+            backgroundColor: "#80cbc4",
+            color: "black",
+            fontFamily: "Your-Heading-Font",
+            textAlign: "center",
+            background: "#26a69a",
+            boxShadow: "0px 5px 10px rgba(0, 77, 64, 0.3)",
+            border: "1px solid rgba(0, 0, 0, 0.3)",
+            borderRadius: "0",
+            backgroundImage:
+              "radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+        >
+          <h5
+            className="pageHead"
+            style={{ fontFamily: "Your-Heading-Font", color: "white" }}
+          >
+            {" "}
+            <FontAwesomeIcon
+              icon={faAdd}
+              style={{
+                marginRight: "8px",
+                color: "white",
+              }}
+            />{" "}
+            Add Service{" "}
+          </h5>
+        </ModalHeader>
+        <ModalBody
+          style={{
+            backgroundImage:
+              "url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)",
+            backgroundSize: "cover",
+          }}
+        >
+          <Row>
+            <Col md={3}>
+              <FormGroup>
+                <label className="forlabel bold-label" htmlFor="sbRequestId">
+                  Assesment Id
+                </label>
+                <input
+                  className="form-control"
+                  type="text"
+                  id="service"
+                  disabled
+                  name="processTransId"
+                  value={Cfinvsrvanx.processTransId}
+                />
+              </FormGroup>
+            </Col>
+            <Col md={3}>
+              <FormGroup>
+                <label className="forlabel bold-label" htmlFor="sbRequestId">
+                  Commodity
+                </label>
+                <input
+                  className="form-control"
+                  type="text"
+                  id="service"
+                  disabled
+                  name="commodityDescription"
+                  value={Cfinvsrvanx.commodityDescription}
+                // value={Cfinvsrvanx.containerNo}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+
+          <Row className="text-center mt-1 mb-1">
+            <Col>
+              <button
+                className="btn btn-outline-success btn-margin newButton"
+                style={{ marginRight: 10, fontWeight: "bold" }}
+                id="submitbtn2"
+                disabled={assessmentData.invoiceNo}
+                onClick={(e) => saveAddService(CfinvsrvanxData)}
+              >
+                <FontAwesomeIcon icon={faSave} style={{ marginRight: "5px" }} />
+                Save
+              </button>
+
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                style={{ marginRight: 10, fontWeight: "bold" }}
+                id="submitbtn2"
+                disabled={assessmentData.invoiceNo}
+                onClick={addServiePlus}
+              >
+                <FontAwesomeIcon icon={faPlus} style={{ marginRight: "5px" }} />
+                Add Row
+              </button>
+            </Col>
+          </Row>
+
+          <hr style={{ margin: 4 }} />
+          <div className="mt-2 table-responsive ">
+            <Table className="table table-bordered tableHeader">
+              <thead className="tableHeader">
+                <tr className="text-center">
+                  <th scope="col">Sr No</th>
+                  <th scope="col">Service</th>
+                  <th scope="col">Service Unit</th>
+                  <th scope="col">Execution Unit</th>
+                  <th scope="col">Service Unit1</th>
+                  <th scope="col">Execution Unit1</th>
+                  <th scope="col">From Range</th>
+                  <th scope="col">To Range</th>
+                  <th scope="col">Rate</th>
+                  <th scope="col">Actual</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItemsAddService.map((item, index) => (
+                  <>
+                    <tr key={index} className="text-center">
+                      <td>
+                        {(currentPagAddService - 1) * itemsPerPage + index + 1}
+                      </td>
+                      <td>
+                        <FormGroup>
+                          {item.alreadySaved !== "Y" ? (
+                            <Select
+                              options={services}
+                              value={
+                                selectedServices.find(
+                                  (service) => service.srlNo === item.srlNo
+                                )?.selectedOption || null
+                              }
+                              onChange={(selectedOption) =>
+                                handleServiceChange(selectedOption, item.srlNo)
+                              }
+                              onInputChange={(inputValue, { action }) => {
+                                if (action === "input-change") {
+                                  searchServices(
+                                    inputValue,
+                                    item.containerSize,
+                                    item.containerType
+                                  );
+                                }
+                              }}
+                              components={{ Option: CustomOptionService }}
+                              className={`inputwidthTukaMax ${validationErrors[item.srlNo]?.serviceId
+                                ? "error-border"
+                                : ""
+                                }`}
+                              placeholder="Select Service"
+                              isDisabled={
+                                assessmentData.invoiceNo ||
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
+                              }
+                              id={
+                                assessmentData.invoiceNo ||
+                                  (!assessmentData.invoiceNo &&
+                                    item.addServices !== "Y")
+                                  ? "service"
+                                  : ""
+                              }
+                              isClearable
+                              styles={{
+                                control: (provided, state) => ({
+                                  ...provided,
+                                  height: 32,
+                                  minHeight: 32,
+                                  border: state.isFocused
+                                    ? "1px solid #ccc"
+                                    : "1px solid #ccc",
+                                }),
+
+                                valueContainer: (provided) => ({
+                                  ...provided,
+                                  alignItems: "center",
+                                  padding: "0 8px",
+                                  height: "100%",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
+                                  lineHeight: "28px",
+                                  maxWidth: "calc(100% - 20px)",
+                                  position: "relative",
+                                  overflow: "visible",
+                                }),
+
+                                input: (provided) => ({
+                                  ...provided,
+                                  width: "100%",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  outline: "none", // Avoid outline clashes
+                                }),
+
+                                singleValue: (provided) => ({
+                                  ...provided,
+                                  lineHeight: "32px",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
+                                }),
+
+                                clearIndicator: (provided) => ({
+                                  ...provided,
+                                  padding: 2,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  position: "absolute",
+                                  right: 5,
+                                  top: "50%",
+                                  transform: "translateY(-50%)", // Vertically center the clear indicator
+                                }),
+
+                                indicatorSeparator: () => ({
+                                  display: "none", // Remove the separator between indicators
+                                }),
+
+                                dropdownIndicator: () => ({
+                                  display: "none", // Remove the dropdown arrow
+                                }),
+
+                                placeholder: (provided) => ({
+                                  ...provided,
+                                  lineHeight: "32px",
+                                  color: "gray",
+                                }),
+                              }}
+                            />
+                          ) : (
+                            // Render Input field for all other rows or if status exists
+                            <Input
+                              type="text"
+                              value={item.serviceName}
+                              className={`inputwidthTukaMax form-control`}
+                              disabled
+                              id="service"
+                            />
+                          )}
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin`}
+                            type="text"
+                            maxLength={10}
+                            value={item.serviceUnit}
+                            disabled
+                            id="service"
+                          />
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
+                            type="text"
+                            maxLength={4}
+                            value={item.executionUnit}
+                            disabled={
+                              assessmentData.invoiceNo ||
                               (!assessmentData.invoiceNo &&
                                 item.addServices !== "Y")
+                            }
+                            id={
+                              assessmentData.invoiceNo ||
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
+                                ? "service"
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleFieldChangeService(
+                                e,
+                                "executionUnit",
+                                "number",
+                                item.srlNo
+                              )
+                            }
+                          />
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin`}
+                            type="text"
+                            maxLength={10}
+                            value={item.serviceUnit1}
+                            disabled
+                            id="service"
+                          />
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin ${validationErrors[item.srlNo]?.executionUnit
+                              ? "error-border"
+                              : ""
+                              }`}
+                            type="text"
+                            maxLength={4}
+                            value={item.executionUnit1}
+                            onChange={(e) =>
+                              handleFieldChangeService(
+                                e,
+                                "executionUnit1",
+                                "number",
+                                item.srlNo
+                              )
+                            }
+                            disabled={
+                              assessmentData.invoiceNo ||
+                              (!assessmentData.invoiceNo &&
+                                item.addServices !== "Y") ||
+                              item.serviceUnit1 === "" ||
+                              !item.serviceUnit1 ||
+                              item.serviceUnit1 === "NA"
+                            }
+                            id={
+                              assessmentData.invoiceNo ||
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
+                                ? "service"
+                                : ""
+                            }
+                          />
+                        </FormGroup>
+                      </td>
+
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin`}
+                            type="text"
+                            maxLength={10}
+                            value={item.rangeFrom}
+                            disabled
+                            id="service"
+                          />
+                        </FormGroup>
+                      </td>
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTukaMin`}
+                            type="text"
+                            maxLength={10}
+                            value={item.rangeTo}
+                            disabled
+                            id="service"
+                          />
+                        </FormGroup>
+                      </td>
+
+                      <td>
+                        <FormGroup>
+                          <input
+                            className={`form-control inputwidthTuka ${validationErrors[item.srlNo]?.rate
+                              ? "error-border"
+                              : ""
+                              }`}
+                            type="text"
+                            maxLength={10}
+                            value={item.rate}
+                            onChange={(e) =>
+                              handleFieldChangeService(
+                                e,
+                                "rate",
+                                "number",
+                                item.srlNo
+                              )
+                            }
+                            disabled={
+                              assessmentData.invoiceNo ||
+                              (!assessmentData.invoiceNo &&
+                                item.addServices !== "Y")
+                            }
+                            id={
+                              assessmentData.invoiceNo ||
+                                (!assessmentData.invoiceNo &&
+                                  item.addServices !== "Y")
                                 ? "service"
                                 : ""
                             }
@@ -4780,9 +5710,8 @@ export default function General({ activeTab }) {
                     }
                   }}
                   components={{ Option: CustomOptionService }}
-                  className={`${
-                    validationContainer?.serviceId ? "error-border" : ""
-                  }`}
+                  className={`${validationContainer?.serviceId ? "error-border" : ""
+                    }`}
                   placeholder="Select Service"
                   isClearable
                   styles={{
@@ -4884,9 +5813,8 @@ export default function General({ activeTab }) {
                       Execution Unit
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.executionUnit ? "error-border" : ""
-                      }`}
+                      className={`form-control ${validationContainer?.executionUnit ? "error-border" : ""
+                        }`}
                       type="text"
                       name="executionUnit"
                       maxLength={4}
@@ -4926,11 +5854,10 @@ export default function General({ activeTab }) {
                       Execution Unit1
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.executionUnit1
-                          ? "error-border"
-                          : ""
-                      }`}
+                      className={`form-control ${validationContainer?.executionUnit1
+                        ? "error-border"
+                        : ""
+                        }`}
                       disabled
                       type="text"
                       maxLength={4}
@@ -4956,9 +5883,8 @@ export default function General({ activeTab }) {
                       Rate
                     </label>
                     <input
-                      className={`form-control ${
-                        validationContainer?.rate ? "error-border" : ""
-                      }`}
+                      className={`form-control ${validationContainer?.rate ? "error-border" : ""
+                        }`}
                       type="text"
                       name="rate"
                       value={Cfinvsrvanx.rate}
@@ -6560,8 +7486,8 @@ export default function General({ activeTab }) {
                   selectedInvoice === "noc"
                     ? handleSave
                     : selectedInvoice === "exbond"
-                    ? handleSave1
-                    : ""
+                      ? handleSave1
+                      : ""
                 }
                 disabled={assessmentData.invoiceNo !== ""}
               >
@@ -6576,8 +7502,8 @@ export default function General({ activeTab }) {
                   selectedInvoice === "noc"
                     ? saveProcess
                     : selectedInvoice === "exbond"
-                    ? saveProcess1
-                    : ""
+                      ? saveProcess1
+                      : ""
                 }
                 disabled={
                   assessmentData.invoiceNo !== "" ||
@@ -6629,7 +7555,17 @@ export default function General({ activeTab }) {
                 />
                 Print
               </button>
+              <button
+                className="btn btn-outline-primary btn-margin newButton"
+                id="submitbtn2"
+                onClick={openAddDocumentModal}
+                disabled={!assessmentData.invoiceNo}
+              >
+                <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+                Upload Documents
+              </button>
             </Col>
+
           </Row>
           <div id="datepicker-portal15"></div>
 

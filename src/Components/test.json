@@ -1,0 +1,132 @@
+F~{
+    "UserPanNo": "AALCT9135F",
+    "Irn": "",
+    "ValDtls": {
+        "CgstVal": 0,
+        "AssVal": 66,
+        "IgstVal": 11.79,
+        "RndOffAmt": -0.71,
+        "CesVal": "0",
+        "TotInvVal": 78,
+        "StCesVal": "0",
+        "SgstVal": 0
+    },
+    "DocDtls": {
+        "Dt": "10-04-2026",
+        "No": "DH/0007/26-27",
+        "Typ": "INV"
+    },
+    "BuyerDtls": {
+        "TrdNm": "Neogen Chemicals Ltd",
+        "Loc": "Bharuch",
+        "Addr1": "Z 109 Dahej ",
+        "Gstin": "24AAACN5836E3ZN",
+        "Addr2": "Special Economic Zone ",
+        "Pin": "392130",
+        "Pos": "24",
+        "State": "24",
+        "Ph": "",
+        "Em": "",
+        "LglNm": "Neogen Chemicals Ltd"
+    },
+    "ShipDtls": {
+        "TrdNm": "Neogen Chemicals Ltd",
+        "Loc": "Bharuch",
+        "Addr1": "Z 109 Dahej ",
+        "Gstin": "24AAACN5836E3ZN",
+        "Addr2": "Special Economic Zone",
+        "Pin": "392130",
+        "Stcd": "24",
+        "LglNm": "Neogen Chemicals Ltd"
+    },
+    "UserGSTNo": "24AALCT9135F2Z5",
+    "Version": "1.1",
+    "sgst_flag": "N",
+    "ItemList": [
+        {
+            "SgstAmt": 0,
+            "Discount": 0,
+            "OthChrg": "0",
+            "IsServc": "Y",
+            "TotAmt": 55,
+            "CesNonAdvlAmt": "0",
+            "HsnCd": "996729",
+            "Unit": "UNT",
+            "CesRt": "0",
+            "CgstAmt": 0,
+            "CesAmt": "0",
+            "StateCesNonAdvlAmt": "0",
+            "PrdDesc": "Storage Charges - Palletized cargo",
+            "UnitPrice": 2.75,
+            "StateCesRt": "0",
+            "AssAmt": 55,
+            "GstRt": "18.000",
+            "Qty": "2.0",
+            "StateCesAmt": "0",
+            "BchDtls": {
+                "WrDt": "0000-00-00",
+                "ExpDt": "0000-00-00",
+                "Nm": ""
+            },
+            "SlNo": 1,
+            "IgstAmt": 9.9,
+            "TotItemVal": 64.9
+        },
+        {
+            "SgstAmt": 0,
+            "Discount": 0,
+            "OthChrg": "0",
+            "IsServc": "Y",
+            "TotAmt": 10.5,
+            "CesNonAdvlAmt": "0",
+            "HsnCd": "996729",
+            "Unit": "UNT",
+            "CesRt": "0",
+            "CgstAmt": 0,
+            "CesAmt": "0",
+            "StateCesNonAdvlAmt": "0",
+            "PrdDesc": "Un Loading Charges",
+            "UnitPrice": 1.5,
+            "StateCesRt": "0",
+            "AssAmt": 10.5,
+            "GstRt": "18.000",
+            "Qty": "7.0",
+            "StateCesAmt": "0",
+            "BchDtls": {
+                "WrDt": "0000-00-00",
+                "ExpDt": "0000-00-00",
+                "Nm": ""
+            },
+            "SlNo": 1,
+            "IgstAmt": 1.89,
+            "TotItemVal": 12.39
+        }
+    ],
+    "igst_flag": "Y",
+    "SellerDtls": {
+        "TrdNm": "Transport India - 3PL Ltd",
+        "Loc": "Dahej",
+        "Addr1": "Z 85 2 A  Dahej Sez 1  Bharuch  Gujarat   392130",
+        "Gstin": "24AALCT9135F2Z5",
+        "Addr2": " ",
+        "Pin": "392130",
+        "State": "24",
+        "Ph": "",
+        "Em": "",
+        "LglNm": "Transport India - 3PL Ltd"
+    },
+    "cgst_flag": "N",
+    "TranDtls": {
+        "RegRev": "Y",
+        "TaxSch": "GST",
+        "SupTyp": "SEZWP"
+    },
+    "DispDtls": {
+        "Loc": "",
+        "Addr1": "",
+        "Addr2": "",
+        "Pin": "",
+        "Stcd": "",
+        "Nm": ""
+    }
+}
