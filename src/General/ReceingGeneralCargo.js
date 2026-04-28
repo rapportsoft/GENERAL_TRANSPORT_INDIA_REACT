@@ -5918,7 +5918,7 @@ function ReceingGeneralCargo({
   const [importerSearchedData, setImporterSearchedData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(100);
+  const [itemsPerPage] = useState(10);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -7309,65 +7309,37 @@ function ReceingGeneralCargo({
     ]);
   };
 
-  const handlePrint = async (type) => {
+  const handlePrint = async () => {
+
     setLoading(true);
-    let inBondingId = inBond.inBondingId;
-    try {
-      const response = await axios.get(
-        `${ipaddress}api/cfinbondcrg/generateCustomeInBondPrint?companyId=${companyid}&branchId=${branchId}&uname=${username}&type=${type}&cname=${companyname}&bname=${branchname}&inBondingId=${inBondingId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        },
-      );
 
-      console.log("Response Data");
-      console.log(response.data);
-
-      if (type === "PDF") {
-        const pdfBase64 = response.data;
-
-        const pdfBlob = new Blob(
-          [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
-          { type: "application/pdf" },
-        );
-
-        const blobUrl = URL.createObjectURL(pdfBlob);
-
-        const downloadLink = document.createElement("a");
-        downloadLink.href = blobUrl;
-        downloadLink.download = "BOND GATEPASS";
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        window.URL.revokeObjectURL(blobUrl);
-
-        toast.success("Downloading PDF!", {
-          position: "top-center",
-          autoClose: 800,
-        });
-      } else if (type === "PRINT") {
-        const pdfBase64 = response.data;
-
-        const pdfBlob = new Blob(
-          [Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))],
-          { type: "application/pdf" },
-        );
-
-        const blobUrl = URL.createObjectURL(pdfBlob);
-
-        window.open(blobUrl, "_blank");
-      } else {
-        throw new Error("Invalid print type");
+    axios.post(`${ipaddress}api/receiving/importGateInReport`, null, {
+      params: {
+        cid: companyid,
+        bid: branchId,
+        id: inBond.receivingId
+      },
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
       }
-    } catch (error) {
-      console.error("Error in handlePrint:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    })
+      .then(response => {
+        const pdfBase64 = response.data;
+
+        const pdfBlob = new Blob([Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        setLoading(false);
+
+
+
+      })
+      .catch(error => {
+        console.error('Error in handlePrint:', error.message);
+        setLoading(false);
+      });
+  }
+
 
   const axiosInstance = useAxios();
   const CFSService = new cfsService(axiosInstance);
@@ -9450,19 +9422,7 @@ function ReceingGeneralCargo({
                   Submit
                 </button> */}
 
-            {/* {inBond.status ==="A" ?
-(
-<button
-              className="btn btn-outline-primary btn-margin newButton"
-              style={{ marginRight: 10 }}
-              id="submitbtn2"
-              onClick={()=> handlePrint('PRINT')}
-            >
-              <FontAwesomeIcon icon={faPrint} style={{ marginRight: "5px" }} />
-              Print
-            </button>
 
-):null} */}
             <button
               className="btn btn-outline-primary btn-margin newButton"
               style={{ marginRight: 10 }}
@@ -9484,6 +9444,16 @@ function ReceingGeneralCargo({
                 style={{ marginRight: "5px" }}
               />
               Clear
+            </button>
+            <button
+              className="btn btn-outline-primary btn-margin newButton"
+              style={{ marginRight: 10 }}
+              id="submitbtn2"
+              onClick={handlePrint}
+              disabled={inBond.receivingId === ''}
+            >
+              <FontAwesomeIcon icon={faPrint} style={{ marginRight: "5px" }} />
+              Print
             </button>
           </Col>
         </Row>
