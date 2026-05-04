@@ -1665,7 +1665,13 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
               <div style={{ position: 'relative' }}>
                 <DatePicker
                   selected={gateInHeaderData.gateInDate}
-                  disabled
+                  // disabled
+                  onChange={(date) => {
+                    setGateInHeaderData((prevNoc) => ({
+                      ...prevNoc,
+                      gateInDate: date,
+                    }));
+                  }}
                   id='gateInDate'
                   name='gateInDate'
                   dateFormat="dd/MM/yyyy HH:mm"

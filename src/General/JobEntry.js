@@ -515,6 +515,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
       ...prevNoc,
       jobTransDate: date,
     }));
+    setSelectedDate(date);
 
   };
 
@@ -744,6 +745,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
     setCfbondnocDtl([]);
     setNocFlag('add');
     setChaName('');
+    setSelectedDate(new Date());
   };
 
   const [modal, setModal] = useState(false);
@@ -2243,9 +2245,9 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
                     id="jobTransDate"
                     name="jobTransDate"
                     dateFormat="dd/MM/yyyy HH:mm"
-                    showTimeSelect
+                    showTimeInput
                   //  value={new Date(noc.jobTransDate)}
-                    disabled
+                    //disabled
                     timeFormat="HH:mm"
                     className="form-control border-right-0 inputField"
                     customInput={<input style={{ width: "100%" }} />}
