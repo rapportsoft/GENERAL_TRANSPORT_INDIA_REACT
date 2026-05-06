@@ -1297,7 +1297,7 @@ export default function ServiceMapping() {
         gateOutType: '',
         typeOfConatiner: '',
         profitCenterDesc: '',
-        customerPartyId :"",
+        customerpartyId :"",
     })
 
     const [addNewService, setAddNewService] = useState({
@@ -1320,7 +1320,7 @@ export default function ServiceMapping() {
         examination: "",
         blApplicableFlag: "",
         secondaryItem: "",
-         customerPartyId: "" 
+         customerpartyId: "" 
 
     });
 
@@ -1403,12 +1403,12 @@ const handleCustomerChange = async (selectedOption, { action }) => {
         }))
            setMappingDetails((prev) => ({
             ...prev,
-            customerPartyId: selectedOption.value
+            customerpartyId: selectedOption.value
         }));
     } else {
         setMappingDetails((prev) => ({
             ...prev,
-            customerPartyId: ''
+            customerpartyId: ''
         }));
     
     }
@@ -1422,7 +1422,7 @@ const handleCustomerChange = async (selectedOption, { action }) => {
             gateOutType: '',
             typeOfConatiner: '',
             profitCenterDesc: '',
-            customerPartyId:'',
+            customerpartyId:'',
         }
 
         )
@@ -1626,7 +1626,7 @@ if (!customerId) {
             examination: "",
             blApplicableFlag: "",
             secondaryItem: "",
-             customerPartyId: ""  
+             customerpartyId: ""  
         });
         setServiceId("");
         setServiceShortDesc(""); 
@@ -1692,7 +1692,7 @@ if (!customerId) {
             examination: "",
             blApplicableFlag: "",
             secondaryItem: "",
-            customerPartyId: "" 
+            customerpartyId: "" 
         });
 
         setServiceId("");
@@ -1766,7 +1766,8 @@ if (!customerId) {
   const isDuplicate = responseData.some(item => 
         item.profitcentreId === profitcenterId1 && 
         item.invoiceType === mappingDetails.invoiceType && 
-        item.customerPartyId === customerId
+        item.customerpartyId === customerId && 
+        item.serviceId === serviceId
     );
 
     if (isDuplicate) {
@@ -1828,8 +1829,8 @@ if (!customerId) {
         status: "A",
         examination: "",
         blApplicableFlag: "",
-        secondaryItem: ""
-
+        secondaryItem: "",
+        customerpartyId: ""
     });
 
     const handledelete = (serviceid, scannertype, containertype) => {
@@ -1841,7 +1842,7 @@ if (!customerId) {
         deleteService.containerType = containertype
         deleteService.scannerType = scannertype;
         deleteService.serviceId = serviceid;
-
+        deleteService.customerpartyId = customerId
 
 
         const profitcenterId1 = getprofitCenterId(mappingDetails.profitCenterDesc);
@@ -1958,7 +1959,7 @@ if (!customerId) {
                                         onChange={handlemappingChange}
                                     >
                                         <option id="" value=""> </option>
-                                        <option value="EXBOND">Ex Bond</option>
+                                        {/* <option value="EXBOND">Ex Bond</option>
 
                                         <option value="EXP">Export Container</option>
 
@@ -1989,7 +1990,7 @@ if (!customerId) {
                                         <option value="ONWH">OnWheel</option>
 
                                         <option value="PORT">Port Return</option>
-                                        <option value="INBONDPER">In Bond Periodic</option>
+                                        <option value="INBONDPER">In Bond Periodic</option> */}
                                         <option value="GENREC">General Receiving</option>
                                         <option value="GENDEL">General Delivery</option>
                                         <option value="GENRECPER">General Receiving Periodic</option>
@@ -2242,7 +2243,7 @@ if (!customerId) {
                                             <td className="text-center">{((currentPage - 1) * itemsPerPage) + index + 1}</td>
                                             <td className="text-center">{item.serviceId}</td>
                                             <td className="text-center">{item.serviceShortDesc}</td>
-                                             {/* <td className="text-center">{item.customerpartyId || item.customerPartyId || "-"}</td> */}
+                                             {/* <td className="text-center">{item.customerpartyId || item.customerpartyId || "-"}</td> */}
                                           <td className="text-center">{item.customerName || item.customerpartyId || "-"}</td>
                                             <td className="text-center">
                                                 <Input

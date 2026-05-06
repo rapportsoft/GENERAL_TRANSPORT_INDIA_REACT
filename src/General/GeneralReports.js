@@ -15,6 +15,7 @@ import "../assets/css/style.css";
 import "../Components/Style.css";
 import GeneralOperationalReports from "./GeneralOperationalReports";
 import GeneralDamageReports from "./GeneralDamageReports";
+import GeneralYardReports from "./GeneralYardReports";
 
 export default function GeneralReports() {
   const navigate = useNavigate();
@@ -202,8 +203,17 @@ export default function GeneralReports() {
                 >
                   <GeneralDamageReports />
                 </div>
-
+                <div
+                  className={`tab-pane fade ${activeTab === "P01883" ? "show active" : ""
+                    }`}
+                  id="bordered-justified-profile-2"
+                  role="tabpanel"
+                  aria-labelledby="2"
+                >
+                  <GeneralYardReports />
+                </div>
               </div>
+
             </Row>
           </CardBody>
         </Card>
