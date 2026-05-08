@@ -243,6 +243,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
 
   const [chaSearchId, setChaSearchId] = useState("");
   const [chaSearchedData, setCHASearchedData] = useState([]);
+  const [chaSearchedDatacargo, setCHASearchedDatacargo] = useState([]);
 
   const searchCHA = (id) => {
     setLoading(true);
@@ -670,6 +671,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
     setInBondFlag("add");
     setChaName("");
     setCHASearchedData([]);
+    setCHASearchedDatacargo([]);
     setyardId('');
     getYardData('');
     setIsoName('');
@@ -712,6 +714,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       const data = await response.json();
       setCfbondnocDtl(data);
       setCHASearchedData(data);
+      setCHASearchedDatacargo(data);
 
 
       // setInputValues(data.map(mnr => ({
@@ -790,6 +793,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       const data = await response.json();
       setCfbondnocDtl(data);
       setCHASearchedData(data);
+      setCHASearchedDatacargo(data);
 
       const selectedData = data.filter((row) => row.deliveryId !== undefined && row.deliveryId !== null);
       setSelectedRows(selectedData);
@@ -1184,6 +1188,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       setIsoName('');
       setISOId('');
       setCHASearchedData([]);
+      setCHASearchedDatacargo([]);
       setCfbondnocDtl([]);
       setChaName('');
       setInBond(initialNoc);
@@ -1298,6 +1303,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       setIsoNameFIFO('');
       setISOId('');
       setCHASearchedData([]);
+      setCHASearchedDatacargo([]);
       setCfbondnocDtl([]);
       setChaName('');
       setInBond(initialNoc);
@@ -1783,13 +1789,13 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
                 }}
               >
                 <Row>
-                  <Col md={4}>
+                  <Col md={6}>
                     <FormGroup>
                       <label
                         className="forlabel bold-label"
                         htmlFor="sbRequestId"
                       >
-                        Search by Receiving Id / Importer / Deposite No / CHA
+                        Search by Receiving Id / Importer / Deposite No / CHA / BOE No/ Delivery Id
                       </label>
                       <input
                         className="form-control"
@@ -3749,7 +3755,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((dtl, index) => (
+              {chaSearchedDatacargo.map((dtl, index) => (
                 <tr key={index} className="text-center">
                   <td>
                     <input

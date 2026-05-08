@@ -122,11 +122,19 @@ const totalPages = Math.ceil(yardReportData.length / itemsPerPage);
 
         return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
     };
+const handleClear = () => {
+    setSearchCriteria(initialSearchCriteria);
 
-    const handleClear = async () => {
-        setSearchCriteria(initialSearchCriteria);
-        handleShow(initialSearchCriteria);
-    }
+    // ✅ Clear table data
+    setYardReportData([]);
+
+    // ✅ Reset pagination
+    setCurrentPage(1);
+};
+    // const handleClear = async () => {
+    //     setSearchCriteria(initialSearchCriteria);
+    //     handleShow(initialSearchCriteria);
+    // }
     const handleShow = async (searchCriteria) => {
     setLoading(true);
     try {
@@ -247,6 +255,13 @@ const handleYardDownload = async (type) => {
         setLoading(false);
     }
 };
+  const shouldShowAdditionalColumns = () => {
+        const locationCategory = searchCriteria.locationCategory;
+        const occupancyCategory = searchCriteria.occupancyCategory;
+        
+        return (locationCategory === 'C' || locationCategory === 'G') && 
+               (occupancyCategory === 'OCCUPIED' || occupancyCategory === 'PARTIAL');
+    };
 
     function formatDate(date) {
         if (!date) return '';
@@ -718,6 +733,20 @@ const handleYardDownload = async (type) => {
                         <th scope="col" className="text-center" style={{ color: "black" }}>
                             Occupancy Status
                         </th>
+                           {shouldShowAdditionalColumns() && (
+                                        <>
+                                            
+                                            {/* <th scope="col" className="text-center" style={{ color: "black" }}>
+                                                Receiving Pck
+                                            </th>
+                                            <th scope="col" className="text-center" style={{ color: "black" }}>
+                                                Qty Taken Out
+                                            </th> */}
+                                            <th scope="col" className="text-center" style={{ color: "black" }}>
+                                                Receiving Id
+                                            </th>
+                                        </>
+                                    )}
                     </tr>
                 </thead>
                 <tbody>
@@ -729,7 +758,15 @@ const handleYardDownload = async (type) => {
                             <td>{item.cell || item[2]}</td>
                             <td >{item.cellArea || item[3]}</td>
                             <td >{item.cellAreaUsed || item[4]}</td>
-                            <td>{item.occupancyStatus || item[5]}</td>
+                              <td>{item.occupancyStatus || item[5]}</td>
+                           {/* Conditionally show these data cells */}
+                                        {shouldShowAdditionalColumns() && (
+                                            <>
+                                                {/* <td>{item.receivingPack || item[7] || '-'}</td>
+                                                <td>{item.qtytakeOut || item[8] }</td> */}
+                                                <td>{item.receivingId || item[6] || '-'}</td>
+                                            </>
+                                        )}
                         </tr>
                     ))}
                 </tbody>
