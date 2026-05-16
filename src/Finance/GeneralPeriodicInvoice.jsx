@@ -1010,7 +1010,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             }
 
             setLoading(true);
-
+console.log('data ',data)
             const formData = {
                 assessmentData: assessmentData,
                 containerData: data

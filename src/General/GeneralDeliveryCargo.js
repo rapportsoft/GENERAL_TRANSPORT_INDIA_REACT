@@ -525,14 +525,14 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
     }
     let isValid = true;
     const updatedValues = [...inputValues];
-
+console.log('select ',selectedRows,'  ',updatedValues)
 
     selectedRows.forEach((dtl, index) => {
       if (!updatedValues[index]) {
         updatedValues[index] = {};
       }
 
-      const values = updatedValues[index];
+      const values = updatedValues.find(item=>item.actCommodityId === dtl.actCommodityId);
 
       console.log('values : ', values, ' values.deliveredPackages ', values.deliveredPackages);
 
