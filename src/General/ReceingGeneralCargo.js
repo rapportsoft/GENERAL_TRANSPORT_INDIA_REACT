@@ -6982,9 +6982,9 @@
         }
 
         // Check if value is 0, 1, or 2
-        if (numValue !== 1 && numValue !== 2) {
+        if (numValue !== 1 && numValue !== 2 && numValue !== 3 && numValue !== 4) {
           const errorMessage =
-            "For Covered Grounded Space, Yard Packages can only be 1, or 2";
+            "For Covered Grounded Space, Yard Packages can only be 1,2,3 & 4";
           setErrors((prevErrors) => ({
             ...prevErrors,
             [`receivedPackages-${index}`]: errorMessage,
