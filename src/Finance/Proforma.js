@@ -37,6 +37,9 @@ import ExportProforma from './ExportProforma';
 import BondProforma from './BondProforma';
 import GeneralProforma from './GeneralProforma';
 import GeneralContainerProforma from './GeneralContainerProforma';
+import GeneralPeriodicInvoiceProforma from './GeneralPeriodicInvoiceProforma';
+import GeneralPeriofiCommWiseProfoInv from './GeneralPeriofiCommWiseProfoInv';
+import GeneralCommodityWiseProforma from './GeneralCommodityWiseProforma';
 
 export default function Proforma() {
     const navigate = useNavigate();
@@ -360,7 +363,23 @@ export default function Proforma() {
                                 <GeneralContainerProforma activeTab={activeTab} />
 
                             </div>
+<div className={`tab-pane fade ${activeTab === 'P01122' ? 'show active' : ''}`} id="bordered-justified-home-1" role="tabpanel" aria-labelledby="1">
 
+                                <GeneralPeriodicInvoiceProforma activeTab={activeTab} />
+
+                            </div>
+                            
+                            <div className={`tab-pane fade ${activeTab === 'P01123' ? 'show active' : ''}`} id="bordered-justified-home-1" role="tabpanel" aria-labelledby="1">
+
+                                <GeneralCommodityWiseProforma activeTab={activeTab} />
+
+                            </div>
+
+                            <div className={`tab-pane fade ${activeTab === 'P01124' ? 'show active' : ''}`} id="bordered-justified-home-1" role="tabpanel" aria-labelledby="1">
+
+                                <GeneralPeriofiCommWiseProfoInv activeTab={activeTab} />
+
+                            </div>
                         </div>
                     </CardBody>
                 </Card>

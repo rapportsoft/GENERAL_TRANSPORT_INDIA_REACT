@@ -32,6 +32,8 @@ import {
   faPrint,
   faPlaneArrival,
   faXmark,
+  faEye,
+  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/style.css";
 import "../Components/Style.css";
@@ -56,7 +58,8 @@ import {
   Table,
   ModalFooter,
   FormFeedback,
-  Button
+  Button,
+  Alert
 } from "reactstrap";
 import { Pagination } from "react-bootstrap";
 import Swal from "sweetalert2";
@@ -134,6 +137,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
     profitCentreId: "N00008",
     boeNo: "",
     boeDate: "",
+     outwardBoeNo: "",
     depositNo: "",
     storageValidityDate: "",
     onAccountOf: "",
@@ -190,7 +194,9 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
     handlingStatus: "",
     transporterName: "",
     handlingInvoiceNo: "",
-    jobNo: ''
+    jobNo: '',
+              totalNetWeight: "",
+
   };
 
 
@@ -447,6 +453,7 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
   const [bondingErrors, setBondingErrors] = useState({
     bondingNo: "",
     bondingDate: "",
+     outwardBoeNo: "",
   });
 
   const [nocDtlErrors, setNocDtlErrors] = useState({
@@ -473,6 +480,14 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       setLoading(false);
       return;
     }
+
+         if (!inBond.outwardBoeNo || inBond.outwardBoeNo.trim() === "") {
+    errors.outwardBoeNo = "Outward BOE No is required.";
+    document.getElementById("outwardBoeNo").classList.add("error-border");
+    toast.error("Outward BOE No is required.", {});
+    setLoading(false);
+    return;
+  }
 
     if (!inBond.shift) {
       errors.shift = "Please specify shift...";
@@ -501,10 +516,16 @@ function GeneralDeliveryCargo({ acttab, listOfData, listOfExbond, flag, onReques
       setLoading(false);
       return;
     }
-
-    const hasEmptyFields = rows.some(row =>
-      !row.yardLocation || !row.yardBlock || !row.blockCellNo || !row.deliveryPkgs
-    );
+const hasEmptyFields = rows.some(row => {
+  // Location fields must be truthy (non-empty)
+  const missingLocation = !row.yardLocation || !row.yardBlock || !row.blockCellNo;
+  // deliveryPkgs is required but can be 0 – only block if it's null/undefined/empty string
+  const missingDeliveryPkgs = row.deliveryPkgs === undefined || row.deliveryPkgs === null || row.deliveryPkgs === '';
+  return missingLocation || missingDeliveryPkgs;
+});
+    // const hasEmptyFields = rows.some(row =>
+    //   !row.yardLocation || !row.yardBlock || !row.blockCellNo || !row.deliveryPkgs
+    // );
 
     if (hasEmptyFields) {
       const errorMsg = "Required fields in location must be filled before saving.";
@@ -610,6 +631,7 @@ console.log('select ',selectedRows,'  ',updatedValues)
     };
 
     if (isValid) {
+       const currentJobNo = inBond.jobNo;
       axios
         .post(
           `${ipaddress}api/generaldelivery/saveCfInbondCrg?companyId=${companyid}&branchId=${branchId}&user=${userId}&flag=${inbondFlag}`,
@@ -621,7 +643,14 @@ console.log('select ',selectedRows,'  ',updatedValues)
           }
         )
         .then((response) => {
-          setInBond(response.data);
+
+          const savedData = response.data;
+        const updatedData = {
+          ...savedData,
+          jobNo: savedData.jobNo || currentJobNo
+        };
+        setInBond(updatedData);
+          // setInBond(response.data);
           handleGridData(response.data.deliveryId, response.data.receivingId);
           fetchDataAfterSave(
             companyid,
@@ -664,6 +693,8 @@ console.log('select ',selectedRows,'  ',updatedValues)
     setInBond(initialNoc);
     document.getElementById("boeNo").classList.remove("error-border");
     document.getElementById("boeDate").classList.remove("error-border");
+         document.getElementById("outwardBoeNo").classList.remove("error-border");
+
     setBondingErrors("");
     setSelectAll(false);
     setSelectedRows([]);
@@ -1103,6 +1134,262 @@ console.log('select ',selectedRows,'  ',updatedValues)
 
   const [modalDataInput, setModalDataInput] = useState(initialYardGrid);
   const [cost, setCost] = useState(0);
+
+  const [isModalOpenForAddDocuments, setIsModalOpenForAddDocuments] = useState(false);
+const [savedFiles, setSavedFiles] = useState([]);
+const [docId, setDocId] = useState('');
+const [files, setFiles] = useState([]);
+const [isDragging, setIsDragging] = useState(false);
+
+const openAddDocumentModal = (id) => {
+  setIsModalOpenForAddDocuments(true);
+  setDocId(id);
+  getSavedDoc(id);
+
+  console.log("Doc Id ", id);
+  console.log("Job No ", inBond.jobNo);
+}
+
+const closeAddDocumentModal = () => {
+  setIsModalOpenForAddDocuments(false);
+  setFiles([]);
+  setSavedFiles([]);
+  setDocId('');
+}
+
+const handleFileChange = (e) => {
+  const selectedFiles = Array.from(e.target.files);
+  const validFiles = [];
+
+  selectedFiles.forEach((file) => {
+    if (file.size <= 10 * 1024 * 1024) {
+      validFiles.push(file);
+    } else {
+      toast.error(`${file.name} exceeds 10MB limit`, {
+        autoClose: 800
+      });
+    }
+  });
+
+  setFiles(prev => [...prev, ...validFiles]);
+};
+
+const handleRemove2 = (indexToRemove) => {
+  setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+};
+
+const handleRemove1 = (sr) => {
+  try {
+    setLoading(true);
+
+    axios.post(`${ipaddress}api/generaldelivery/deleteDoc`, null, {
+      params: {
+        cid: companyid,
+        bid: branchId,
+        jobNo: inBond.jobNo,
+        sr: sr,
+        id: inBond.deliveryId,
+        user: userId
+      },
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      }
+    })
+      .then((response) => {
+        setLoading(false);
+        const data = response.data;
+        setSavedFiles(data.map((item) => ({
+          companyId: item.companyId || '',
+          branchId: item.branchId || '',
+          jobTransId: item.jobTransId || '',
+          jobNo: item.jobNo || '',
+          docPath: `data:application/octet-stream;base64,${item.file}` || '',
+          srNo: item.srNo || '',
+          fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+        })));
+
+        toast.error("File Deleted Successfully!!", {
+          autoClose: 800
+        })
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error.response.data, {
+          autoClose: 800
+        })
+      })
+  } catch (error) {
+    setLoading(false);
+  }
+};
+
+const handleDownload = (file) => {
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = file.name;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+const handleDownload1 = (fileUrl, fileName, type) => {
+  try {
+    const base64Data = fileUrl.split(',')[1];
+    const byteString = atob(base64Data);
+
+    const extension = fileName.split('.').pop().toLowerCase();
+    let mimeType = 'application/octet-stream';
+
+    if (extension === 'pdf') mimeType = 'application/pdf';
+    else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension))
+      mimeType = `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([ab], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+
+    if (type === 'view') {
+      if (mimeType.startsWith('image/') || mimeType === 'application/pdf') {
+        window.open(url, '_blank');
+      } else {
+        toast.error('Preview is only supported for images and PDF files.', {
+          autoClose: 800
+        });
+        URL.revokeObjectURL(url);
+      }
+    } else if (type === 'download') {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  } catch (error) {
+    console.error('Error handling file:', error);
+  }
+};
+
+const handleDocumentUpload = () => {
+  try {
+    if (files.length === 0) {
+      toast.error("Please select the file", {
+        autoClose: 800
+      })
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append("files", file);
+    });
+
+    formData.append("cid", companyid);
+    formData.append("bid", branchId);
+    formData.append("jobNo", inBond.jobNo);
+    formData.append("id", inBond.deliveryId);
+    formData.append("user", userId);
+
+    axios.post(`${ipaddress}api/generaldelivery/uploadJobDoc`, formData, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "multipart/form-data"
+      }
+    })
+      .then((response) => {
+        setLoading(false);
+        const data = response.data;
+        setFiles([]);
+        setSavedFiles(data.map((item) => ({
+          companyId: item.companyId || '',
+          branchId: item.branchId || '',
+          deliveryId: item.deliveryId || '',
+          jobNo: item.jobNo || '',
+          docPath: `data:application/octet-stream;base64,${item.file}` || '',
+          srNo: item.srNo || '',
+          fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+        })));
+
+        toast.success("Files Uploaded Successfully!!", {
+          autoClose: 800
+        })
+      })
+      .catch((error) => {
+        toast.error(error.response.data, {
+          autoClose: 800
+        })
+        setLoading(false);
+      })
+  } catch (error) {
+    setLoading(false);
+  }
+}
+
+const getSavedDoc = (id) => {
+  try {
+    axios.get(`${ipaddress}api/generaldelivery/getSavedDoc`, {
+      params: {
+        cid: companyid,
+        bid: branchId,
+        id: inBond.deliveryId,
+        jobNo: inBond.jobNo
+      },
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+        if (data.length > 0) {
+          setSavedFiles(data.map((item) => ({
+            companyId: item.companyId || '',
+            branchId: item.branchId || '',
+            deliveryId: item.deliveryId || '',
+            jobNo: item.jobNo || '',
+            docPath: `data:application/octet-stream;base64,${item.file}` || '',
+            srNo: item.srNo || '',
+            fileName: item.docPath.split('\\').pop().split('/').pop() || ''
+          })));
+        } else {
+          setSavedFiles([]);
+        }
+      })
+      .catch((error) => {})
+  } catch (error) {}
+};
+
+const handlePreview = (file) => {
+  const fileType = file.type || getMimeType(file.name);
+  if (fileType.startsWith('image/') || fileType === 'application/pdf') {
+    const fileURL = URL.createObjectURL(file);
+    window.open(fileURL, '_blank');
+  } else {
+    toast.error('Preview is only available for images and PDF files.', {
+      autoClose: 800
+    });
+  }
+};
+
+const getMimeType = (fileName) => {
+  const extension = fileName.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'pdf': return 'application/pdf';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'bmp':
+      return 'image/' + extension;
+    default: return '';
+  }
+};
 
   const handleGridData = (deliveryId, receivingId) => {
     axios.get(
@@ -1936,6 +2223,126 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 </div>
               </ModalBody>
             </Modal>
+
+
+            <Modal isOpen={isModalOpenForAddDocuments} toggle={closeAddDocumentModal} style={{ maxWidth: '900px', fontSize: 14 }}>
+  <ModalHeader toggle={closeAddDocumentModal} style={{
+    backgroundColor: '#80cbc4', color: 'black', fontFamily: 'Your-Heading-Font', textAlign: 'center', background: '#26a69a',
+    boxShadow: '0px 5px 10px rgba(23, 28, 27, 0.3)',
+    border: '1px solid rgba(0, 0, 0, 0.3)',
+    borderRadius: '0',
+    backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+  }}>
+    <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }}>
+      <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px', color: 'white' }} />
+      Upload Documents
+    </h5>
+  </ModalHeader>
+  <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }}>
+    <Row>
+      <Col md="4" className="text-center d-flex flex-column align-items-center justify-content-center" style={{
+        border: '2px dashed #ccc',
+        borderRadius: 10,
+        padding: 20,
+        backgroundColor: isDragging ? '#f8f9fa' : 'transparent',
+        transition: 'background-color 0.2s ease',
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const droppedFiles = Array.from(e.dataTransfer.files);
+        const validFiles = [];
+        droppedFiles.forEach((file) => {
+          if (file.size <= 10 * 1024 * 1024) {
+            validFiles.push(file);
+          } else {
+            toast.error(`${file.name} exceeds 10MB limit`, { autoClose: 800 });
+          }
+        });
+        setFiles(prev => [...prev, ...validFiles]);
+      }}>
+        <div className="my-3">
+          <i className="fas fa-upload fa-2x mb-2"></i>
+          <p>Drag and drop file here</p>
+          <p>- OR -</p>
+          <Input type="file" onChange={handleFileChange} multiple />
+        </div>
+      </Col>
+      <Col md="7">
+        <h5>Uploaded Files</h5>
+        {files.length === 0 ? (
+          <></>
+        ) : (
+          <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #dee2e6', borderRadius: '5px', padding: '10px' }}>
+            {files.map((file, index) => (
+              <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                <Col xs="8" className="text-truncate">{file.name}</Col>
+                <Col xs="1" style={{ marginRight: 10 }}>
+                  <button className="btn btn-outline-primary btn-margin newButton" onClick={() => handlePreview(file)}>
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
+                </Col>
+                <Col xs="1" style={{ marginRight: 10 }}>
+                  <button className="btn btn-outline-primary btn-margin newButton" onClick={() => handleDownload(file)}>
+                    <FontAwesomeIcon icon={faDownload} />
+                  </button>
+                </Col>
+                <Col xs="1">
+                  <button className="btn btn-outline-danger btn-margin newButton" onClick={() => handleRemove2(index)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </Col>
+              </Row>
+            ))}
+          </div>
+        )}
+        {savedFiles.length > 0 && (
+          <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #dee2e6', borderRadius: '5px', padding: '10px', marginTop: '10px' }}>
+            {savedFiles.map((file, index) => (
+              <Row key={index} className="align-items-center mb-2 border-bottom pb-2">
+                <Col xs="8" className="text-truncate">{file.fileName}</Col>
+                <Col xs="1" style={{ marginRight: 10 }}>
+                  <button className="btn btn-outline-primary btn-margin newButton" onClick={() => handleDownload1(file.docPath, file.fileName, 'view')}>
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
+                </Col>
+                <Col xs="1" style={{ marginRight: 10 }}>
+                  <button className="btn btn-outline-primary btn-margin newButton" onClick={() => handleDownload1(file.docPath, file.fileName, 'download')}>
+                    <FontAwesomeIcon icon={faDownload} />
+                  </button>
+                </Col>
+                <Col xs="1">
+                  <button className="btn btn-outline-danger btn-margin newButton" onClick={() => handleRemove1(file.srNo)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </Col>
+              </Row>
+            ))}
+          </div>
+        )}
+      </Col>
+    </Row>
+    <Row>
+      <Col className="text-center">
+        <button className="btn btn-outline-primary btn-margin newButton" style={{ marginRight: 10 }} onClick={handleDocumentUpload}>
+          <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+          Upload
+        </button>
+      </Col>
+    </Row>
+    <Alert color="warning" className="mt-3">
+      <strong>Note:</strong> The file size should be less than or equal to 10MB.
+    </Alert>
+  </ModalBody>
+</Modal>
           </Row>
 
           {/* <hr /> */}
@@ -2244,6 +2651,22 @@ console.log('select ',selectedRows,'  ',updatedValues)
               </Col>
             )}
 
+<Col md={2}>
+      <FormGroup>
+        <label className="forlabel bold-label" htmlFor="outwardBoeNo">
+          Outward BOE No <span className="error-message">*</span>
+        </label>
+        <input
+          className="form-control"
+          type="text"
+          id="outwardBoeNo"
+          name="outwardBoeNo"
+          value={inBond.outwardBoeNo || ""}
+          maxLength={20}
+          onChange={handleNocChange}
+        />
+      </FormGroup>
+    </Col>
 
             {/* <Col md={2}>
                   <FormGroup>
@@ -2302,7 +2725,10 @@ console.log('select ',selectedRows,'  ',updatedValues)
               </FormGroup>
             </Col>
 
-            <Col md={2}>
+          
+          </Row>
+          <Row>
+              <Col md={2}>
               <FormGroup>
                 <label
                   className="forlabel bold-label"
@@ -2323,8 +2749,6 @@ console.log('select ',selectedRows,'  ',updatedValues)
               </FormGroup>
             </Col>
 
-          </Row>
-          <Row>
             <Col md={2}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="shift">
@@ -2448,24 +2872,11 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col> */}
-            <Col md={2}>
-              <FormGroup>
-                <label className="forlabel bold-label" htmlFor="jobNo">
-                  Job No
-                </label>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="jobNo"
-                  name="jobNo"
-                  value={inBond.jobNo}
-                  disabled
-                />
-              </FormGroup>
-            </Col>
+            
           </Row>
 
           <Row>
+         
             <Col md={2}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="noOf20Ft">
@@ -2550,7 +2961,21 @@ console.log('select ',selectedRows,'  ',updatedValues)
           </Row>
 
           <Row>
-
+   <Col md={2}>
+              <FormGroup>
+                <label className="forlabel bold-label" htmlFor="jobNo">
+                  Job No
+                </label>
+                <input
+                  className="form-control"
+                  type="text"
+                  id="jobNo"
+                  name="jobNo"
+                  value={inBond.jobNo}
+                  disabled
+                />
+              </FormGroup>
+            </Col>
 
             <Col md={2}>
               <FormGroup>
@@ -2661,7 +3086,11 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
-            <Col md={2}>
+          
+
+          </Row>
+          <Row>
+  <Col md={2}>
               <FormGroup>
                 <label
                   className="forlabel bold-label"
@@ -2682,10 +3111,6 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
-
-          </Row>
-          <Row>
-
 
             <Col md={2}>
               <FormGroup>
@@ -2796,7 +3221,12 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
-            <Col md={2}>
+          
+
+          </Row>
+
+          <Row>
+              <Col md={2}>
               <FormGroup>
                 <label
                   className="forlabel bold-label"
@@ -2817,10 +3247,6 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
-
-          </Row>
-
-          <Row>
             <Col md={2}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="handlingEquip">
@@ -2948,7 +3374,13 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 </select>
               </FormGroup>
             </Col>
-            <Col md={2}>
+          
+
+          </Row>
+
+          <Row>
+
+  <Col md={2}>
               <FormGroup>
                 <label className="forlabel bold-label" htmlFor="comments">
                   Remarks
@@ -2966,12 +3398,6 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
-
-          </Row>
-
-          <Row>
-
-
             <Col md={2}>
               <FormGroup>
                 <label
@@ -3065,6 +3491,31 @@ console.log('select ',selectedRows,'  ',updatedValues)
                 />
               </FormGroup>
             </Col>
+
+
+             <Col md={2}>
+                            <FormGroup>
+                              <label className="forlabel bold-label" htmlFor="cargoValue">
+                                Total Net Weight
+                              </label>
+                              <input
+                                className="form-control"
+                                type="text"
+                                id="totalNetWeight"
+                                maxLength={16} // 13 digits + 1 decimal + 2 decimals
+                                name="totalNetWeight"
+                                value={inBond.totalNetWeight != null ? inBond.totalNetWeight : " "}
+                                pattern="^\d{0,13}(\.\d{0,2})?$"
+                                step="0.01"
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  if (/^\d{0,13}(\.\d{0,2})?$/.test(value) || value === "") {
+                                    handleNocChange(e);
+                                  }
+                                }}
+                              />
+                            </FormGroup>
+                          </Col>
 
 
           </Row>
@@ -3168,6 +3619,19 @@ console.log('select ',selectedRows,'  ',updatedValues)
               />
               Clear
             </button>
+
+
+             <button
+  className="btn btn-outline-primary btn-margin newButton"
+  id="submitbtn2"
+  onClick={() => openAddDocumentModal(inBond.deliveryId)}
+  disabled={!inBond.deliveryId}
+>
+  <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
+  Upload Documents
+</button>
+
+
           </Col>
         </Row>
         <hr />

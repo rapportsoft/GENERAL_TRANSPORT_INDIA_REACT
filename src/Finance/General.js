@@ -177,7 +177,7 @@ export default function General({ activeTab }) {
     cha: "",
     chaSrNo: "",
     sez: "N",
-    taxApplicable: "Y",
+    taxApplicable: "N",
     onAccountOf: "",
     accSrNo: "",
     comments: "",
@@ -286,14 +286,75 @@ export default function General({ activeTab }) {
         taxApplicable:
           sanitizeValue === "AGRO" ? "N" : assessmentData.taxApplicable,
       }));
-    } else {
+    } 
+    else if (name === "billingParty") {
+          console.log("fghjk");
+          
+        // When Billing Party changes to IMP, check if importer is selected and get its customer type
+        if (value === "IMP" && assessmentData.importerId) {
+          // Fetch customer type for the selected importer
+          console.log("value==", value,"dfghgfdfgh==",assessmentData.importerId );
+          
+          axios
+            .get(
+              `${ipaddress}party/getPartyDataWithCustomerType`,
+              {
+                params: {
+                  cid: companyid,
+                  bid: branchId,
+                  pid: assessmentData.importerId
+                },
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              }
+            )
+            .then((response) => {
+              console.log("response---",response.data);
+              console.log("response---",response.data.customerType );
+              const isRegistered = response.data.customerType && 
+                response.data.customerType === "Registered";
+              
+              setAssessmentData((prevState) => ({
+                ...prevState,
+                billingParty: value,
+                taxApplicable: isRegistered ? "Y" : "N",
+              }));
+            })
+            
+            
+            .catch((error) => {
+              // If API fails, keep existing taxApplicable or default to N
+              setAssessmentData((prevState) => ({
+                ...prevState,
+                billingParty: value,
+                taxApplicable: "N",
+              }));
+            });
+        } 
+        // If Billing Party is IMP but no importer selected, set tax to N
+        else if (value === "IMP" && !assessmentData.importerId) {
+          setAssessmentData((prevState) => ({
+            ...prevState,
+            billingParty: value,
+            taxApplicable: "N",
+          }));
+        }  else {
+         
+          setAssessmentData((prevState) => ({
+            ...prevState,
+            [name]: sanitizeValue,
+              taxApplicable: "N",
+          }));
+        }
+      }
+    else {
       setAssessmentData((prevState) => ({
         ...prevState,
         [name]: sanitizeValue,
       }));
     }
   };
-
   const [impData, setImpData] = useState([]);
 
   const getImpData = (val) => {
@@ -330,7 +391,7 @@ export default function General({ activeTab }) {
       });
   };
 
-  const handleImpChange = async (selectedOption, { action }) => {
+   const handleImpChange = async (selectedOption, { action }) => {
     if (action === "clear") {
       setAssessmentData((prev) => ({
         ...prev,
@@ -341,14 +402,54 @@ export default function General({ activeTab }) {
         impSrNo: "",
       }));
     } else {
-      setAssessmentData((prev) => ({
-        ...prev,
-        impAddress: selectedOption.address,
-        impGst: selectedOption.gst,
-        importerId: selectedOption.value,
-        importerName: selectedOption.impName,
-        impSrNo: selectedOption.srNo,
-      }));
+      // setAssessmentData((prev) => ({
+      //   ...prev,
+      //   impAddress: selectedOption.address,
+      //   impGst: selectedOption.gst,
+      //   importerId: selectedOption.value,
+      //   importerName: selectedOption.impName,
+      //   impSrNo: selectedOption.srNo,
+      // }));
+       try {
+            const response = await axios.get(
+              `${ipaddress}party/getPartyDataWithCustomerType`,
+              {
+                params: {
+                  cid: companyid,
+                  bid: branchId,
+                  pid: selectedOption.value
+                },
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              }
+            );
+            
+            const isRegistered = response.data.customerType && 
+              response.data.customerType === "Registered";
+            
+            setAssessmentData((prev) => ({
+              ...prev,
+              impAddress: selectedOption.address,
+              impGst: selectedOption.gst,
+              importerId: selectedOption.value,
+              importerName: selectedOption.impName,
+              impSrNo: selectedOption.srNo,
+              // Update taxApplicable based on customer type
+              taxApplicable: isRegistered ? "Y" : "N",
+            }));
+          } catch (error) {
+            // If API fails, set taxApplicable to N
+            setAssessmentData((prev) => ({
+              ...prev,
+              impAddress: selectedOption.address,
+              impGst: selectedOption.gst,
+              importerId: selectedOption.value,
+              importerName: selectedOption.impName,
+              impSrNo: selectedOption.srNo,
+              taxApplicable: "N",
+            }));
+          }
     }
   };
 
@@ -630,7 +731,7 @@ export default function General({ activeTab }) {
           cha: singleData[14] === null ? "" : singleData[14] || "",
           chaSrNo: "",
           sez: "N",
-          taxApplicable: "Y",
+          taxApplicable: "N",
           onAccountOf: "",
           accSrNo: "",
           comments: "",
@@ -742,7 +843,7 @@ export default function General({ activeTab }) {
       cha: "",
       chaSrNo: "",
       sez: "N",
-      taxApplicable: "Y",
+      taxApplicable: "N",
       onAccountOf: "",
       accSrNo: "",
       comments: "",
@@ -1154,7 +1255,7 @@ export default function General({ activeTab }) {
           cha: singleData[30] || "",
           chaSrNo: singleData[31] || "",
           sez: singleData[36] || "N",
-          taxApplicable: singleData[37] || "Y",
+          taxApplicable: singleData[37] || "N",
           onAccountOf: singleData[38] || "",
           accSrNo: singleData[40] || "",
           comments: singleData[43] || "",
@@ -1467,7 +1568,7 @@ export default function General({ activeTab }) {
           cha: singleData[30] || "",
           chaSrNo: singleData[31] || "",
           sez: singleData[36] || "N",
-          taxApplicable: singleData[37] || "Y",
+          taxApplicable: singleData[37] || "N",
           onAccountOf: singleData[38] || "",
           accSrNo: singleData[40] || "",
           comments: singleData[43] || "",
@@ -2000,7 +2101,7 @@ export default function General({ activeTab }) {
           cha: singleData[30] || "",
           chaSrNo: singleData[31] || "",
           sez: singleData[36] || "N",
-          taxApplicable: singleData[37] || "Y",
+          taxApplicable: singleData[37] || "N",
           onAccountOf: singleData[38] || "",
           accSrNo: singleData[40] || "",
           comments: singleData[43] || "",
@@ -2259,7 +2360,7 @@ export default function General({ activeTab }) {
           cha: singleData[30] || "",
           chaSrNo: singleData[31] || "",
           sez: singleData[36] || "N",
-          taxApplicable: singleData[37] || "Y",
+          taxApplicable: singleData[37] || "N",
           onAccountOf: singleData[38] || "",
           accSrNo: singleData[40] || "",
           comments: singleData[43] || "",
@@ -2475,7 +2576,7 @@ export default function General({ activeTab }) {
           cha: singleData[30] || "",
           chaSrNo: singleData[31] || "",
           sez: singleData[36] || "N",
-          taxApplicable: singleData[37] || "Y",
+          taxApplicable: singleData[37] || "N",
           onAccountOf: singleData[38] || "",
           accSrNo: singleData[40] || "",
           comments: singleData[43] || "",
@@ -2745,6 +2846,9 @@ export default function General({ activeTab }) {
       const assesmentId = assessmentData.assesmentId;
       const igmTransId = assessmentData.igmTransId;
 
+      const deliveryId = assessmentData.blNo;
+
+
       await axios
         .post(
           `${ipaddress}importinvoiceprint/printContainerWiseGeneralInvoicepdfForGeneral`,
@@ -2760,6 +2864,7 @@ export default function General({ activeTab }) {
               assesmentId: assesmentId,
               igmTransId: igmTransId,
               selectedInvoice: selectedInvoice,
+               deliveryId: deliveryId,
             },
           }
         )
@@ -2836,7 +2941,7 @@ export default function General({ activeTab }) {
           cha: singleData[14] === null ? "" : singleData[14] || "",
           chaSrNo: "",
           sez: "N",
-          taxApplicable: "Y",
+          taxApplicable: "N",
           onAccountOf: "",
           accSrNo: "",
           comments: "",
@@ -7213,7 +7318,8 @@ export default function General({ activeTab }) {
                       name="taxApplicable"
                       value={assessmentData.taxApplicable}
                       onChange={handleAssessmentChange}
-                      disabled={assessmentData.assesmentId !== ""}
+                      // disabled={assessmentData.assesmentId !== ""}
+                      disabled
                     >
                       <option value="N">No</option>
                       <option value="Y">Yes</option>

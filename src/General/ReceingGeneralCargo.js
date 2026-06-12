@@ -6133,6 +6133,25 @@
           setLoading(false);
           return;
         }
+const totalReceivingPackages = selectedRows.reduce(
+      (sum, row, index) => sum + (parseFloat(inputValues[index]?.receivingPackages) || 0), 
+      0
+    );
+
+    const totalGridPackages = rows.reduce(
+      (sum, row) => sum + (parseFloat(row.receivedPackages) || 0), 
+      0
+    );
+
+    console.log("Total Receiving Packages:", totalReceivingPackages);
+    console.log("Total Grid Packages:", totalGridPackages);
+
+    if (Math.abs(totalReceivingPackages - totalGridPackages) > 0.001) {
+      toast.error(`Package mismatch: Receiving (${totalReceivingPackages}) vs Grid (${totalGridPackages})`);
+      setLoading(false);
+      return;
+    }
+    // =============================================
 
         if (selectedRows.length === 0) {
           toast.error(
@@ -6173,12 +6192,16 @@
 
         let isValid = true;
         const updatedValues = [...inputValues];
+        const validSelectedRows = [];
+const validInputValues = [];
         selectedRows.forEach((dtl, index) => {
           if (!updatedValues[index]) {
             updatedValues[index] = {};
           }
 
           const values = updatedValues[index];
+          const validSelectedRows = [];
+const validInputValues = [];
           let errorMessage = "";
 
           if (!values.receivingPackages) {
@@ -6208,23 +6231,38 @@
 
           updatedValues[index].errorMessage = errorMessage;
         });
+selectedRows.forEach((row, index) => {
+  const receivingPkgs = parseFloat(inputValues[index]?.receivingPackages) || 0;
+  if (receivingPkgs > 0) {
+    validSelectedRows.push(row);
+    validInputValues.push(inputValues[index]);
+  }
+});
 
-        const dataToSave = selectedRows.map((row) => {
-          const index = currentItems.findIndex(
-            (item) =>
-              item.jobTransId === row.jobTransId &&
-              item.jobNo === row.jobNo &&
-              item.commodityId === row.commodityId &&
-              item.srNo === row.srNo,
-          );
-          const inputValuesForRow = inputValues[index] || {};
-          const updatedFields = {};
+// Filter grid rows with 0 received packages
+const validGridRows = rows.filter(row => {
+  return parseFloat(row.receivedPackages) > 0;
+});
+const dataToSave = validSelectedRows.map((row, idx) => {
+  const inputValuesForRow = validInputValues[idx] || {};
+  const updatedFields = {};
+  
+  Object.keys(inputValuesForRow).forEach((field) => {
+    if (inputValuesForRow[field] !== undefined) {
+      updatedFields[field] = inputValuesForRow[field];
+    }
+  });
+        // const dataToSave = selectedRows.map((row) => {
+        //   const index = currentItems.findIndex(
+        //     (item) =>
+        //       item.jobTransId === row.jobTransId &&
+        //       item.jobNo === row.jobNo &&
+        //       item.commodityId === row.commodityId &&
+        //       item.srNo === row.srNo,
+        //   );
+          
 
-          Object.keys(inputValuesForRow).forEach((field) => {
-            if (inputValuesForRow[field] !== undefined) {
-              updatedFields[field] = inputValuesForRow[field];
-            }
-          });
+         
 
           return {
             ...row,
@@ -6240,7 +6278,7 @@
             ...dataToSave,
           },
           grid: {
-            ...rows,
+            ...validGridRows,
           },
         };
 
@@ -6283,6 +6321,248 @@
         }
       }
     };
+
+    // const handleSave = () => {
+    //   setLoading(true);
+
+    //   // First, delete marked rows if any
+    //   if (rowsToDelete.length > 0) {
+    //     // Create an array of delete promises
+    //     const deletePromises = rowsToDelete.map((rowToDelete) => {
+    //       return axios.delete(
+    //         `${ipaddress}api/receiving/deleteYardLocationGridOnly`,
+    //         {
+    //           params: {
+    //             companyId: companyid,
+    //             branchId: branchId,
+    //             receivingId: rowToDelete.receivingId,
+    //             yardLocation: rowToDelete.yardLocation,
+    //             yardBlock: rowToDelete.yardBlock,
+    //             blockCellNo: rowToDelete.blockCellNo,
+    //             cellAreaAllocated: rowToDelete.cellAreaAllocated, // Pass the area to subtract
+    //             user: userId,
+    //           },
+    //           headers: {
+    //             Authorization: `Bearer ${jwtToken}`,
+    //           },
+    //         },
+    //       );
+    //     });
+
+    //     // Execute all delete operations
+    //     Promise.all(deletePromises)
+    //       .then(() => {
+    //         // Clear the rowsToDelete state after successful deletion
+    //         setRowsToDelete([]);
+    //         // Continue with the main save operation
+    //         proceedWithSave();
+    //       })
+    //       .catch((error) => {
+    //         console.error("Error deleting rows:", error);
+    //         toast.error("Failed to delete some rows. Please try again.", {
+    //           autoClose: 3000,
+    //         });
+    //         setLoading(false);
+    //       });
+    //   } else {
+    //     // No rows to delete, proceed directly with save
+    //     proceedWithSave();
+    //   }
+
+    //   function proceedWithSave() {
+    //     // Your existing save logic from handleSave goes here
+    //     // ... (all your existing validation and save code)
+
+    //     let errors = {};
+
+    //     if (!inBond.boeNo) {
+    //       errors.boeNo = "BOE No is required.";
+    //       document.getElementById("boeNo").classList.add("error-border");
+    //       toast.error("BOE No is required.", {});
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     if (!inBond.receivingDate) {
+    //       errors.receivingDate = "Receiving date is required.";
+    //       toast.error("Receiving date is required.", {});
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     if (!inBond.cargoCondition) {
+    //       errors.cargoCondition = "Please specify cargo condition...";
+    //       document.getElementById("cargoCondition").classList.add("error-border");
+    //       toast.error("Please specify cargo condition...", {});
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     if (!inBond.handlingEquip1) {
+    //       errors.handlingEquip1 = "Please specify handling equipment...";
+    //       document.getElementById("handlingEquip1").classList.add("error-border");
+    //       toast.error("Please specify handling equipment...", {});
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     if (!inBond.handlingEquip2) {
+    //       errors.handlingEquip2 = "Please specify handling2 equipment...";
+    //       document.getElementById("handlingEquip2").classList.add("error-border");
+    //       toast.error("Please specify handling equipment...", {});
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     if (selectedRows.length === 0) {
+    //       toast.error(
+    //         "Commodity not selected. Please select commodity to add...",
+    //       );
+    //       setLoading(false);
+    //       return;
+    //     }
+
+    //     const hasEmptyFields = rows.some((row) => {
+    //       if (!row.yardLocation || !row.yardBlock || !row.blockCellNo) {
+    //         return true;
+    //       }
+
+    //       if (
+    //         inBond.spaceAllocated === "COVERED" ||
+    //         inBond.spaceAllocated === "COVEREDGD"
+    //       ) {
+    //         return (
+    //           !row.cellAreaAllocated || parseFloat(row.cellAreaAllocated) <= 0
+    //         );
+    //       }
+
+    //       return false;
+    //     });
+
+    //     if (hasEmptyFields) {
+    //       const errorMsg =
+    //         "Required fields in location must be filled before saving.";
+    //       setErrors((prevErrors) => ({
+    //         ...prevErrors,
+    //         save: errorMsg,
+    //       }));
+    //       setLoading(false);
+    //       toast.error(errorMsg);
+    //       return;
+    //     }
+
+    //     let isValid = true;
+    //     const updatedValues = [...inputValues];
+    //     selectedRows.forEach((dtl, index) => {
+    //       if (!updatedValues[index]) {
+    //         updatedValues[index] = {};
+    //       }
+
+    //       const values = updatedValues[index];
+    //       let errorMessage = "";
+
+    //       if (!values.receivingPackages) {
+    //         errorMessage = "Receiving Packages is required";
+    //         toast.error("Receiving Packages is required.", {});
+    //         setLoading(false);
+    //         isValid = false;
+    //       } else if (parseFloat(values.receivingPackages) > dtl.noOfPackages) {
+    //         errorMessage =
+    //           "Receiving Packages should not be greater than gate in Packages";
+    //         toast.error(
+    //           "Receiving Packages should not be greater than gate in Packages.",
+    //           {},
+    //         );
+    //         setLoading(false);
+    //         isValid = false;
+    //       }
+
+    //       updatedValues[index].inbondInsuranceValue =
+    //         parseFloat(values.inbondCifValue || 0) +
+    //         parseFloat(values.inbondCargoDuty || 0);
+
+    //       const perPackageWeight = dtl.grossWeight / dtl.nocPackages;
+    //       updatedValues[index].inbondGrossWt = (
+    //         perPackageWeight * parseFloat(values.inBondedPackages || 0)
+    //       ).toFixed(3);
+
+    //       updatedValues[index].errorMessage = errorMessage;
+    //     });
+
+    //     const dataToSave = selectedRows.map((row) => {
+    //       const index = currentItems.findIndex(
+    //         (item) =>
+    //           item.jobTransId === row.jobTransId &&
+    //           item.jobNo === row.jobNo &&
+    //           item.commodityId === row.commodityId &&
+    //           item.srNo === row.srNo,
+    //       );
+    //       const inputValuesForRow = inputValues[index] || {};
+    //       const updatedFields = {};
+
+    //       Object.keys(inputValuesForRow).forEach((field) => {
+    //         if (inputValuesForRow[field] !== undefined) {
+    //           updatedFields[field] = inputValuesForRow[field];
+    //         }
+    //       });
+
+    //       return {
+    //         ...row,
+    //         ...updatedFields,
+    //       };
+    //     });
+
+    //     const requestBody = {
+    //       inBond: {
+    //         ...inBond,
+    //       },
+    //       nocDtl: {
+    //         ...dataToSave,
+    //       },
+    //       grid: {
+    //         ...rows,
+    //       },
+    //     };
+
+    //     if (isValid) {
+    //       axios
+    //         .post(
+    //           `${ipaddress}api/receiving/saveCfInbondCrg?companyId=${companyid}&branchId=${branchId}&user=${userId}&flag=${inbondFlag}`,
+    //           requestBody,
+    //           {
+    //             headers: {
+    //               Authorization: `Bearer ${jwtToken}`,
+    //             },
+    //           },
+    //         )
+    //         .then((response) => {
+    //           setInBond(response.data);
+    //           fetchDataAfterSave(companyid, branchId, response.data.receivingId);
+    //           handleGridData(response.data.receivingId);
+    //           setInBondFlag("edit");
+    //           toast.success("Data save successfully!!", {
+    //             autoClose: 800,
+    //           });
+    //           onRequest();
+    //           setLoading(false);
+    //         })
+    //         .catch((error) => {
+    //           setLoading(false);
+    //           if (error.response) {
+    //             console.error("Error data:", error.response.data);
+    //             toast.error(
+    //               error.response.data || "An error occurred. Please try again.",
+    //               {
+    //                 autoClose: 9000,
+    //               },
+    //             );
+    //           }
+    //         });
+    //     } else {
+    //       setInputValues(updatedValues);
+    //     }
+    //   }
+    // };
 
     const handleClear = () => {
       // Reset the form fields
@@ -6526,7 +6806,7 @@
       const isChecked = event.target.checked;
       setSelectAll(isChecked);
       if (isChecked) {
-        setSelectedRows([...currentItems]); // Select all rows
+        setSelectedRows([...chaSearchedDatacargo]); // Select all rows
       } else {
         setSelectedRows([]); // Deselect all rows
       }
@@ -6574,7 +6854,7 @@
         const updatedValues = [...prevInputValues];
         // const dtl = currentItems[index];
 
-        const dtl = currentItems[index]; // Get the current item details for comparison
+        const dtl = chaSearchedDatacargo[index]; // Get the current item details for comparison
         const currentRow = updatedValues[index]; // Use from inputValues directly
         let errorMessage = "";
 

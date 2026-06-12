@@ -140,7 +140,8 @@ const [accountHolderData, setAccountHolderData] = useState([]);
         // "Export Monthly Revenue Report",
         "TDS Report",
         "Daily Receipt Report",
-        "Out Standing Report"
+        "Out Standing Report",
+        "Pending Invoice Report"
 
       ];
     

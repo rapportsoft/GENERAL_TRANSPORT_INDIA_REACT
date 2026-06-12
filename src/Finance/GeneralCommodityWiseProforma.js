@@ -27,7 +27,7 @@ import {
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faFileInvoice, faGear } from '@fortawesome/free-solid-svg-icons';
 import '../assets/css/style.css';
 import '../Components/Style.css';
 import { Button } from "react-bootstrap";
@@ -38,7 +38,7 @@ import { CSSTransition } from 'react-transition-group';
 import { error } from 'jquery';
 import financeService from '../service/financeService';
 
-export default function GeneralContainerProforma({ activeTab }) {
+export default function GeneralCommodityWiseProforma({ activeTab }) {
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
@@ -112,7 +112,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
 
     useEffect(() => {
-        if (activeTab === 'P01121') {
+        if (activeTab === 'P01123') {
             getCommodityData();
         }
     }, [activeTab])
@@ -179,7 +179,9 @@ export default function GeneralContainerProforma({ activeTab }) {
         lastAssesmentId: "",
         lastAssesmentDate: null,
         lastInvoiceNo: "",
-        lastInvoiceDate: null
+        lastInvoiceDate: null,
+        convertedToInvoice: ""
+
 
     })
 
@@ -210,8 +212,7 @@ export default function GeneralContainerProforma({ activeTab }) {
         containerStatus: "",
         gatePassNo: "",
         gateOutId: "",
-        area: "",
-        convertedToInvoice: "",
+        area: ""
     }])
     const [advanceAmt, setAdvanceAmt] = useState('');
 
@@ -256,68 +257,67 @@ export default function GeneralContainerProforma({ activeTab }) {
 
             }));
         }
-
         else if (name === "billingParty") {
-              console.log("fghjk");
-              
+            console.log("fghjk");
+
             // When Billing Party changes to IMP, check if importer is selected and get its customer type
             if (value === "IMP" && assessmentData.importerId) {
-              // Fetch customer type for the selected importer
-              console.log("value==", value,"dfghgfdfgh==",assessmentData.importerId );
-              
-              axios
-                .get(
-                  `${ipaddress}party/getPartyDataWithCustomerType`,
-                  {
-                    params: {
-                      cid: companyid,
-                      bid: branchId,
-                      pid: assessmentData.importerId
-                    },
-                    headers: {
-                      Authorization: `Bearer ${jwtToken}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log("response---",response.data);
-                  console.log("response---",response.data.customerType );
-                  const isRegistered = response.data.customerType && 
-                    response.data.customerType === "Registered";
-                  
-                  setAssessmentData((prevState) => ({
-                    ...prevState,
-                    billingParty: value,
-                    taxApplicable: isRegistered ? "Y" : "N",
-                  }));
-                })
-                
-                
-                .catch((error) => {
-                  // If API fails, keep existing taxApplicable or default to N
-                  setAssessmentData((prevState) => ({
+                // Fetch customer type for the selected importer
+                console.log("value==", value, "dfghgfdfgh==", assessmentData.importerId);
+
+                axios
+                    .get(
+                        `${ipaddress}party/getPartyDataWithCustomerType`,
+                        {
+                            params: {
+                                cid: companyid,
+                                bid: branchId,
+                                pid: assessmentData.importerId
+                            },
+                            headers: {
+                                Authorization: `Bearer ${jwtToken}`,
+                            },
+                        }
+                    )
+                    .then((response) => {
+                        console.log("response---", response.data);
+                        console.log("response---", response.data.customerType);
+                        const isRegistered = response.data.customerType &&
+                            response.data.customerType === "Registered";
+
+                        setAssessmentData((prevState) => ({
+                            ...prevState,
+                            billingParty: value,
+                            taxApplicable: isRegistered ? "Y" : "N",
+                        }));
+                    })
+
+
+                    .catch((error) => {
+                        // If API fails, keep existing taxApplicable or default to N
+                        setAssessmentData((prevState) => ({
+                            ...prevState,
+                            billingParty: value,
+                            taxApplicable: "N",
+                        }));
+                    });
+            }
+            // If Billing Party is IMP but no importer selected, set tax to N
+            else if (value === "IMP" && !assessmentData.importerId) {
+                setAssessmentData((prevState) => ({
                     ...prevState,
                     billingParty: value,
                     taxApplicable: "N",
-                  }));
-                });
-            } 
-            // If Billing Party is IMP but no importer selected, set tax to N
-            else if (value === "IMP" && !assessmentData.importerId) {
-              setAssessmentData((prevState) => ({
-                ...prevState,
-                billingParty: value,
-                taxApplicable: "N",
-              }));
-            }  else {
-             
-              setAssessmentData((prevState) => ({
-                ...prevState,
-                [name]: sanitizeValue,
-                  taxApplicable: "N",
-              }));
+                }));
+            } else {
+
+                setAssessmentData((prevState) => ({
+                    ...prevState,
+                    [name]: sanitizeValue,
+                    taxApplicable: "N",
+                }));
             }
-          }
+        }
         else {
             setAssessmentData(prevState => ({
                 ...prevState,
@@ -376,33 +376,25 @@ export default function GeneralContainerProforma({ activeTab }) {
             }));
         }
         else {
-            // setAssessmentData((prev) => ({
-            //     ...prev,
-            //     impAddress: selectedOption.address,
-            //     impGst: selectedOption.gst,
-            //     importerId: selectedOption.value,
-            //     importerName: selectedOption.impName,
-            //     impSrNo: selectedOption.srNo
-            // }));
-             try {
-                  const response = await axios.get(
+            try {
+                const response = await axios.get(
                     `${ipaddress}party/getPartyDataWithCustomerType`,
                     {
-                      params: {
-                        cid: companyid,
-                        bid: branchId,
-                        pid: selectedOption.value
-                      },
-                      headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                      },
+                        params: {
+                            cid: companyid,
+                            bid: branchId,
+                            pid: selectedOption.value
+                        },
+                        headers: {
+                            Authorization: `Bearer ${jwtToken}`,
+                        },
                     }
-                  );
-                  
-                  const isRegistered = response.data.customerType && 
+                );
+
+                const isRegistered = response.data.customerType &&
                     response.data.customerType === "Registered";
-                  
-                  setAssessmentData((prev) => ({
+
+                setAssessmentData((prev) => ({
                     ...prev,
                     impAddress: selectedOption.address,
                     impGst: selectedOption.gst,
@@ -411,10 +403,10 @@ export default function GeneralContainerProforma({ activeTab }) {
                     impSrNo: selectedOption.srNo,
                     // Update taxApplicable based on customer type
                     taxApplicable: isRegistered ? "Y" : "N",
-                  }));
-                } catch (error) {
-                  // If API fails, set taxApplicable to N
-                  setAssessmentData((prev) => ({
+                }));
+            } catch (error) {
+                // If API fails, set taxApplicable to N
+                setAssessmentData((prev) => ({
                     ...prev,
                     impAddress: selectedOption.address,
                     impGst: selectedOption.gst,
@@ -422,8 +414,8 @@ export default function GeneralContainerProforma({ activeTab }) {
                     importerName: selectedOption.impName,
                     impSrNo: selectedOption.srNo,
                     taxApplicable: "N",
-                  }));
-                }
+                }));
+            }
         }
     };
 
@@ -623,7 +615,7 @@ export default function GeneralContainerProforma({ activeTab }) {
             return;
         }
 
-        axios.get(`${ipaddress}assessment/getSearchDataForReceivingContainerWiseInvoice?cid=${companyid}&bid=${branchId}&id=${val}`, {
+        axios.get(`${ipaddress}generalcommProforma/getSearchDataForReceivingContainerWiseInvoice?cid=${companyid}&bid=${branchId}&id=${val}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -635,7 +627,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
                 const searchOptions = data.map(port => ({
                     value: port[2],
-                    label: port[0] + " - " + port[1] + " - " + port[2] + " - " + port[3],
+                    label: port[1] + " - " + port[2] + " - " + port[3],
                     containerNo: port[0],
                     receivingId: port[1],
                     jobNo: port[2],
@@ -667,7 +659,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
     const getSelectedBeforeSearchData = (igmtrans) => {
         setLoading(true);
-        axios.get(`${ipaddress}assessment/getSelectedDataForReceivingContainerWiseInvoice?cid=${companyid}&bid=${branchId}&id=${igmtrans}`, {
+        axios.get(`${ipaddress}generalcommProforma/getSelectedDataForReceivingContainerWiseInvoice?cid=${companyid}&bid=${branchId}&id=${igmtrans}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1112,7 +1104,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         setLoading(true);
 
-        axios.post(`${ipaddress}proforma/saveContainerWiseGeneralReceivingAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
+        axios.post(`${ipaddress}generalcommProforma/saveContainerWiseGeneralReceivingAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1329,7 +1321,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         setLoading(true);
 
-        axios.post(`${ipaddress}proforma/saveGeneralContWiseDeliveryAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
+        axios.post(`${ipaddress}generalcommProforma/saveGeneralContWiseDeliveryAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1497,7 +1489,7 @@ export default function GeneralContainerProforma({ activeTab }) {
             return;
         }
 
-        axios.get(`${ipaddress}assessment/getTdsPerc?cid=${companyid}&bid=${branchId}&val=${val}`, {
+        axios.get(`${ipaddress}generalcommProforma/getTdsPerc?cid=${companyid}&bid=${branchId}&val=${val}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1596,7 +1588,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         setLoading(true);
 
-        axios.post(`${ipaddress}proforma/saveContainerWiseGeneralJobInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
+        axios.post(`${ipaddress}generalcommProforma/saveContainerWiseGeneralJobInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1736,11 +1728,24 @@ export default function GeneralContainerProforma({ activeTab }) {
                 setLoading(false);
             })
             .catch((error) => {
-                toast.error(error.response.data, {
-                    autoClose: 800
-                })
+                // Better error handling
+                if (error.response?.data?.includes("No service data found")) {
+                    toast.error("Please save the assessment first before processing invoice.", {
+                        autoClose: 3000
+                    });
+                } else {
+                    toast.error(error.response?.data || "An error occurred", {
+                        autoClose: 800
+                    });
+                }
                 setLoading(false);
-            })
+            });
+        // .catch((error) => {
+        //     toast.error(error.response.data, {
+        //         autoClose: 800
+        //     })
+        //     setLoading(false);
+        // })
     }
 
 
@@ -1813,7 +1818,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
         setLoading(true);
 
-        axios.post(`${ipaddress}proforma/saveGeneralContWiseDeliveryInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
+        axios.post(`${ipaddress}generalcommProforma/saveGeneralContWiseDeliveryInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -1975,9 +1980,202 @@ export default function GeneralContainerProforma({ activeTab }) {
         setGateInSearchData([]);
     }
 
+
+    const convertProformaToCreditInvoice = async () => {
+        // Validation checks
+        if (!assessmentData.assesmentId) {
+            toast.error("No proforma data found to convert", { autoClose: 800 });
+            return;
+        }
+
+        if (!assessmentData.invoiceNo) {
+            toast.error("Please generate proforma first before converting to credit invoice", { autoClose: 800 });
+            return;
+        }
+
+        // Confirm with user
+        const result = await Swal.fire({
+            title: 'Convert Proforma to Credit Invoice?',
+            text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to a CREDIT invoice?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Convert to Credit!',
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false
+        });
+
+        if (!result.isConfirmed) return;
+
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                `${ipaddress}generalcommProforma/convertProformaToCreditInvoice`,
+                null,
+                {
+                    params: {
+                        cid: companyid,
+                        bid: branchId,
+                        userId: userId,
+                        assessmentId: assessmentData.assesmentId,
+                        invoiceNo: assessmentData.invoiceNo,
+
+                    },
+                    headers: {
+                        Authorization: `Bearer ${jwtToken}`
+                    }
+                }
+            );
+
+            setLoading(false);
+
+            console.log('Conversion response:', response.data);
+
+            if (response.data.status === 'SUCCESS') {
+                const newInvoiceNo = response.data.invoiceNo;
+                toast.success(response.data.message || 'Proforma converted to credit invoice successfully!', {
+                    autoClose: 2000
+                });
+
+                // if (selectedInvoice === "noc") {
+                //     await getSelectedBeforeSearchData(assessmentData.igmTransId);
+                // } else {
+                //     await getSelectedBeforeSearchDataForExBond(assessmentData.igmTransId);
+                // }
+
+                await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
+
+
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: `Credit Invoice converted successfully!\nNew Invoice No: ${newInvoiceNo}`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                toast.error(response.data.message || 'Failed to convert proforma to credit invoice', {
+                    autoClose: 800
+                });
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error('Conversion error:', error);
+
+            let errorMessage = 'Error converting to invoice';
+
+            if (error.response) {
+                if (error.response.data && typeof error.response.data === 'object') {
+                    errorMessage = error.response.data.message || error.response.data.status || errorMessage;
+                }
+                else if (typeof error.response.data === 'string') {
+                    errorMessage = error.response.data;
+                }
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+
+            toast.error(errorMessage, { autoClose: 800 });
+        }
+    };
+
+    const convertProformaToInvoiceDelivery = async () => {
+        // Validation checks
+        if (!assessmentData.assesmentId) {
+            toast.error("No proforma data found to convert", { autoClose: 800 });
+            return;
+        }
+
+        if (!assessmentData.invoiceNo) {
+            toast.error("Please generate proforma first before converting to invoice", { autoClose: 800 });
+            return;
+        }
+
+        // Confirm with user
+        const result = await Swal.fire({
+            title: 'Convert Proforma to Invoice?',
+            text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to an INVOICE?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Convert to Invoice!',
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false
+        });
+
+        if (!result.isConfirmed) return;
+
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                `${ipaddress}generalcommProforma/convertProformaToInvoiceDelivery`, // Different endpoint for Delivery
+                null,
+                {
+                    params: {
+                        cid: companyid,
+                        bid: branchId,
+                        userId: userId,
+                        assessmentId: assessmentData.assesmentId,
+                        invoiceNo: assessmentData.invoiceNo,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${jwtToken}`
+                    }
+                }
+            );
+
+            setLoading(false);
+
+            console.log('Conversion response:', response.data);
+
+            if (response.data.status === 'SUCCESS') {
+                const newInvoiceNo = response.data.invoiceNo;
+                toast.success(response.data.message || 'Proforma converted to invoice successfully!', {
+                    autoClose: 2000
+                });
+
+                // Refresh the data with the converted invoice
+                await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: `Invoice converted successfully!\nNew Invoice No: ${newInvoiceNo}`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                toast.error(response.data.message || 'Failed to convert proforma to invoice', {
+                    autoClose: 800
+                });
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error('Conversion error:', error);
+
+            let errorMessage = 'Error converting to invoice';
+
+            if (error.response) {
+                if (error.response.data && typeof error.response.data === 'object') {
+                    errorMessage = error.response.data.message || error.response.data.status || errorMessage;
+                }
+                else if (typeof error.response.data === 'string') {
+                    errorMessage = error.response.data;
+                }
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+
+            toast.error(errorMessage, { autoClose: 800 });
+        }
+    };
+
     const searchExportEmptyContainerGateIn = (id) => {
         setLoading(true);
-        axios.get(`${ipaddress}proforma/searchGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&val=${id}&type=${selectedInvoice}`, {
+        axios.get(`${ipaddress}generalcommProforma/searchGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&val=${id}&type=${selectedInvoice}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2000,7 +2198,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
 
     const getSelectedInvoiceData = (assId, invId) => {
-        axios.get(`${ipaddress}proforma/getSelectedGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&assId=${assId}&invId=${invId}&type=${selectedInvoice}`, {
+        axios.get(`${ipaddress}generalcommProforma/getSelectedGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&assId=${assId}&invId=${invId}&type=${selectedInvoice}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2009,7 +2207,6 @@ export default function GeneralContainerProforma({ activeTab }) {
                 const data = response.data.result;
 
                 const singleData = data[0];
-
 
                 setAssessmentData({
                     companyId: "",
@@ -2073,7 +2270,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                     lastAssesmentDate: singleData[76] === null ? null : new Date(singleData[76]),
                     lastInvoiceNo: singleData[77] || "",
                     lastInvoiceDate: singleData[78] === null ? null : new Date(singleData[78]),
-                    convertedToInvoice:singleData[82] || "",
+                    convertedToInvoice: singleData[81] || "",
                 })
 
 
@@ -2105,8 +2302,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                         containerStatus: item[25] || "",
                         gatePassNo: "",
                         gateOutId: "",
-                        area: "",
-                        convertedToInvoice:singleData[82] || "",
+                        area: ""
                     })))
                 }
                 else {
@@ -2137,8 +2333,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                         containerStatus: item[25] || "",
                         gatePassNo: "",
                         gateOutId: "",
-                        area: "",
-                        convertedToInvoice:singleData[81] || "",
+                        area: ""
                     })))
                 }
 
@@ -2248,7 +2443,7 @@ export default function GeneralContainerProforma({ activeTab }) {
             return;
         }
 
-        axios.get(`${ipaddress}assessment/getBeforeAssessmentConWiseDeliveryData?cid=${companyid}&bid=${branchId}&val=${val}`, {
+        axios.get(`${ipaddress}generalcommProforma/getBeforeAssessmentConWiseDeliveryData?cid=${companyid}&bid=${branchId}&val=${val}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2295,7 +2490,7 @@ export default function GeneralContainerProforma({ activeTab }) {
         const igmTransId = assessmentData.igmTransId;
 
 
-        axios.post(`${ipaddress}importinvoiceproformaprint/printContainerWiseGeneralInvoicepdf`, null, {
+        axios.post(`${ipaddress}importinvoiceproformaprint/printContainerWiseGeneralInvoicepdfForGeneral`, null, {
             headers: {
 
                 Authorization: `Bearer ${jwtToken}`
@@ -2333,7 +2528,7 @@ export default function GeneralContainerProforma({ activeTab }) {
 
     const getSelectedBeforeSearchDataForExBond = (val) => {
         setLoading(true);
-        axios.get(`${ipaddress}assessment/getGeneralConDeliveryBeforeSaveAssessmentData?cid=${companyid}&bid=${branchId}&val=${val}`, {
+        axios.get(`${ipaddress}generalcommProforma/getGeneralConDeliveryBeforeSaveAssessmentData?cid=${companyid}&bid=${branchId}&val=${val}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -3036,7 +3231,7 @@ export default function GeneralContainerProforma({ activeTab }) {
             else if (assessmentData.billingParty === "OTH") {
                 partyId = assessmentData.othPartyId;
             }
-            axios.get(`${ipaddress}proforma/getDataByAfterAssessmentForGeneralCon?cid=${companyid}&bid=${branchId}&id=${assessmentData.assesmentId}&partyId=${partyId}&creditType=${assessmentData.creditType}&type=${selectedInvoice}`, {
+            axios.get(`${ipaddress}generalcommProforma/getDataByAfterAssessmentForGeneralCon?cid=${companyid}&bid=${branchId}&id=${assessmentData.assesmentId}&partyId=${partyId}&creditType=${assessmentData.creditType}&type=${selectedInvoice}`, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 }
@@ -3339,7 +3534,7 @@ export default function GeneralContainerProforma({ activeTab }) {
                 Cfinvsrvanx: selectedContainers
             }
 
-            axios.post(`${ipaddress}proforma/saveAddServiceForgeneralCon`, formData, {
+            axios.post(`${ipaddress}generalcommProforma/saveAddServiceForgeneralCon`, formData, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 },
@@ -3551,344 +3746,10 @@ export default function GeneralContainerProforma({ activeTab }) {
             }
         }
     };
-const convertProformaToCreditInvoice = async () => {
-    console.log("receiving");
-    
-    // Validation checks
-    if (!assessmentData.assesmentId) {
-        toast.error("No proforma data found to convert", { autoClose: 800 });
-        return;
-    }
-
-    if (!assessmentData.invoiceNo) {
-        toast.error("Please generate proforma first before converting to credit invoice", { autoClose: 800 });
-        return;
-    }
-
-    // Confirm with user
-    const result = await Swal.fire({
-        title: 'Convert Proforma to Credit Invoice?',
-        text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to a CREDIT invoice?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Convert to Credit!',
-        cancelButtonText: 'Cancel',
-        allowOutsideClick: false
-    });
-
-    if (!result.isConfirmed) return;
-
-    setLoading(true);
-
-    try {
-        // Include tdsDeductee and tdsPerc in the request
-        const response = await axios.post(
-            `${ipaddress}proforma/convertProformaToCreditInvoice`,
-            null, 
-            {
-                params: {
-                    cid: companyid,
-                    bid: branchId,
-                    userId: userId,
-                    assessmentId: assessmentData.assesmentId,
-                    invoiceNo: assessmentData.invoiceNo,
-                    tdsDeductee: tdsDeductee || '',  // Add this
-                    tdsPerc: tdsPerc || 0            // Add this
-                },
-                headers: { 
-                    Authorization: `Bearer ${jwtToken}` 
-                }
-            }
-        );
-
-        setLoading(false);
-
-        if (response.data.status === 'SUCCESS') {
-            toast.success(response.data.message || 'Proforma converted to credit invoice successfully!', { 
-                autoClose: 2000 
-            });
-
-            // Refresh the data after conversion
-            await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
-              
-            Swal.fire({
-                title: 'Success!',
-                text: `Credit Invoice converted successfully!`,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        } else {
-            toast.error(response.data.message || 'Failed to convert proforma to credit invoice', { 
-                autoClose: 800 
-            });
-        }
-    } catch (error) {
-        setLoading(false);
-        console.error('Conversion error:', error);
-        toast.error(error.response?.data || error.message || 'Error converting to credit invoice', { 
-            autoClose: 800 
-        });
-    }
-};
 
 
-// const convertProformaToCreditInvoice = async () => {
-//     // Validation checks 
-//     console.log("receiving");
-//     if (!assessmentData.assesmentId) {
-//         toast.error("No proforma data found to convert", { autoClose: 800 });
-//         return;
-//     }
 
-//     if (!assessmentData.invoiceNo) {
-//         toast.error("Please generate proforma first before converting to credit invoice", { autoClose: 800 });
-//         return;
-//     }
-
-//     // Confirm with user
-//     const result = await Swal.fire({
-//         title: 'Convert Proforma to Credit Invoice?',
-//         text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to a CREDIT invoice?`,
-//         icon: 'question',
-//         showCancelButton: true,
-//         confirmButtonColor: '#3085d6',
-//         cancelButtonColor: '#d33',
-//         confirmButtonText: 'Yes, Convert to Credit!',
-//         cancelButtonText: 'Cancel',
-//         allowOutsideClick: false
-//     });
-
-//     if (!result.isConfirmed) return;
-
-//     setLoading(true);
-
-//     try {
-//         const response = await axios.post(
-//             `${ipaddress}proforma/convertProformaToCreditInvoice`,
-//             null, 
-//             {
-//                 params: {
-//                     cid: companyid,
-//                     bid: branchId,
-//                     userId: userId,
-//                     assessmentId: assessmentData.assesmentId,
-//                     invoiceNo: assessmentData.invoiceNo,
-//                     tdsDeductee: tdsDeductee || '',  // Add this
-//                     tdsPerc: tdsPerc || 0  
-               
-//                 },
-//                 headers: { 
-//                     Authorization: `Bearer ${jwtToken}` 
-//                 }
-//             }
-//         );
-
-//         setLoading(false);
-
-//         if (response.data.status === 'SUCCESS') {
-//             toast.success(response.data.message || 'Proforma converted to credit invoice successfully!', { 
-//                 autoClose: 2000 
-//             });
-
-//             // if (selectedInvoice === "noc") {
-//             //     await getSelectedBeforeSearchData(assessmentData.igmTransId);
-//             // } else {
-//             //     await getSelectedBeforeSearchDataForExBond(assessmentData.igmTransId);
-//             // }
-
-//               await getSelectedInvoiceData(assessmentData.assesmentId,  assessmentData.invoiceNo);
-
-              
-//             Swal.fire({
-//                 title: 'Success!',
-//                 text: `Credit Invoice converted successfully!`,
-//                 icon: 'success',
-//                 confirmButtonText: 'OK'
-//             });
-//         } else {
-//             toast.error(response.data.message || 'Failed to convert proforma to credit invoice', { 
-//                 autoClose: 800 
-//             });
-//         }
-//     } catch (error) {
-//         setLoading(false);
-//         console.error('Conversion error:', error);
-//         toast.error(error.response?.data || error.message || 'Error converting to credit invoice', { 
-//             autoClose: 800 
-//         });
-//     }
-// };
-// const convertProformaToCreditInvoicedelivery = async () => {
-//     console.log("delivery");
-    
-//     // Validation checks
-//     if (!assessmentData.assesmentId) {
-//         toast.error("No proforma data found to convert", { autoClose: 800 });
-//         return;
-//     }
-
-//     if (!assessmentData.invoiceNo) {
-//         toast.error("Please generate proforma first before converting to credit invoice", { autoClose: 800 });
-//         return;
-//     }
-
-//     // Confirm with user
-//     const result = await Swal.fire({
-//         title: 'Convert Proforma to Credit Invoice?',
-//         text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to a CREDIT invoice?`,
-//         icon: 'question',
-//         showCancelButton: true,
-//         confirmButtonColor: '#3085d6',
-//         cancelButtonColor: '#d33',
-//         confirmButtonText: 'Yes, Convert to Credit!',
-//         cancelButtonText: 'Cancel',
-//         allowOutsideClick: false
-//     });
-
-//     if (!result.isConfirmed) return;
-
-//     setLoading(true);
-
-//     try {
-//         const response = await axios.post(
-//             `${ipaddress}proforma/convertProformaToCreditInvoicedelivery`,
-//             null, 
-//             {
-//                 params: {
-//                     cid: companyid,
-//                     bid: branchId,
-//                     userId: userId,
-//                     assessmentId: assessmentData.assesmentId,
-//                     invoiceNo: assessmentData.invoiceNo,
-//                     tdsDeductee: tdsDeductee || '',  // Add this
-//                     tdsPerc: tdsPerc || 0  
-               
-//                 },
-//                 headers: { 
-//                     Authorization: `Bearer ${jwtToken}` 
-//                 }
-//             }
-//         );
-
-//         setLoading(false);
-
-//         if (response.data.status === 'SUCCESS') {
-//             toast.success(response.data.message || 'Proforma converted to credit invoice successfully!', { 
-//                 autoClose: 2000 
-//             });
-
-//             // if (selectedInvoice === "noc") {
-//             //     await getSelectedBeforeSearchData(assessmentData.igmTransId);
-//             // } else {
-//             //     await getSelectedBeforeSearchDataForExBond(assessmentData.igmTransId);
-//             // }
-
-//               await getSelectedInvoiceData(assessmentData.assesmentId,  assessmentData.invoiceNo);
-
-              
-//             Swal.fire({
-//                 title: 'Success!',
-//                 text: `Credit Invoice converted successfully!`,
-//                 icon: 'success',
-//                 confirmButtonText: 'OK'
-//             });
-//         } else {
-//             toast.error(response.data.message || 'Failed to convert proforma to credit invoice', { 
-//                 autoClose: 800 
-//             });
-//         }
-//     } catch (error) {
-//         setLoading(false);
-//         console.error('Conversion error:', error);
-//         toast.error(error.response?.data || error.message || 'Error converting to credit invoice', { 
-//             autoClose: 800 
-//         });
-//     }
-// };
-const convertProformaToCreditInvoicedelivery = async () => {
-    console.log("delivery");
-    
-    // Validation checks
-    if (!assessmentData.assesmentId) {
-        toast.error("No proforma data found to convert", { autoClose: 800 });
-        return;
-    }
-
-    if (!assessmentData.invoiceNo) {
-        toast.error("Please generate proforma first before converting to credit invoice", { autoClose: 800 });
-        return;
-    }
-
-    // Confirm with user
-    const result = await Swal.fire({
-        title: 'Convert Proforma to Credit Invoice?',
-        text: `Are you sure you want to convert Proforma ${assessmentData.invoiceNo} to a CREDIT invoice?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Convert to Credit!',
-        cancelButtonText: 'Cancel',
-        allowOutsideClick: false
-    });
-
-    if (!result.isConfirmed) return;
-
-    setLoading(true);
-
-    try {
-        // Include tdsDeductee and tdsPerc in the request
-        const response = await axios.post(
-            `${ipaddress}proforma/convertProformaToCreditInvoicedelivery`,
-            null, 
-            {
-                params: {
-                    cid: companyid,
-                    bid: branchId,
-                    userId: userId,
-                    assessmentId: assessmentData.assesmentId,
-                    invoiceNo: assessmentData.invoiceNo,
-                    tdsDeductee: tdsDeductee || '',  // Add this
-                    tdsPerc: tdsPerc || 0            // Add this
-                },
-                headers: { 
-                    Authorization: `Bearer ${jwtToken}` 
-                }
-            }
-        );
-
-        setLoading(false);
-
-        if (response.data.status === 'SUCCESS') {
-            toast.success(response.data.message || 'Proforma converted to credit invoice successfully!', { 
-                autoClose: 2000 
-            });
-
-            // Refresh the data after conversion
-            await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
-              
-            Swal.fire({
-                title: 'Success!',
-                text: `Credit Invoice converted successfully!`,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        } else {
-            toast.error(response.data.message || 'Failed to convert proforma to credit invoice', { 
-                autoClose: 800 
-            });
-        }
-    } catch (error) {
-        setLoading(false);
-        console.error('Conversion error:', error);
-        toast.error(error.response?.data || error.message || 'Error converting to credit invoice', { 
-            autoClose: 800 
-        });
-    }
-};
-return (
+    return (
         <div>
             {loading && (
                 <div style={styles.overlay}>
@@ -4895,7 +4756,7 @@ return (
                         <Col md={4}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Search By Container No / Receiving Id / Job No / BOE No
+                                    Search By Receiving Id / Job No / BOE No
                                 </label>
                                 <Select
                                     value={{ value: searchval, label: searchval }}
@@ -5833,7 +5694,8 @@ return (
                                             name='taxApplicable'
                                             value={assessmentData.taxApplicable}
                                             onChange={handleAssessmentChange}
-                                            disabled={assessmentData.assesmentId !== ''}
+                                            disabled
+                                        // disabled={assessmentData.assesmentId !== ''}
                                         >
                                             <option value="N">No</option>
                                             <option value="Y">Yes</option>
@@ -6131,32 +5993,10 @@ return (
                                 />
                                 Process
                             </button>
-                       <button
-    className="btn btn-outline-primary btn-margin newButton"
-    style={{ marginRight: 10, fontSize: 13 }}
-    id="submitbtn2"
-    // onClick={convertProformaToCreditInvoice}
-      onClick={selectedInvoice === "noc" ? convertProformaToCreditInvoice : selectedInvoice === "exbond" ? convertProformaToCreditInvoicedelivery : ""}
-                               
- disabled={!assessmentData.invoiceNo || !assessmentData.assesmentId || assessmentData.convertedToInvoice}>
-    <FontAwesomeIcon
-        icon={faFileInvoice}
-        style={{ marginRight: "5px" }}
-    />
-    Convert to Invoice
-</button>
- {/* <button
-        className="btn btn-outline-warning btn-margin newButton"
-        style={{ marginRight: 10, fontSize: 13 }}
-        id="submitbtn2"
-        onClick={convertProformaToInvoice}
-    >
-        <FontAwesomeIcon
-            icon={faFileExcel}
-            style={{ marginRight: "5px" }}
-        />
-        Convert to Invoice
-    </button> */}
+
+
+
+
                             <button
                                 className="btn btn-outline-danger btn-margin newButton"
                                 style={{ marginRight: 10, fontSize: 13 }}
@@ -6194,12 +6034,23 @@ return (
                                 Print
                             </button>
 
-
+                            <button
+                                className="btn btn-outline-primary btn-margin newButton"
+                                style={{ marginRight: 10, fontSize: 13 }}
+                                id="submitbtn2"
+                                onClick={selectedInvoice === "noc" ? convertProformaToCreditInvoice : convertProformaToInvoiceDelivery}
+                                disabled={!assessmentData.invoiceNo || !assessmentData.assesmentId || assessmentData.convertedToInvoice}>
+                                <FontAwesomeIcon
+                                    icon={faGear}
+                                    style={{ marginRight: "5px" }}
+                                />
+                                Generate Invoice
+                            </button>
 
 
                         </Col>
                     </Row>
-                    <div id="datepicker-portal10"></div>
+                    <div id="datepicker-portal20"></div>
 
 
                     {selectedInvoice === "noc" && (
@@ -6219,12 +6070,12 @@ return (
                                                 onChange={handleCurrentDateCheckBox}
                                             />
                                         </th>
-                                        <th scope="col" className="text-center" style={{ color: "black" }}>
+                                        {/* <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Container No
                                         </th>
                                         <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Size / Type
-                                        </th>
+                                        </th> */}
                                         <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Commodity
                                         </th>
@@ -6283,10 +6134,10 @@ return (
                                                     onChange={(e) => handleSelectDateCheckBox(e, index)}
                                                 />
                                             </td>
-                                            <td>{item.containerNo}</td>
+                                            {/* <td>{item.containerNo}</td>
                                             <td>
                                                 {item.containerSize} {item.containerType}
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 {item.containerStatus}
                                             </td>
@@ -6356,7 +6207,7 @@ return (
                                                         name='invoiceDate'
                                                         onChange={(date) => handleSelectInvDate(date, index)}
                                                         dateFormat="dd/MM/yyyy HH:mm"
-                                                        portalId="datepicker-portal10" // Add this line
+                                                        portalId="datepicker-portal20" // Add this line
 
                                                         minDate={(() => {
                                                             const date = new Date(item.lastInvoiceUptoDate === null ? item.gateInDate : item.lastInvoiceUptoDate);
@@ -6418,12 +6269,12 @@ return (
                                                 onChange={handleCurrentDateCheckBox1}
                                             />
                                         </th>
-                                        <th scope="col" className="text-center" style={{ color: "black" }}>
+                                        {/* <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Container No
                                         </th>
                                         <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Size / Type
-                                        </th>
+                                        </th> */}
                                         <th scope="col" className="text-center" style={{ color: "black" }}>
                                             Commodity
                                         </th>
@@ -6485,11 +6336,11 @@ return (
                                                     onChange={(e) => handleSelectDateCheckBox(e, index)}
                                                 />
                                             </td>
-                                            <td>{item.containerNo}</td>
+                                            {/* <td>{item.containerNo}</td>
 
                                             <td>
                                                 {item.containerSize} {item.containerType}
-                                            </td>
+                                            </td> */}
                                             <td>{item.containerStatus}</td>
                                             <td>{item.examPercentage}</td>
                                             <td>{item.cargoWt}</td>
@@ -6565,7 +6416,7 @@ return (
                                                         name='invoiceDate'
                                                         onChange={(date) => handleSelectInvDate1(date, index)}
                                                         dateFormat="dd/MM/yyyy HH:mm"
-                                                        portalId="datepicker-portal10" // Add this line
+                                                        portalId="datepicker-portal20" // Add this line
                                                         minDate={(() => {
                                                             const date = new Date(item.gateInDate);
                                                             date.setDate(date.getDate() + 1);

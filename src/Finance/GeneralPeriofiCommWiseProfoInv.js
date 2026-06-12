@@ -29,7 +29,11 @@ import {
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faEye, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+    faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faFileAlt,
+    faEye,
+    faGear,
+} from '@fortawesome/free-solid-svg-icons';
 import '../assets/css/style.css';
 import '../Components/Style.css';
 import { Button } from "react-bootstrap";
@@ -40,7 +44,7 @@ import { CSSTransition } from 'react-transition-group';
 import { error, param } from 'jquery';
 import financeService from '../service/financeService';
 
-export default function GeneralPeriodicInvoice({ activeTab }) {
+export default function GeneralPeriofiCommWiseProfoInv({ activeTab }) {
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
@@ -220,7 +224,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
         cha: "",
         chaSrNo: "",
         sez: "N",
-        taxApplicable: "N",
+        taxApplicable: "Y",
         onAccountOf: "",
         accSrNo: "",
         comments: "",
@@ -228,7 +232,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
         othSrNo: "",
         billingParty: "IMP",
         invoiceNo: "",
-        creditType: "N",
+        creditType: "Y",
         invoiceCategory: "SINGLE",
         isAncillary: "N",
         invoiceDate: null,
@@ -383,14 +387,14 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
         });
     };
 
-    const [paymentMode, setPaymentMode] = useState([{
-        payMode: '',
-        chequeNo: '',
-        chequeDate: null,
-        bankDetails: '',
-        amount: '',
-        status: ''
-    }])
+    // const [paymentMode, setPaymentMode] = useState([{
+    //     payMode: '',
+    //     chequeNo: '',
+    //     chequeDate: null,
+    //     bankDetails: '',
+    //     amount: '',
+    //     status: ''
+    // }])
 
     const [tdsDeductee, setTdsDeductee] = useState('');
 
@@ -438,205 +442,205 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
     const [balanceAmt, setBalanceAmt] = useState('');
     const [advanceAmt, setAdvanceAmt] = useState('');
 
-    const handlePaymentModeChange = (e, index) => {
-        const { name, value } = e.target;
-        let sanitizeValue = value;
+    // const handlePaymentModeChange = (e, index) => {
+    //     const { name, value } = e.target;
+    //     let sanitizeValue = value;
 
-        if (name === 'amount') {
-            sanitizeValue = handleInputChange(value, 13, 2)
-        }
+    //     if (name === 'amount') {
+    //         sanitizeValue = handleInputChange(value, 13, 2)
+    //     }
 
-        // Function to round values to 3 decimal places
-        const roundToThree = (num) => Math.round(num * 1000) / 1000;
+    //     // Function to round values to 3 decimal places
+    //     const roundToThree = (num) => Math.round(num * 1000) / 1000;
 
-        if (name === 'payMode') {
-            if (tdsPerc === '') {
-                if (tdsPerc === '' && value !== 'TDS') {
+    //     if (name === 'payMode') {
+    //         if (tdsPerc === '') {
+    //             if (tdsPerc === '' && value !== 'TDS') {
 
-                    const totalAmount = paymentMode.reduce((total, item, idx) => {
-                        if (idx !== index) { // Exclude the current row
-                            const amount = parseFloat(item.amount) || 0;
-                            return total + amount;
-                        }
-                        return total;
-                    }, 0);
+    //                 const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                     if (idx !== index) { // Exclude the current row
+    //                         const amount = parseFloat(item.amount) || 0;
+    //                         return total + amount;
+    //                     }
+    //                     return total;
+    //                 }, 0);
 
-                    const amt = roundToThree(receiptAmt - totalAmount);
+    //                 const amt = roundToThree(receiptAmt - totalAmount);
 
-                    setBalanceAmt(roundToThree(balanceAmt - amt) < 0 ? 0 : roundToThree(balanceAmt - amt));
-                    setInvoiceAmt(roundToThree(totalAmount + amt));
-                    setPaymentMode((prevState) => {
-                        const updatedRows = [...prevState];
-                        updatedRows[index] = {
-                            ...updatedRows[index],
-                            amount: amt,
-                        };
-                        return updatedRows;
-                    });
-                }
-            }
-            else {
-                const tdsAmt = roundToThree((beforeTax * tdsPerc) / 100);
+    //                 setBalanceAmt(roundToThree(balanceAmt - amt) < 0 ? 0 : roundToThree(balanceAmt - amt));
+    //                 setInvoiceAmt(roundToThree(totalAmount + amt));
+    //                 setPaymentMode((prevState) => {
+    //                     const updatedRows = [...prevState];
+    //                     updatedRows[index] = {
+    //                         ...updatedRows[index],
+    //                         amount: amt,
+    //                     };
+    //                     return updatedRows;
+    //                 });
+    //             }
+    //         }
+    //         else {
+    //             const tdsAmt = roundToThree((beforeTax * tdsPerc) / 100);
 
-                if (value !== 'TDS') {
-                    const existingValue = paymentMode[index];
+    //             if (value !== 'TDS') {
+    //                 const existingValue = paymentMode[index];
 
-                    console.log('existingValue ', existingValue);
-
-
-                    if ((!existingValue) || (existingValue.amount === '' || existingValue === 0)) {
-                        const totalAmount = paymentMode.reduce((total, item, idx) => {
-                            if (idx !== index && item.payMode !== 'TDS') { // Exclude the current row
-                                const amount = parseFloat(item.amount) || 0;
-                                return total + amount;
-                            }
-                            return total;
-                        }, 0);
-
-                        const amt = roundToThree((receiptAmt - totalAmount) - tdsAmt);
-                        setBalanceAmt(roundToThree(receiptAmt - (invoiceAmt + amt)));
-                        setInvoiceAmt(roundToThree(invoiceAmt + amt));
-                        setPaymentMode((prevState) => {
-                            const updatedRows = [...prevState];
-                            updatedRows[index] = {
-                                ...updatedRows[index],
-                                amount: amt,
-                                chequeNo: '',
-                                chequeDate: null,
-                            };
-                            return updatedRows;
-                        });
-                    }
-                }
-                else {
-
-                    const tdsExist = paymentMode.find(item => item.payMode === 'TDS');
-                    console.log('tdsExist ', tdsExist);
-
-                    if (tdsExist) {
-                        toast.error("TDS amount already present!!", {
-                            autoClose: 800
-                        })
-                        return;
-                    }
-
-                    const totalAmount = paymentMode.reduce((total, item, idx) => {
-                        if (idx !== index) { // Exclude the current row
-                            const amount = parseFloat(item.amount) || 0;
-                            return total + amount;
-                        }
-                        return total;
-                    }, 0);
-                    setBalanceAmt(roundToThree((receiptAmt - totalAmount) - tdsAmt));
-                    setPaymentMode((prevState) => {
-                        const updatedRows = [...prevState];
-                        updatedRows[index] = {
-                            ...updatedRows[index],
-                            amount: tdsAmt,
-                            chequeNo: '',
-                            chequeDate: null,
-                        };
-                        return updatedRows;
-                    });
-                    setInvoiceAmt(roundToThree(invoiceAmt + tdsAmt));
-                }
-            }
-        }
-
-        if (name === 'amount') {
-            sanitizeValue = handleInputChange(value, 10, 3);
-
-            if (parseFloat(receiptAmt) < parseFloat(sanitizeValue)) {
-                setInvoiceAmt(invoiceAmt); // Retain the current invoice amount
-                // Calculate the total of all rows except the current row (index)
-                const totalAmount = paymentMode.reduce((total, item, idx) => {
-                    if (idx !== index) { // Exclude the current row
-                        const amount = parseFloat(item.amount) || 0;
-                        return total + amount;
-                    }
-                    return total;
-                }, 0);
-
-                // Add the sanitized value of the current row to the totalAmount
-                const newTotalAmount = totalAmount;
-
-                // Set the balance amount by subtracting the totalAmount from receiptAmt
-                setBalanceAmt(roundToThree(receiptAmt - newTotalAmount));
-                sanitizeValue = ''; // Reset the input value
-            }
-
-            else {
-                // Calculate totalAmount with proper rounding
-                const totalAmount = paymentMode.reduce((total, item, idx) => {
-                    const amount = idx === index
-                        ? parseFloat(sanitizeValue) || 0
-                        : parseFloat(item.amount) || 0;
-                    return total + amount;
-                }, 0);
-
-                const roundedTotalAmount = roundToThree(totalAmount);
-
-                if (parseFloat(receiptAmt) < roundedTotalAmount) {
-                    const totalAmount = paymentMode.reduce((total, item, idx) => {
-                        if (idx !== index) { // Exclude the current row
-                            const amount = parseFloat(item.amount) || 0;
-                            return total + amount;
-                        }
-                        return total;
-                    }, 0);
-
-                    // Add the sanitized value of the current row to the totalAmount
-                    const newTotalAmount = totalAmount;
-
-                    // Set the balance amount by subtracting the totalAmount from receiptAmt
-                    setBalanceAmt(roundToThree(receiptAmt - newTotalAmount));
-                    setInvoiceAmt(roundToThree(newTotalAmount));
-                    sanitizeValue = '';
-                } else {
-                    setInvoiceAmt(roundedTotalAmount);
-                    setBalanceAmt(roundToThree(receiptAmt - roundedTotalAmount));
-                }
-            }
-        }
-
-        setPaymentMode((prevState) => {
-            const updatedRows = [...prevState];
-            updatedRows[index] = {
-                ...updatedRows[index],
-                [name]: sanitizeValue,
-            };
-            return updatedRows;
-        });
-    };
+    //                 console.log('existingValue ', existingValue);
 
 
+    //                 if ((!existingValue) || (existingValue.amount === '' || existingValue === 0)) {
+    //                     const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                         if (idx !== index && item.payMode !== 'TDS') { // Exclude the current row
+    //                             const amount = parseFloat(item.amount) || 0;
+    //                             return total + amount;
+    //                         }
+    //                         return total;
+    //                     }, 0);
+
+    //                     const amt = roundToThree((receiptAmt - totalAmount) - tdsAmt);
+    //                     setBalanceAmt(roundToThree(receiptAmt - (invoiceAmt + amt)));
+    //                     setInvoiceAmt(roundToThree(invoiceAmt + amt));
+    //                     setPaymentMode((prevState) => {
+    //                         const updatedRows = [...prevState];
+    //                         updatedRows[index] = {
+    //                             ...updatedRows[index],
+    //                             amount: amt,
+    //                             chequeNo: '',
+    //                             chequeDate: null,
+    //                         };
+    //                         return updatedRows;
+    //                     });
+    //                 }
+    //             }
+    //             else {
+
+    //                 const tdsExist = paymentMode.find(item => item.payMode === 'TDS');
+    //                 console.log('tdsExist ', tdsExist);
+
+    //                 if (tdsExist) {
+    //                     toast.error("TDS amount already present!!", {
+    //                         autoClose: 800
+    //                     })
+    //                     return;
+    //                 }
+
+    //                 const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                     if (idx !== index) { // Exclude the current row
+    //                         const amount = parseFloat(item.amount) || 0;
+    //                         return total + amount;
+    //                     }
+    //                     return total;
+    //                 }, 0);
+    //                 setBalanceAmt(roundToThree((receiptAmt - totalAmount) - tdsAmt));
+    //                 setPaymentMode((prevState) => {
+    //                     const updatedRows = [...prevState];
+    //                     updatedRows[index] = {
+    //                         ...updatedRows[index],
+    //                         amount: tdsAmt,
+    //                         chequeNo: '',
+    //                         chequeDate: null,
+    //                     };
+    //                     return updatedRows;
+    //                 });
+    //                 setInvoiceAmt(roundToThree(invoiceAmt + tdsAmt));
+    //             }
+    //         }
+    //     }
+
+    //     if (name === 'amount') {
+    //         sanitizeValue = handleInputChange(value, 10, 3);
+
+    //         if (parseFloat(receiptAmt) < parseFloat(sanitizeValue)) {
+    //             setInvoiceAmt(invoiceAmt); // Retain the current invoice amount
+    //             // Calculate the total of all rows except the current row (index)
+    //             const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                 if (idx !== index) { // Exclude the current row
+    //                     const amount = parseFloat(item.amount) || 0;
+    //                     return total + amount;
+    //                 }
+    //                 return total;
+    //             }, 0);
+
+    //             // Add the sanitized value of the current row to the totalAmount
+    //             const newTotalAmount = totalAmount;
+
+    //             // Set the balance amount by subtracting the totalAmount from receiptAmt
+    //             setBalanceAmt(roundToThree(receiptAmt - newTotalAmount));
+    //             sanitizeValue = ''; // Reset the input value
+    //         }
+
+    //         else {
+    //             // Calculate totalAmount with proper rounding
+    //             const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                 const amount = idx === index
+    //                     ? parseFloat(sanitizeValue) || 0
+    //                     : parseFloat(item.amount) || 0;
+    //                 return total + amount;
+    //             }, 0);
+
+    //             const roundedTotalAmount = roundToThree(totalAmount);
+
+    //             if (parseFloat(receiptAmt) < roundedTotalAmount) {
+    //                 const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //                     if (idx !== index) { // Exclude the current row
+    //                         const amount = parseFloat(item.amount) || 0;
+    //                         return total + amount;
+    //                     }
+    //                     return total;
+    //                 }, 0);
+
+    //                 // Add the sanitized value of the current row to the totalAmount
+    //                 const newTotalAmount = totalAmount;
+
+    //                 // Set the balance amount by subtracting the totalAmount from receiptAmt
+    //                 setBalanceAmt(roundToThree(receiptAmt - newTotalAmount));
+    //                 setInvoiceAmt(roundToThree(newTotalAmount));
+    //                 sanitizeValue = '';
+    //             } else {
+    //                 setInvoiceAmt(roundedTotalAmount);
+    //                 setBalanceAmt(roundToThree(receiptAmt - roundedTotalAmount));
+    //             }
+    //         }
+    //     }
+
+    //     setPaymentMode((prevState) => {
+    //         const updatedRows = [...prevState];
+    //         updatedRows[index] = {
+    //             ...updatedRows[index],
+    //             [name]: sanitizeValue,
+    //         };
+    //         return updatedRows;
+    //     });
+    // };
 
 
-    const addPaymentMode = () => {
-        setPaymentMode([...paymentMode, {
-            payMode: '',
-            chequeNo: '',
-            chequeDate: null,
-            bankDetails: '',
-            amount: '',
-            status: ''
-        }]);
-    };
 
-    const removePaymentMode = (index, amount) => {
-        setPaymentMode((prevState) => prevState.filter((_, i) => i !== index));
-        const roundToThree = (num) => Math.round(num * 1000) / 1000;
 
-        const totalAmount = paymentMode.reduce((total, item, idx) => {
-            if (idx !== index) { // Exclude the current row
-                const amount = parseFloat(item.amount) || 0;
-                return total + amount;
-            }
-            return total;
-        }, 0);
-        setBalanceAmt(roundToThree(receiptAmt - totalAmount));
-        setInvoiceAmt(roundToThree(invoiceAmt - amount));
-    };
+    // const addPaymentMode = () => {
+    //     setPaymentMode([...paymentMode, {
+    //         payMode: '',
+    //         chequeNo: '',
+    //         chequeDate: null,
+    //         bankDetails: '',
+    //         amount: '',
+    //         status: ''
+    //     }]);
+    // };
+
+    // const removePaymentMode = (index, amount) => {
+    //     setPaymentMode((prevState) => prevState.filter((_, i) => i !== index));
+    //     const roundToThree = (num) => Math.round(num * 1000) / 1000;
+
+    //     const totalAmount = paymentMode.reduce((total, item, idx) => {
+    //         if (idx !== index) { // Exclude the current row
+    //             const amount = parseFloat(item.amount) || 0;
+    //             return total + amount;
+    //         }
+    //         return total;
+    //     }, 0);
+    //     setBalanceAmt(roundToThree(receiptAmt - totalAmount));
+    //     setInvoiceAmt(roundToThree(invoiceAmt - amount));
+    // };
 
     const handleInvDate = (date) => {
         setInvDate(date);
@@ -710,7 +714,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             cha: "",
             chaSrNo: "",
             sez: "N",
-            taxApplicable: "N",
+            taxApplicable: "Y",
             onAccountOf: "",
             accSrNo: "",
             comments: "",
@@ -718,7 +722,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             othSrNo: "",
             billingParty: "IMP",
             invoiceNo: "",
-            creditType: "N",
+            creditType: "Y",
             invoiceCategory: "SINGLE",
             isAncillary: "N",
             invoiceDate: null,
@@ -758,14 +762,14 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
         setTdsPerc('');
         setInvDate(null);
         setAdvanceAmt('');
-        setPaymentMode([{
-            payMode: '',
-            chequeNo: '',
-            chequeDate: null,
-            bankDetails: '',
-            amount: '',
-            status: ''
-        }])
+        // setPaymentMode([{
+        //     payMode: '',
+        //     chequeNo: '',
+        //     chequeDate: null,
+        //     bankDetails: '',
+        //     amount: '',
+        //     status: ''
+        // }])
 
         setContainerData([{
             assesmentId: '',
@@ -831,48 +835,48 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
         const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD') : '';
 
         setLoading(true);
-         axios.get(`${ipaddress}party/getPartyDataWithCustomerType`, {
-        params: {
-            cid: companyid,
-            bid: branchId,
-            pid: searchImpId
-        },
-        headers: {
-            Authorization: `Bearer ${jwtToken}`
-        }
-    })
-    .then((customerResponse) => {
-        console.log("Customer Type Response---", customerResponse.data);
-        console.log("Customer Type---", customerResponse.data.customerType);
-        
-        const isRegistered = customerResponse.data.customerType && 
-            customerResponse.data.customerType === "Registered";
-        
-        // Now fetch the assessment data
-        return axios.get(`${ipaddress}assessment/searcBeforeSavePeriodicInvoice`, {
+
+        axios.get(`${ipaddress}party/getPartyDataWithCustomerType`, {
             params: {
                 cid: companyid,
                 bid: branchId,
-                id: searchImpId,
-                startDate: formattedStartDate,
-                endDate: formattedEndDate
+                pid: searchImpId
             },
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
-        }).then((response) => {
-            return { assessmentResponse: response, isRegistered };
-        });
-    })
-          .then(({ assessmentResponse, isRegistered }) => {
-                setLoading(false);
+        })
 
+            .then((customerResponse) => {
+                console.log("Customer Type Response---", customerResponse.data);
+                console.log("Customer Type---", customerResponse.data.customerType);
+
+                const isRegistered = customerResponse.data.customerType &&
+                    customerResponse.data.customerType === "Registered";
+                return axios.get(`${ipaddress}assessmentPeriodicCmdtyConProforma/searcBeforeSavePeriodicInvoice`, {
+                    params: {
+                        cid: companyid,
+                        bid: branchId,
+                        id: searchImpId,
+                        startDate: formattedStartDate,
+                        endDate: formattedEndDate
+                    },
+                    headers: {
+                        Authorization: `Bearer ${jwtToken}`
+                    }
+                }).then((assessmentResponse) => {
+                    return { assessmentResponse, isRegistered };
+                });
+            })
+            .then((result) => {
+                setLoading(false);
+                const { assessmentResponse, isRegistered } = result;
                 const data = assessmentResponse.data;
                 const singleData = data[0];
 
                 setCheckInvDate('N');
                 setInvDate(null);
-                 const taxApplicableValue = isRegistered ? "Y" : "N";
+                const taxApplicableValue = isRegistered ? "Y" : "N";
                 setAssessmentData({
                     companyId: "",
                     branchId: "",
@@ -910,7 +914,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
                     othSrNo: "",
                     billingParty: "IMP",
                     invoiceNo: "",
-                    creditType: "N",
+                    creditType: "Y",
                     invoiceCategory: "SINGLE",
                     isAncillary: "N",
                     invoiceDate: null,
@@ -1005,7 +1009,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             const filterdata = containerData.filter(item => item.jobNo);
 
             if (filterdata.length === 0) {
-                toast.error("Container data not found", {
+                toast.error("Commodity data not found", {
                     autoClose: 800
                 })
                 return;
@@ -1014,7 +1018,7 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             const data = containerData.filter(item => item.checkDate === 'Y');
 
             if (data.length === 0) {
-                toast.error("Please select container data", {
+                toast.error("Please select Commodity data", {
                     autoClose: 800
                 })
                 return;
@@ -1023,7 +1027,8 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             for (let item of containerData) {
                 if (item.checkDate === "Y") {
                     if (item.invoiceDate === null) {
-                        toast.error("Please select invoice validity date for container no " + item.containerNo, {
+                        toast.error("Please select invoice validity date for Receiving Ids " + item.receivingId, {
+                            // toast.error("Please select invoice validity date for Commodity Details " + item.containerStatus, {
                             autoClose: 800
                         });
                         return; // This will exit the enclosing function
@@ -1032,13 +1037,13 @@ export default function GeneralPeriodicInvoice({ activeTab }) {
             }
 
             setLoading(true);
-console.log('data ',data)
+
             const formData = {
                 assessmentData: assessmentData,
                 containerData: data
             }
 
-            axios.post(`${ipaddress}assessment/saveContainerWiseGeneralPeriodicAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
+            axios.post(`${ipaddress}assessmentPeriodicCmdtyConProforma/saveContainerWiseGeneralPeriodicAssessmentData?cid=${companyid}&bid=${branchId}&user=${userId}`, formData, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 }
@@ -1092,7 +1097,7 @@ console.log('data ',data)
                         cha: singleData[30] || "",
                         chaSrNo: singleData[31] || "",
                         sez: singleData[36] || "N",
-                        taxApplicable: singleData[37] || "N",
+                        taxApplicable: singleData[37] || "Y",
                         onAccountOf: singleData[38] || "",
                         accSrNo: singleData[40] || "",
                         comments: singleData[43] || "",
@@ -1100,7 +1105,7 @@ console.log('data ',data)
                         othSrNo: singleData[46] || "",
                         billingParty: singleData[49] || "",
                         invoiceNo: "",
-                        creditType: singleData[51] || "N",
+                        creditType: singleData[51] || "Y",
                         invoiceCategory: singleData[52] || "SINGLE",
                         isAncillary: singleData[53] || "N",
                         invoiceDate: null,
@@ -1164,14 +1169,14 @@ console.log('data ',data)
                     })))
 
                     if (singleData[51] === "Y") {
-                        setPaymentMode([{
-                            payMode: 'CREDIT',
-                            chequeNo: '',
-                            chequeDate: null,
-                            bankDetails: '',
-                            amount: response.data.finaltotalRateWithTax,
-                            status: ''
-                        }])
+                        // setPaymentMode([{
+                        //     payMode: 'CREDIT',
+                        //     chequeNo: '',
+                        //     chequeDate: null,
+                        //     bankDetails: '',
+                        //     amount: response.data.finaltotalRateWithTax,
+                        //     status: ''
+                        // }])
 
                         setInvoiceAmt(response.data.finaltotalRateWithTax);
                         setBalanceAmt('');
@@ -1185,14 +1190,14 @@ console.log('data ',data)
                             setAdvanceAmt(advance[4]);
                         }
 
-                        setPaymentMode([{
-                            payMode: 'ADVANCE',
-                            chequeNo: '',
-                            chequeDate: null,
-                            bankDetails: '',
-                            amount: response.data.finaltotalRateWithTax,
-                            status: ''
-                        }])
+                        // setPaymentMode([{
+                        //     payMode: 'ADVANCE',
+                        //     chequeNo: '',
+                        //     chequeDate: null,
+                        //     bankDetails: '',
+                        //     amount: response.data.finaltotalRateWithTax,
+                        //     status: ''
+                        // }])
                         setBalanceAmt('');
 
                         setInvoiceAmt(response.data.finaltotalRateWithTax);
@@ -1268,7 +1273,7 @@ console.log('data ',data)
         negeotiable: '', // String for negeotiable
         containerNo: '', // String for containerNo
         containerStatus: '', // String for containerStatus
-        commodityDescription: '', // String for commodityDescription
+        commodityDescription: assessmentData.commodityDescription, // String for commodityDescription
         actualNoOfPackages: 0, // BigDecimal for actualNoOfPackages (use number in JS)
         gateOutId: '', // String for gateOutId
         gatePassNo: '', // String for gatePassNo
@@ -1324,7 +1329,7 @@ console.log('data ',data)
 
     const getAllCfInvSrvAnxList = async (companyId, branchId, assesmentId, assesmentLineNo, containerNo, profitcentreId) => {
         try {
-            const response = await FinanceService.getAllCfInvSrvAnxList(companyId, branchId, assesmentId, assesmentLineNo, containerNo, profitcentreId, jwtToken);
+            const response = await FinanceService.getAllCfInvSrvAnxListForPeriodicCommwise(companyId, branchId, assesmentId, assesmentLineNo, containerNo, profitcentreId, jwtToken);
 
             setCfinvsrvanxData(response.data);
         } catch {
@@ -1350,6 +1355,7 @@ console.log('data ',data)
             invoiceUptoWeek: item.invoiceDate,
             partyId: assessmentData.partyId,
             startDate: item.gateInDate,
+            commodityDescription: assessmentData.commodityDescription
         }));
         setIsModalOpenForAddService(true);
     }
@@ -1734,6 +1740,8 @@ console.log('data ',data)
         try {
             const response = await FinanceService.getAllContainerListOfAssessMentSheetGeneralCon(companyId, branchId, assesmentId, profitcentreId, jwtToken);
             setContainerDataServiceWise(response.data);
+            console.log("commodityDescription" + response.data);
+
         } catch {
             setContainerDataServiceWise([]);
         }
@@ -1770,7 +1778,7 @@ console.log('data ',data)
             else if (assessmentData.billingParty === "OTH") {
                 partyId = assessmentData.othPartyId;
             }
-            axios.get(`${ipaddress}assessment/getDataByAfterAssessmentForGeneralCon?cid=${companyid}&bid=${branchId}&id=${assessmentData.assesmentId}&partyId=${partyId}&creditType=${assessmentData.creditType}&type=${selectedInvoice}`, {
+            axios.get(`${ipaddress}assessmentPeriodicCmdtyConProforma/getDataByAfterAssessmentForGeneralCon?cid=${companyid}&bid=${branchId}&id=${assessmentData.assesmentId}&partyId=${partyId}&creditType=${assessmentData.creditType}&type=${selectedInvoice}`, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 }
@@ -1830,14 +1838,14 @@ console.log('data ',data)
                         })))
 
                         if (singleData[51] === "Y") {
-                            setPaymentMode([{
-                                payMode: 'CREDIT',
-                                chequeNo: '',
-                                chequeDate: null,
-                                bankDetails: '',
-                                amount: response.data.finaltotalRateWithTax,
-                                status: ''
-                            }])
+                            // setPaymentMode([{
+                            //     payMode: 'CREDIT',
+                            //     chequeNo: '',
+                            //     chequeDate: null,
+                            //     bankDetails: '',
+                            //     amount: response.data.finaltotalRateWithTax,
+                            //     status: ''
+                            // }])
 
                             setInvoiceAmt(response.data.finaltotalRateWithTax);
                             setBalanceAmt('');
@@ -1851,14 +1859,14 @@ console.log('data ',data)
                                 setAdvanceAmt(advance[4]);
                             }
 
-                            setPaymentMode([{
-                                payMode: 'ADVANCE',
-                                chequeNo: '',
-                                chequeDate: null,
-                                bankDetails: '',
-                                amount: response.data.finaltotalRateWithTax,
-                                status: ''
-                            }])
+                            // setPaymentMode([{
+                            //     payMode: 'ADVANCE',
+                            //     chequeNo: '',
+                            //     chequeDate: null,
+                            //     bankDetails: '',
+                            //     amount: response.data.finaltotalRateWithTax,
+                            //     status: ''
+                            // }])
                             setBalanceAmt('');
 
                             setInvoiceAmt(response.data.finaltotalRateWithTax);
@@ -1905,14 +1913,14 @@ console.log('data ',data)
                         setTdsDeductee(singleData[49]);
 
                         if (singleData[51] === "Y") {
-                            setPaymentMode([{
-                                payMode: 'CREDIT',
-                                chequeNo: '',
-                                chequeDate: null,
-                                bankDetails: '',
-                                amount: response.data.finaltotalRateWithTax,
-                                status: ''
-                            }])
+                            // setPaymentMode([{
+                            //     payMode: 'CREDIT',
+                            //     chequeNo: '',
+                            //     chequeDate: null,
+                            //     bankDetails: '',
+                            //     amount: response.data.finaltotalRateWithTax,
+                            //     status: ''
+                            // }])
 
                             setInvoiceAmt(response.data.finaltotalRateWithTax);
                             setBalanceAmt('');
@@ -1926,14 +1934,14 @@ console.log('data ',data)
                                 setAdvanceAmt(advance[4]);
                             }
 
-                            setPaymentMode([{
-                                payMode: 'ADVANCE',
-                                chequeNo: '',
-                                chequeDate: null,
-                                bankDetails: '',
-                                amount: response.data.finaltotalRateWithTax,
-                                status: ''
-                            }])
+                            // setPaymentMode([{
+                            //     payMode: 'ADVANCE',
+                            //     chequeNo: '',
+                            //     chequeDate: null,
+                            //     bankDetails: '',
+                            //     amount: response.data.finaltotalRateWithTax,
+                            //     status: ''
+                            // }])
                             setBalanceAmt('');
 
                             setInvoiceAmt(response.data.finaltotalRateWithTax);
@@ -2109,7 +2117,7 @@ console.log('data ',data)
                 Cfinvsrvanx: selectedContainers
             }
 
-            axios.post(`${ipaddress}assessment/saveAddServiceForgeneralCon`, formData, {
+            axios.post(`${ipaddress}assessmentPeriodicCmdtyConProforma/saveAddServiceForgeneralCon`, formData, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 },
@@ -2324,27 +2332,27 @@ console.log('data ',data)
 
     const saveProcess = () => {
 
-        for (let i = 0; i < paymentMode.length; i++) {
-            const { chequeNo, chequeDate, amount, payMode } = paymentMode[i];
+        // for (let i = 0; i < paymentMode.length; i++) {
+        //     const { chequeNo, chequeDate, amount, payMode } = paymentMode[i];
 
 
 
-            // Check if chequeNo and chequeDate are missing for modes other than CASH and TDS
-            if ((!chequeNo || !chequeDate) && payMode !== 'CASH' && payMode !== 'ADVANCE' && payMode !== 'CREDIT' && payMode !== 'TDS') {
-                toast.error(`Error: Cheque details are missing for payment mode entry ${i + 1}.`, {
-                    autoClose: 800,
-                });
-                return; // Stop the process if validation fails
-            }
+        //     // Check if chequeNo and chequeDate are missing for modes other than CASH and TDS
+        //     if ((!chequeNo || !chequeDate) && payMode !== 'CASH' && payMode !== 'ADVANCE' && payMode !== 'CREDIT' && payMode !== 'TDS') {
+        //         toast.error(`Error: Cheque details are missing for payment mode entry ${i + 1}.`, {
+        //             autoClose: 800,
+        //         });
+        //         return; // Stop the process if validation fails
+        //     }
 
 
-            if (!amount) {
-                toast.error(`Error: Amount is required for payment mode entry ${i + 1}.`, {
-                    autoClose: 800,
-                });
-                return; // Stop the process if validation fails
-            }
-        }
+        //     if (!amount) {
+        //         toast.error(`Error: Amount is required for payment mode entry ${i + 1}.`, {
+        //             autoClose: 800,
+        //         });
+        //         return; // Stop the process if validation fails
+        //     }
+        // }
 
 
         if (receiptAmt !== invoiceAmt) {
@@ -2354,45 +2362,45 @@ console.log('data ',data)
             return; // Stop the process if validation fails
         }
 
-        if (assessmentData.creditType === 'Y') {
-            const creditRed = paymentMode.filter(item => item.payMode === "CREDIT");
+        // if (assessmentData.creditType === 'Y') {
+        //     const creditRed = paymentMode.filter(item => item.payMode === "CREDIT");
 
-            const creditAmt = creditRed.reduce((total, item) => total + parseFloat(item.amount), 0);
+        //     const creditAmt = creditRed.reduce((total, item) => total + parseFloat(item.amount), 0);
 
-            if (assessmentData.creditAllowed < creditAmt) {
-                toast.error(`The credit amount exceeds the allowed credit limit.`, {
-                    autoClose: 800,
-                });
-                return; // Stop the process if validation fails
-            }
-        }
+        //     if (assessmentData.creditAllowed < creditAmt) {
+        //         toast.error(`The credit amount exceeds the allowed credit limit.`, {
+        //             autoClose: 800,
+        //         });
+        //         return; // Stop the process if validation fails
+        //     }
+        // }
 
-        if (assessmentData.creditType === 'P') {
-            const creditRed = paymentMode.filter(item => item.payMode === "ADVANCE");
+        // if (assessmentData.creditType === 'P') {
+        //     const creditRed = paymentMode.filter(item => item.payMode === "ADVANCE");
 
-            const creditAmt = creditRed.reduce((total, item) => total + parseFloat(item.amount), 0);
+        //     const creditAmt = creditRed.reduce((total, item) => total + parseFloat(item.amount), 0);
 
-            if (advanceAmt < creditAmt) {
-                toast.error(`The advance amount exceeds the remaining advance balance of the billing party.`, {
-                    autoClose: 800,
-                });
-                return; // Stop the process if validation fails
-            }
-        }
+        //     if (advanceAmt < creditAmt) {
+        //         toast.error(`The advance amount exceeds the remaining advance balance of the billing party.`, {
+        //             autoClose: 800,
+        //         });
+        //         return; // Stop the process if validation fails
+        //     }
+        // }
 
 
 
         const formData = {
             assessmentData: assessmentData,
             containerData: containerData,
-            paymentDto: paymentMode,
+            // paymentDto: paymentMode,
             tdsDeductee: tdsDeductee,
             tdsPerc: tdsPerc,
         }
 
         setLoading(true);
 
-        axios.post(`${ipaddress}assessment/saveContainerWiseGeneralPeriodicInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
+        axios.post(`${ipaddress}assessmentPeriodicCmdtyConProforma/saveContainerWiseGeneralPeriodicInvoiceReceipt?cid=${companyid}&bid=${branchId}&user=${userId}&creditStatus=${assessmentData.creditType}`, formData, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2434,7 +2442,7 @@ console.log('data ',data)
                     cha: singleData[30] || "",
                     chaSrNo: singleData[31] || "",
                     sez: singleData[36] || "N",
-                    taxApplicable: singleData[37] || "N",
+                    taxApplicable: singleData[37] || "Y",
                     onAccountOf: singleData[38] || "",
                     accSrNo: singleData[40] || "",
                     comments: singleData[43] || "",
@@ -2442,7 +2450,7 @@ console.log('data ',data)
                     othSrNo: singleData[46] || "",
                     billingParty: singleData[49] || "",
                     invoiceNo: singleData[50] || "",
-                    creditType: singleData[51] || "N",
+                    creditType: singleData[51] || "Y",
                     invoiceCategory: singleData[52] || "SINGLE",
                     isAncillary: singleData[53] || "N",
                     invoiceDate: singleData[54] === null ? null : new Date(singleData[54]),
@@ -2521,14 +2529,14 @@ console.log('data ',data)
                 const payData = response.data.existingSrvFin;
 
 
-                setPaymentMode(payData.map((item) => ({
-                    payMode: item.paymentMode || '',
-                    chequeNo: item.chequeNo || '',
-                    chequeDate: item.chequeDate === null ? null : new Date(item.chequeDate),
-                    bankDetails: item.bankName || '',
-                    amount: item.paymentMode !== "CREDIT" ? item.documentAmt : item.creditAmount || '',
-                    status: item.status || ''
-                })))
+                // setPaymentMode(payData.map((item) => ({
+                //     payMode: item.paymentMode || '',
+                //     chequeNo: item.chequeNo || '',
+                //     chequeDate: item.chequeDate === null ? null : new Date(item.chequeDate),
+                //     bankDetails: item.bankName || '',
+                //     amount: item.paymentMode !== "CREDIT" ? item.documentAmt : item.creditAmount || '',
+                //     status: item.status || ''
+                // })))
 
                 if (singleData[51] === "P") {
                     const advance = response.data.advanceData;
@@ -2571,7 +2579,7 @@ console.log('data ',data)
 
     const searchExportEmptyContainerGateIn = (id) => {
         setLoading(true);
-        axios.get(`${ipaddress}assessment/searchPeriodicGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&val=${id}&type=${selectedInvoice}`, {
+        axios.get(`${ipaddress}assessmentPeriodicCmdtyConProforma/searchPeriodicGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&val=${id}&type=${selectedInvoice}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2594,7 +2602,7 @@ console.log('data ',data)
 
 
     const getSelectedInvoiceData = (assId, invId) => {
-        axios.get(`${ipaddress}assessment/getSelectedGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&assId=${assId}&invId=${invId}&type=${selectedInvoice}`, {
+        axios.get(`${ipaddress}assessmentPeriodicCmdtyConProforma/getSelectedGeneralConInvoiceData?cid=${companyid}&bid=${branchId}&assId=${assId}&invId=${invId}&type=${selectedInvoice}`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
@@ -2633,7 +2641,7 @@ console.log('data ',data)
                     cha: singleData[30] || "",
                     chaSrNo: singleData[31] || "",
                     sez: singleData[36] || "N",
-                    taxApplicable: singleData[37] || "N",
+                    taxApplicable: singleData[37] || "Y",
                     onAccountOf: singleData[38] || "",
                     accSrNo: singleData[40] || "",
                     comments: singleData[43] || "",
@@ -2641,7 +2649,7 @@ console.log('data ',data)
                     othSrNo: singleData[46] || "",
                     billingParty: singleData[49] || "",
                     invoiceNo: singleData[50] || "",
-                    creditType: singleData[51] || "N",
+                    creditType: singleData[51] || "Y",
                     invoiceCategory: singleData[52] || "SINGLE",
                     isAncillary: singleData[53] || "N",
                     invoiceDate: singleData[54] === null ? null : new Date(singleData[54]),
@@ -2759,14 +2767,14 @@ console.log('data ',data)
 
                 const payData = response.data.existingSrvFin;
 
-                setPaymentMode(payData.map((item) => ({
-                    payMode: item.paymentMode || '',
-                    chequeNo: item.chequeNo || '',
-                    chequeDate: item.chequeDate === null ? null : new Date(item.chequeDate),
-                    bankDetails: item.bankName || '',
-                    amount: item.paymentMode !== "CREDIT" ? item.documentAmt : item.creditAmount || '',
-                    status: item.status || ''
-                })))
+                // setPaymentMode(payData.map((item) => ({
+                //     payMode: item.paymentMode || '',
+                //     chequeNo: item.chequeNo || '',
+                //     chequeDate: item.chequeDate === null ? null : new Date(item.chequeDate),
+                //     bankDetails: item.bankName || '',
+                //     amount: item.paymentMode !== "CREDIT" ? item.documentAmt : item.creditAmount || '',
+                //     status: item.status || ''
+                // })))
 
                 if (singleData[51] === "P") {
                     const advance = response.data.advanceData;
@@ -2833,7 +2841,7 @@ console.log('data ',data)
 
         setLoading(true);
 
-        axios.post(`${ipaddress}importinvoiceprint/printContainerWiseGeneralPeriodicInvoicepdf`, null, {
+        axios.post(`${ipaddress}importinvoiceproformaprint/printContainerWiseGeneralPeriodicCommdtyInvoicepdfFor`, null, {
             headers: {
 
                 Authorization: `Bearer ${jwtToken}`
@@ -2869,8 +2877,6 @@ console.log('data ',data)
             });
 
     }
-
-
     const [isModalOpenForAddDocuments, setIsModalOpenForAddDocuments] = useState(false);
     const [savedFiles, setSavedFiles] = useState([]);
     const [docId, setDocId] = useState('');
@@ -3152,6 +3158,40 @@ console.log('data ',data)
         }
     };
 
+    const generateInvoice = async () => {
+        try {
+            setLoading(true);
+            await axios.post(`${ipaddress}assessmentPeriodicCmdtyConProforma/generateInvoice`, null, {
+                params: {
+                    cid: companyid,
+                    bid: branchId,
+                    assId: assessmentData.assesmentId,
+                    invId: assessmentData.invoiceNo,
+                    user: userId
+                },
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                }
+            })
+                .then((response) => {
+                    toast.success(response.data, {
+                        autoClose: 800
+                    })
+                })
+                .catch((error) => {
+                    toast.error(error.response.data, {
+                        autoClose: 800
+                    })
+                })
+
+        } catch (error) {
+
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div>
             {loading && (
@@ -3300,13 +3340,13 @@ console.log('data ',data)
                 }} >
 
 
-                    <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
-                        icon={faFileAlt}
-                        style={{
-                            marginRight: '8px',
-                            color: 'white',
-                        }}
-                    />Upload Documents</h5>
+                    {/* <h5 className="pageHead" style={{ fontFamily: 'Your-Heading-Font', color: 'white' }} > <FontAwesomeIcon
+            icon={faFileAlt}
+            style={{
+              marginRight: '8px',
+              color: 'white',
+            }}
+          />Upload Documents</h5> */}
 
                 </ModalHeader>
                 <ModalBody style={{ backgroundImage: 'url(https://img.freepik.com/free-vector/gradient-wavy-background_23-2149123392.jpg?t=st=1694859409~exp=1694860009~hmac=b397945a9c2d45405ac64956165f76bd10a0eff99334c52cd4c88d4162aad58e)', backgroundSize: 'cover' }} >
@@ -3731,8 +3771,8 @@ console.log('data ',data)
                                             onChange={handleSelectAllToggleContainer} />
                                     </th>
                                     <th scope="col">Sr No</th>
-                                    <th scope="col">ContainerNo</th>
-                                    <th scope="col">Size/Type</th>
+                                    <th scope="col">Commodity</th>
+                                    {/* <th scope="col">Size/Type</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -3751,11 +3791,11 @@ console.log('data ',data)
                                             </td>
                                             <td>{index + 1}</td>
                                             <td>
-                                                {item.containerNo}
+                                                {assessmentData.commodityDescription}
                                             </td>
-                                            <td>
+                                            {/* <td>
                                                 {item.containerSize} / {item.containerType}
-                                            </td>
+                                            </td> */}
 
 
                                         </tr>
@@ -3811,7 +3851,8 @@ console.log('data ',data)
                         <Col md={3}>
                             <FormGroup>
                                 <label className="forlabel bold-label" htmlFor="sbRequestId">
-                                    Container No
+                                    {/* Container No */}
+                                    Commodity Description
                                 </label>
                                 <input
                                     className="form-control"
@@ -3819,7 +3860,7 @@ console.log('data ',data)
                                     id="service"
                                     disabled
                                     name='containerNo'
-                                    value={Cfinvsrvanx.containerNo}
+                                    value={Cfinvsrvanx.commodityDescription}
                                 />
                             </FormGroup>
                         </Col>
@@ -4434,7 +4475,7 @@ console.log('data ',data)
                             id="creditType"
                             name='creditType'
                             value={assessmentData.creditType}
-                            disabled={assessmentData.assesmentId !== ''}
+                            disabled
                             onChange={(e) => setAssessmentData({
                                 ...assessmentData,
                                 creditType: e.target.value
@@ -4873,7 +4914,6 @@ console.log('data ',data)
                         />
                         Print
                     </button>
-
                     <button
                         className="btn btn-outline-primary btn-margin newButton"
                         id="submitbtn2"
@@ -4883,11 +4923,20 @@ console.log('data ',data)
                         <FontAwesomeIcon icon={faUpload} style={{ marginRight: "5px" }} />
                         Upload Documents
                     </button>
+                    <button
+                        className="btn btn-outline-primary btn-margin newButton"
+                        id="submitbtn2"
+                        onClick={() => generateInvoice()}
+                        disabled={!assessmentData.invoiceNo}
+                    >
+                        <FontAwesomeIcon icon={faGear} style={{ marginRight: "5px" }} />
+                        Generate Invoice
+                    </button>
 
 
                 </Col>
             </Row>
-            <div id="datepicker-portal11"></div>
+            <div id="datepicker-portal16"></div>
             <div className="table-responsive mt-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
                 <Table className="table table-bordered" style={{ border: '2px solid black' }}>
                     <thead>
@@ -4904,11 +4953,15 @@ console.log('data ',data)
                                     onChange={handleCurrentDateCheckBox}
                                 />
                             </th>
-                            <th scope="col" className="text-center" style={{ color: "black" }}>
+                            {/* <th scope="col" className="text-center" style={{ color: "black" }}>
                                 Container No
                             </th>
+                             
                             <th scope="col" className="text-center" style={{ color: "black" }}>
                                 Size / Type
+                            </th> */}
+                            <th scope="col" className="text-center" style={{ color: "black" }}>
+                                Commodity
                             </th>
                             <th scope="col" className="text-center" style={{ color: "black", minWidth: 150 }}>
                                 Receiving Id
@@ -4968,7 +5021,6 @@ console.log('data ',data)
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td></td>
                             <td scope="col" className="text-center" style={{ color: "black" }}>
                                 <div style={{ position: 'relative', width: 150 }}>
                                     <DatePicker
@@ -4978,7 +5030,7 @@ console.log('data ',data)
                                         name='invDate'
                                         dateFormat="dd/MM/yyyy HH:mm"
                                         showTimeInput
-                                        portalId="datepicker-portal11" // Add this line
+                                        portalId="datepicker-portal16" // Add this line
                                         disabled={assessmentData.assesmentId !== ''}
                                         popperPlacement="left-start"
                                         className="form-control border-right-0 InputField"
@@ -5011,10 +5063,14 @@ console.log('data ',data)
                                         onChange={(e) => handleSelectDateCheckBox(e, index)}
                                     />
                                 </td>
-                                <td>{item.containerNo}</td>
+                                {/* <td>{item.containerNo}</td>
+                                
                                 <td>
                                     {item.containerSize} {item.containerType}
-                                </td>
+                                </td> */}
+
+                                <td>{item.containerStatus}</td>
+
                                 <td>
                                     {item.receivingId}
                                 </td>
@@ -5071,7 +5127,7 @@ console.log('data ',data)
                                             name='invoiceDate'
                                             onChange={(date) => handleSelectInvDate(date, index)}
                                             dateFormat="dd/MM/yyyy HH:mm"
-                                            portalId="datepicker-portal11" // Add this line
+                                            portalId="datepicker-portal16" // Add this line
 
                                             minDate={(() => {
                                                 const date = new Date(item.lastInvoiceUptoDate === null ? item.gateInDate : item.lastInvoiceUptoDate);
@@ -5262,7 +5318,7 @@ console.log('data ',data)
                                 <span style={{ color: 'red' }}>The TDS will be deducted as per the applicable TDS percentage.</span>
                             </Row>
                         )}
-                        <Row className='text-center'>
+                        {/* <Row className='text-center'>
                             <Col>
                                 <button
                                     className="btn btn-outline-primary btn-margin newButton"
@@ -5361,7 +5417,7 @@ console.log('data ',data)
                                                                     return updatedRows;
                                                                 });
                                                             }}
-                                                            portalId="datepicker-portal11"
+                                                            portalId="datepicker-portal16"
                                                             disabled={item.payMode === '' || item.payMode === 'CASH' || item.payMode === 'TDS' || assessmentData.invoiceNo !== ''}
                                                             popperPlacement="top-start"
                                                             id="chequeDate" // Unique identifier
@@ -5503,7 +5559,7 @@ console.log('data ',data)
                                                                     return updatedRows;
                                                                 });
                                                             }}
-                                                            portalId="datepicker-portal11"
+                                                            portalId="datepicker-portal16"
                                                             disabled={item.payMode === '' || item.payMode === 'ADVANCE' || item.payMode === 'CREDIT' || item.payMode === 'CASH' || item.payMode === 'TDS' || assessmentData.invoiceNo !== ''}
                                                             popperPlacement="top-start"
                                                             id="chequeDate" // Unique identifier
@@ -5566,7 +5622,7 @@ console.log('data ',data)
                                     </tbody>
                                 </Table>
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </>
 

@@ -221,7 +221,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
         cha: "",
         chaSrNo: "",
         sez: "N",
-        taxApplicable: "Y",
+        taxApplicable: "N",
         onAccountOf: "",
         accSrNo: "",
         comments: "",
@@ -711,7 +711,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
             cha: "",
             chaSrNo: "",
             sez: "N",
-            taxApplicable: "Y",
+            taxApplicable: "N",
             onAccountOf: "",
             accSrNo: "",
             comments: "",
@@ -832,7 +832,25 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
         const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD') : '';
 
         setLoading(true);
-        axios.get(`${ipaddress}assessmentPeriodicCmdtyCon/searcBeforeSavePeriodicInvoice`, {
+
+         axios.get(`${ipaddress}party/getPartyDataWithCustomerType`, {
+                params: {
+                    cid: companyid,
+                    bid: branchId,
+                    pid: searchImpId
+                },
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                }
+            })
+
+             .then((customerResponse) => {
+                  console.log("Customer Type Response---", customerResponse.data);
+        console.log("Customer Type---", customerResponse.data.customerType);
+        
+        const isRegistered = customerResponse.data.customerType && 
+            customerResponse.data.customerType === "Registered";
+       return axios.get(`${ipaddress}assessmentPeriodicCmdtyConProforma/searcBeforeSavePeriodicInvoice`, {
             params: {
                 cid: companyid,
                 bid: branchId,
@@ -843,15 +861,19 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             }
-        })
-            .then((response) => {
+        }).then((assessmentResponse) => {
+            return { assessmentResponse, isRegistered };
+        });
+    })
+            .then((result) => {
                 setLoading(false);
-
-                const data = response.data;
+ const { assessmentResponse, isRegistered } = result;
+                const data = assessmentResponse.data;
                 const singleData = data[0];
 
                 setCheckInvDate('N');
                 setInvDate(null);
+                 const taxApplicableValue = isRegistered ? "Y" : "N";
                 setAssessmentData({
                     companyId: "",
                     branchId: "",
@@ -881,7 +903,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
                     cha: singleData[14] === null ? '' : singleData[14] || '',
                     chaSrNo: '',
                     sez: "N",
-                    taxApplicable: "Y",
+                    taxApplicable: taxApplicableValue,
                     onAccountOf: "",
                     accSrNo: "",
                     comments: "",
@@ -889,7 +911,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
                     othSrNo: "",
                     billingParty: "IMP",
                     invoiceNo: "",
-                    creditType: "N",
+                    creditType: "Y",
                     invoiceCategory: "SINGLE",
                     isAncillary: "N",
                     invoiceDate: null,
@@ -1072,7 +1094,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
                         cha: singleData[30] || "",
                         chaSrNo: singleData[31] || "",
                         sez: singleData[36] || "N",
-                        taxApplicable: singleData[37] || "Y",
+                        taxApplicable: singleData[37] || "N",
                         onAccountOf: singleData[38] || "",
                         accSrNo: singleData[40] || "",
                         comments: singleData[43] || "",
@@ -2417,7 +2439,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
                     cha: singleData[30] || "",
                     chaSrNo: singleData[31] || "",
                     sez: singleData[36] || "N",
-                    taxApplicable: singleData[37] || "Y",
+                    taxApplicable: singleData[37] || "N",
                     onAccountOf: singleData[38] || "",
                     accSrNo: singleData[40] || "",
                     comments: singleData[43] || "",
@@ -2616,7 +2638,7 @@ export default function GeneralPeriodiCommodityWiseInvoice({ activeTab }) {
                     cha: singleData[30] || "",
                     chaSrNo: singleData[31] || "",
                     sez: singleData[36] || "N",
-                    taxApplicable: singleData[37] || "Y",
+                    taxApplicable: singleData[37] || "N",
                     onAccountOf: singleData[38] || "",
                     accSrNo: singleData[40] || "",
                     comments: singleData[43] || "",
