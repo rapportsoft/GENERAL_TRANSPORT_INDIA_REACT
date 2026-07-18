@@ -27,7 +27,7 @@ import {
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import { faIdBadge, faChartGantt, faBold, faBox, faArrowAltCircleLeft, faSearch, faRefresh, faUpload, faFileExcel, faSave, faCheck, faDownload, faTrash, faCalendarAlt, faAdd, faCancel, faXmark, faArrowDown, faPlus, faArrowUp, faEdit, faChevronUp, faChevronDown, faMagnifyingGlassChart, faProcedures, faSpinner, faPrint, faFileInvoice, faGear } from '@fortawesome/free-solid-svg-icons';
 import '../assets/css/style.css';
 import '../Components/Style.css';
 import { Button } from "react-bootstrap";
@@ -3612,7 +3612,7 @@ const convertProformaToCreditInvoice = async () => {
 
             // Refresh the data after conversion
             await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
-              
+                //  handleClear();
             Swal.fire({
                 title: 'Success!',
                 text: `Credit Invoice converted successfully!`,
@@ -3868,7 +3868,7 @@ const convertProformaToCreditInvoicedelivery = async () => {
 
             // Refresh the data after conversion
             await getSelectedInvoiceData(assessmentData.assesmentId, assessmentData.invoiceNo);
-              
+                //  handleClear();
             Swal.fire({
                 title: 'Success!',
                 text: `Credit Invoice converted successfully!`,
@@ -6131,7 +6131,7 @@ return (
                                 />
                                 Process
                             </button>
-                       <button
+                       {/* <button
     className="btn btn-outline-primary btn-margin newButton"
     style={{ marginRight: 10, fontSize: 13 }}
     id="submitbtn2"
@@ -6144,7 +6144,7 @@ return (
         style={{ marginRight: "5px" }}
     />
     Convert to Invoice
-</button>
+</button> */}
  {/* <button
         className="btn btn-outline-warning btn-margin newButton"
         style={{ marginRight: 10, fontSize: 13 }}
@@ -6194,7 +6194,20 @@ return (
                                 Print
                             </button>
 
-
+<button
+    className="btn btn-outline-primary btn-margin newButton"
+    style={{ marginRight: 10, fontSize: 13 }}
+    id="submitbtn2"
+    // onClick={convertProformaToCreditInvoice}
+      onClick={selectedInvoice === "noc" ? convertProformaToCreditInvoice : selectedInvoice === "exbond" ? convertProformaToCreditInvoicedelivery : ""}
+                               
+ disabled={!assessmentData.invoiceNo || !assessmentData.assesmentId || assessmentData.convertedToInvoice}>
+    <FontAwesomeIcon
+        icon={faGear}
+        style={{ marginRight: "5px" }}
+    />
+    Generate Invoice
+</button>
 
 
                         </Col>

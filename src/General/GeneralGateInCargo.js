@@ -179,7 +179,8 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
     jobTransDate: null,
     jobNop: "",
     grossWeight: "",
-    gateInPackages: ""
+    gateInPackages: "",
+    transporterName:"",
   })
 
   const handleGateInHeaderDataChange = (e) => {
@@ -264,7 +265,8 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
       jobTransDate: null,
       jobNop: "",
       grossWeight: "",
-      gateInPackages: ""
+      gateInPackages: "",
+      transporterName:"",
     })
 
     setGateInDtlData([{
@@ -816,7 +818,8 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
             jobTransDate: singleData[14] === null ? null : new Date(singleData[14]),
             jobNop: "",
             grossWeight: "",
-            gateInPackages: ""
+            gateInPackages: "",
+            transporterName:singleData[29] || "",
           })
 
           setGateInDtlData(data.map((item) => ({
@@ -930,7 +933,8 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
           jobTransDate: singleData[14] === null ? null : new Date(singleData[14]),
           jobNop: "",
           grossWeight: "",
-          gateInPackages: ""
+          gateInPackages: "",
+          transporterName:singleData[29] || "",
         })
 
         setGateInDtlData(data.map((item) => ({
@@ -980,9 +984,15 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = gateInSearchData.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(gateInSearchData.length / itemsPerPage);
-
+  // const currentItems = gateInSearchData.slice(indexOfFirstItem, indexOfLastItem);
+  // const totalPages = Math.ceil(gateInSearchData.length / itemsPerPage);
+const currentItems = Array.isArray(gateInSearchData) 
+  ? gateInSearchData.slice(indexOfFirstItem, indexOfLastItem) 
+  : [];
+  // const totalPages = Math.ceil(gateInSearchData.length / itemsPerPage);
+const totalPages = Array.isArray(gateInSearchData) 
+  ? Math.ceil(gateInSearchData.length / itemsPerPage) 
+  : 0;
   // Function to handle page change
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -1984,7 +1994,21 @@ function GeneralGateInCargo({ noctrans, nocno, acttab, boe, gateInData, listOfDa
             </FormGroup>
 
           </Col>
+ <Col md={2}>
+            <label>Transporter Name</label>
+            <FormGroup>
+              <Input
+                className="form-control"
+                type="text"
+                name='transporterName'
+                id='transporterName'
+                 value={gateInHeaderData.transporterName}
+maxLength={100}
+  onChange={handleGateInHeaderDataChange}
+              />
+            </FormGroup>
 
+          </Col>
         </Row>
         <Row>
           <Col className="text-center">

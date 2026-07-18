@@ -2382,6 +2382,7 @@ function JobEntry({ nocno, boe, noctrans, acttab, listOfData, flag, onRequest })
                       }}                    >
                       <option value="IS/">IS/</option>
                       <option value="BE/">BE/</option>
+                       <option value="EM/">EM/</option>
                     </Input>
                   </div>
                   <input

@@ -22,6 +22,7 @@ import ExportDashboard from "../Parent Pages/ExportDashboard";
 import InvoicesDashBoard from "../Parent Pages/InvoicesDashBoard";
 import BondingDashBoard from "../Parent Pages/BondingDashBoard";
 import GeneralDashboard from "../Parent Pages/GeneralDashboard";
+import Insurance from "../Parent Pages/Insurance";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
@@ -335,6 +336,15 @@ export default function Dashboard() {
                   aria-labelledby="3"
                 >
                   <GeneralDashboard />
+                </div>
+                  <div
+                  className={`tab-pane fade ${activeTab === "P00007" ? "show active" : ""
+                    }`}
+                  id="bordered-justified-contact-3"
+                  role="tabpanel"
+                  aria-labelledby="3"
+                >
+                  <Insurance />
                 </div>
               </div>
             </Row>

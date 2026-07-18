@@ -667,7 +667,8 @@ export default function AddParty() {
         bankName: "",
         bankAddress: "",
         ifscCode: "",
-        accountNo: ""
+        accountNo: "",
+             insurance: "N",
     });
 
 
@@ -928,6 +929,7 @@ export default function AddParty() {
             phoneNo: '',
             contactPhone: '',
             tdsPercentage: '',
+             insurance: "N", 
         })
         document.getElementById('partyName').classList.remove('error-border');
         // document.getElementById('customerCode').classList.remove('error-border');
@@ -2750,6 +2752,26 @@ export default function AddParty() {
 
                         </Col>
                     </Row>
+
+ <Row>
+                        <Col md={2}>
+    <FormGroup>
+        <Label className="partyFontSize">Insurance</Label>
+        <Input
+            type="select"
+            name="insurance"
+            id='insurance'
+            className="form-control"
+            value={partyData.insurance}
+            onChange={handlePartyChange}
+        >
+            <option value="N">No</option>
+            <option value="Y">Yes</option>
+        </Input>
+    </FormGroup>
+</Col>
+                    </Row>
+
                     <div style={{ fontSize: 16, fontWeight: 800 }}>
                         Contact Details
                     </div>

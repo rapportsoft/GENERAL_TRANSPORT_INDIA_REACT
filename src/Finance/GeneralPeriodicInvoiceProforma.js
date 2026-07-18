@@ -916,7 +916,7 @@ export default function GeneralPeriodicInvoiceProforma({ activeTab }) {
                     othSrNo: "",
                     billingParty: "IMP",
                     invoiceNo: "",
-                    creditType: "N",
+                    creditType: "Y",
                     invoiceCategory: "SINGLE",
                     isAncillary: "N",
                     invoiceDate: null,

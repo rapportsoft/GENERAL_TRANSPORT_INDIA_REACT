@@ -18,8 +18,7 @@ import { faBuilding, faUser, faSignOutAlt, faUserCheck, faUserCircle, faUserGear
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FaUserShield } from 'react-icons/fa';
 import '../assets/css/style.css';
-
-
+import ipaddress from "../Components/IpAddress";
 
 export default function Head({ toggleSidebar }) {
 
@@ -41,7 +40,24 @@ export default function Head({ toggleSidebar }) {
   //   backgroundImage: 'radial-gradient( circle farthest-corner at 48.4% 47.5%,  rgba(122,183,255,1) 0%, rgba(21,83,161,1) 90% )',
 
   // };
+ const [insuranceData, setInsuranceData] = useState({
+    limit: 0,
+    used: 0,
+    alertThreshold: 0,
+    remaining: 0,
+    percentage: 0,
+    isAlert: false,
+    isWarning: false,
+    isCritical: false,
+    status: 'NO_DATA',
+    message: 'Insurance data loaded.',
+    lastUpdated: new Date().toLocaleString(),
+    isFromDatabase: false
+  });
 
+
+  console.log('insuranceData ',insuranceData,' ',(insuranceData && insuranceData.used > 0 && insuranceData.alertThreshold <= insuranceData.used) )
+  const [loading, setLoading] = useState(false);
   const navbarStyle = {
     backgroundImage: 'linear-gradient(-225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%)',
     // backgroundRepeat: 'no-repeat',
@@ -64,6 +80,11 @@ export default function Head({ toggleSidebar }) {
       navigate('/login?message=You need to be authenticated to access this page.');
     }
   }, [isAuthenticated, navigate]);
+ useEffect(() => {
+    if (isAuthenticated && companyid && branchId && jwtToken) {
+      fetchInsuranceData();
+    }
+  }, [isAuthenticated, companyid, branchId, jwtToken]);
 
   const handleLogout = () => {
     navigate('/login?message2=You have successfully logged out.');
@@ -98,6 +119,54 @@ export default function Head({ toggleSidebar }) {
   }, []);
 
   const isMobile = window.innerWidth <= 768;
+const fetchInsuranceData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${ipaddress}api/dashboard/getInsuranceData`,
+        {
+          params: { companyId: companyid, branchId: branchId },
+          headers: { Authorization: `Bearer ${jwtToken}` }
+        }
+      );
+      
+      const data = response.data;
+      setInsuranceData({
+        limit: data.insuranceLimit || 0,
+        used: data.insuranceLimtUsed || 0,
+        alertThreshold: data.insuranceLimitAlert || 0,
+        remaining: data.remaining || 0,
+        percentage: data.percentage || 0,
+        isAlert: data.isAlert || false,
+        isWarning: data.isWarning || false,
+        isCritical: data.isCritical || false,
+        status: data.status || 'NO_DATA',
+        message: data.message || 'Insurance data loaded.',
+        lastUpdated: data.lastUpdated || new Date().toLocaleString(),
+        isFromDatabase: data.isFromDatabase || false
+      });
+      
+      console.log('Insurance Data:', data);
+    } catch (error) {
+      console.error("Error fetching insurance data:", error);
+      setInsuranceData({
+        limit: 0,
+        used: 0,
+        alertThreshold: 0,
+        remaining: 0,
+        percentage: 0,
+        isAlert: false,
+        isWarning: false,
+        isCritical: false,
+        status: 'ERROR',
+        message: 'Unable to fetch insurance data.',
+        lastUpdated: new Date().toLocaleString(),
+        isFromDatabase: false
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -120,6 +189,82 @@ export default function Head({ toggleSidebar }) {
           {/* <i style={{ color: 'white' }} className="bi bi-list toggle-sidebar-btn" ></i> */}
 
         </div>
+        
+          <div
+          style={{
+            flexGrow: 1,
+            overflow: "hidden",
+            position: "relative",
+            margin: "0 15px",
+            height: "30px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {/* Check if insurance data exists and if alert threshold is crossed */}
+          {(insuranceData && insuranceData.used > 0 && insuranceData.alertThreshold <= insuranceData.used) && (
+            <marquee
+              behavior="scroll"
+              direction="left"
+              scrollamount="8"
+              style={{
+                color: insuranceData.isAlert ? "#FF4444" : "#FFD700",
+                fontWeight: "bold",
+                fontSize: "14px",
+                lineHeight: "40px",
+                whiteSpace: "nowrap",
+                width: "100%",
+              }}
+            >
+              {/* Show Alert if Used exceeds Alert Threshold */}
+              {insuranceData.used >= insuranceData.alertThreshold ? (
+                <span>
+                  ⚠️ INSURANCE LIMIT ALERT: Used {insuranceData.used} / {insuranceData.limit} 
+                  (Threshold: {insuranceData.alertThreshold}) - {insuranceData.percentage}% used
+                  {insuranceData.remaining > 0 && ` | Remaining: ${insuranceData.remaining}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+              ) : (
+                <span>
+                  ✅ Insurance: Used {insuranceData.used} / {insuranceData.limit} 
+                  (Alert at: {insuranceData.alertThreshold}) - {insuranceData.percentage}% used
+                  {insuranceData.remaining > 0 && ` | Remaining: ${insuranceData.remaining}`}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+              )}
+
+              {/* Show Warning/Critical messages if applicable */}
+              {insuranceData.isWarning && (
+                <span style={{ color: "#FFA500", marginLeft: "20px" }}>
+                  ⚠️ WARNING: Insurance usage is approaching limit!
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+              )}
+              
+              {insuranceData.isCritical && (
+                <span style={{ color: "#FF0000", marginLeft: "20px" }}>
+                  🔴 CRITICAL: Insurance limit almost reached!
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+              )}
+            </marquee>
+          )}
+
+          {/* Show loading or no data message */}
+          {loading && (
+            <span style={{ color: "#FFFFFF", fontSize: "14px" }}>
+              Loading insurance data...
+            </span>
+          )}
+          
+          {!loading && insuranceData.status === 'NO_DATA' && (
+            <span style={{ color: "#FFFFFF", fontSize: "14px" }}>
+              No insurance data available
+            </span>
+          )}
+        </div>
+
+
         <nav className="header-nav ms-auto">
           <ul className="d-flex align-items-center">
 

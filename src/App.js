@@ -96,6 +96,7 @@ import VendorInvoice from "./VendorInvoice/VendorInvoice";
 import VendorReceipt from "./VendorInvoice/VendorReceipt";
 import VendorTariff from "./VendorInvoice/VendorTariff";
 import CommodityMaster from "./ChildMenus/CommodityMaster";
+import CurrencyRateMaster from "./ChildMenus/CurrencyRateMaster";
 
 
 const App = () => {
@@ -267,6 +268,7 @@ const MainLayout = () => {
             <Route path="/import/Hub" element={<HubMain />} />
 
             <Route path="/parent/SCMTR" element={<SCMTRHead />} />
+             <Route path="/master/currencyratemaster" element={<CurrencyRateMaster />} />
 
 
           </Routes>

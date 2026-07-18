@@ -829,6 +829,9 @@ function Tariff() {
             return;
         }
 
+        console.log('cfsTariff ',cfsTariff)
+        console.log('checkedDetails ',checkedDetails)
+
         setLoading(true);
         try {
             const response = await FinanceService.addDetailCfsTariffService(companyid, branchId, cfsTariff, checkedDetails, userId, jwtToken);
